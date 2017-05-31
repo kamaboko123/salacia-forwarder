@@ -1,0 +1,47 @@
+itypedef unsigned char uint8_t;
+
+struct ARP {
+    uint8_t hw_type[2];
+    uint8_t proto_type[2];
+    uint8_t hlen;
+    uint8_t plen;
+    uint8_t opcode[2];
+    uint8_t src_mac[6];
+    uint8_t src_ip[4];
+    uint8_t dst_mac[6];
+    uint8_t dst_ip[4];
+} __attribute__ ((packed));
+
+struct IPv4 {
+    uint8_t version;
+} __attribute__ ((packed));
+
+struct Ether {
+    uint8_t dst_addr[6];
+    uint8_t src_addr[6];
+    uint8_t type[2];
+    union {
+        struct ARP arp;
+        struct IPv4 ipv4;
+    } payload;
+} __attribute__ ((packed));
+
+#include <stdio.h>
+
+struct Ether ether;
+
+int main() {
+    if (ether.type[0] != 0x08) return -1;
+    switch (ether.type[1]) {
+        case 6: // arp
+            ether.payload.arp.hw_type;
+            break;
+        case 0: // ipv4
+            ether.payload.ipv4.version;
+            break;
+        default:
+            return -1;
+    }
+    return 0;
+}
+
