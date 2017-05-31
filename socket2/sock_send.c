@@ -12,6 +12,7 @@
 #include <net/if_arp.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include "calcaddr.h"
 
 char *interface = NULL;
 int pd = -1;
@@ -192,9 +193,9 @@ int main(int argc, char **argv)
         //*ether.payload.arp.op_code = (uint16_t)1;
         nts(ether.payload.arp.op_code, strtoll("0001", NULL, 16), 2);
         nts(ether.payload.arp.src_mac, strtoll("003d2c152457", NULL, 16), 6);
-        nts(ether.payload.arp.src_ip, strtoll("c0a81e02", NULL, 16), 4);
+        nts(ether.payload.arp.src_ip, iptoi("192.168.30.2"), 4);
         nts(ether.payload.arp.dst_mac, strtoll("000000000000", NULL, 16), 6);
-        nts(ether.payload.arp.dst_ip, strtoll("c0a81e01", NULL, 16), 4);
+        nts(ether.payload.arp.dst_ip, iptoi("192.168.30.1"), 4);
         
         
         hexdump((unsigned char *)&ether, sizeof(ether));
