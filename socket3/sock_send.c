@@ -118,7 +118,83 @@ int main(int argc, char **argv)
         //myaddr_p = &myaddr;
         //printf("%s\n", netif[i].ifname);
         
+        
+        //netif[i].sll.sll_addr = netif[i].myaddr;
+        
+        memset(&netif[i].sll, 0x00, sizeof(netif[i].sll));
+        hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
+        netif[i].sll.sll_addr[0] = (netif[i].myaddr.sa_data[0]);
+        netif[i].sll.sll_addr[1] = (netif[i].myaddr.sa_data[1]);
+        netif[i].sll.sll_addr[2] = (netif[i].myaddr.sa_data[2]);
+        netif[i].sll.sll_addr[3] = (netif[i].myaddr.sa_data[3]);
+        netif[i].sll.sll_addr[4] = (netif[i].myaddr.sa_data[4]);
+        netif[i].sll.sll_addr[5] = (netif[i].myaddr.sa_data[5]);
+        
+        //strncpy(&netif[i].sll.sll_addr, &netif[i].myaddr.sa_data, 6);
+        //hexdump((char *)&netif[i].sll.sll_addr, sizeof(netif[i].sll.sll_addr));
+        
+        netif[i].sll.sll_family = AF_PACKET; //allways AF_PACKET
+        netif[i].sll.sll_protocol = htons(ETH_P_ALL);
+        netif[i].sll.sll_ifindex = netif[i].ifindex;
+        
+        hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
+        if (bind(netif[i].pd, (struct sockaddr *)&netif[i].sll, sizeof(netif[i].sll)) == -1) {
+            perror("bind():");
+            exit(1);
+        }
+        
         printf("\n");
+    }
+    
+    printf("receiving packets...\n");
+    for(;;){
+        
+        /*
+        j = recv(netif[0].pd, buf, sizeof(buf), 0);
+        if (j < 0) {
+            perror("recv():");
+            exit(1);
+        }
+        if (j == 0){
+            continue;
+        }
+        printf("[receive]interface:%s\n", netif[0].ifname);
+        hexdump(buf, j);
+        printf("-----------------------------\n");
+        */
+        
+        for (i = 0; i < 2; i++){
+            printf("%d", i);
+            j = recv(netif[i].pd, buf, sizeof(buf), 0);
+            if (j < 0) {
+                perror("recv():");
+                exit(1);
+            }
+            if (j == 0){
+                continue;
+            }
+            
+            pether = (struct ETHER *)buf;
+            type = pether->eth_type[0];
+            type = (type << 8) + pether->eth_type[1];
+            
+            switch (type) {
+                case TYPE_ARP:
+                    printf("eth_type -> %d[ARP]\n", TYPE_ARP);
+                    break;
+                case TYPE_IP4:
+                    printf("eth_type -> %d[IPv4]\n", TYPE_IP4);
+                    break;
+                default:
+                    printf("eth_type -> [Unknown type]\n");
+                    continue;
+                    //break;
+            }
+            
+            printf("[receive]interface:%s\n", netif[i].ifname);
+            hexdump(buf, j);
+            printf("-----------------------------\n\n");
+       }
     }
     
     return(0);
