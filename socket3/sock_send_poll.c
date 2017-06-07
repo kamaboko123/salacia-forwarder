@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     struct ifreq ifr;
     int ifindex;
     struct sockaddr myaddr;
-    int i, j;
+    int i, j, s;
     unsigned char buf[2048];
     struct sockaddr *myaddr_p;
     int addrlen;
@@ -89,7 +89,6 @@ int main(int argc, char **argv)
     struct pollfd pfds[2];
     
     for(i = 0; i < 2; i++){
-        printf("%d\n", i);
         strcpy(netif[i].ifname, ifnames[i]);
         netif[i].pd = -1;
         if((netif[i].pd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1){
@@ -106,7 +105,7 @@ int main(int argc, char **argv)
             exit(1);
         }
         netif[i].ifindex = netif[i].ifr.ifr_ifindex;
-        printf("ifindex : %d\n", netif[i].ifindex);
+        //printf("ifindex : %d\n", netif[i].ifindex);
         
         //HWADDR取得
         memset(&netif[i].ifr, 0, sizeof(netif[i].ifr));
@@ -116,7 +115,7 @@ int main(int argc, char **argv)
             exit(1);
         }
         netif[i].myaddr = netif[i].ifr.ifr_hwaddr;
-        hexdump(&netif[i].myaddr, sizeof(netif[i].myaddr));
+        //hexdump(&netif[i].myaddr, sizeof(netif[i].myaddr));
         //myaddr_p = &myaddr;
         //printf("%s\n", netif[i].ifname);
         
@@ -124,7 +123,7 @@ int main(int argc, char **argv)
         //netif[i].sll.sll_addr = netif[i].myaddr;
         
         memset(&netif[i].sll, 0x00, sizeof(netif[i].sll));
-        hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
+        //hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
         //netif[i].sll.sll_addr[0] = (netif[i].myaddr.sa_data[0]);
         //netif[i].sll.sll_addr[1] = (netif[i].myaddr.sa_data[1]);
         //netif[i].sll.sll_addr[2] = (netif[i].myaddr.sa_data[2]);
@@ -138,225 +137,76 @@ int main(int argc, char **argv)
         netif[i].sll.sll_protocol = htons(ETH_P_ALL);
         netif[i].sll.sll_ifindex = netif[i].ifindex;
         
-        hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
+        //hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
         if (bind(netif[i].pd, (struct sockaddr *)&netif[i].sll, sizeof(netif[i].sll)) == -1) {
             perror("bind():");
             exit(1);
         }
         
+        ioctl(netif[i].pd, FIONBIO, 1);
+        
         pfds[i].fd = netif[i].pd;
         pfds[i].events = POLLIN|POLLERR;
         
-        printf("\n");
+        if (i == 0){
+            printf("bridge interfaces : ");
+        }
+        printf("%s ", netif[i].ifname);
     }
+    printf("\n");
     
-    printf("receiving packets...\n");
     for(;;){
-        switch(poll(pfds,2,10)){
+        switch(poll(pfds,2,1)){
             case -1:
                 perror("polling");
                 break;
             case 0:
                 break;
             default:
-                for(i = 0; i< 2; i++){
+                for(i = 0; i < 2; i++){
                     if(pfds[i].revents&(POLLIN|POLLERR)){
-                        if((j=read(netif[i].pd, buf, sizeof(buf))) <= 0){
+                        if((s=read(netif[i].pd, buf, sizeof(buf))) <= 0){
                             perror("read");
                         }
-                        
-                        printf("[receive]interface:%s\n", netif[i].ifname);
-                        hexdump(buf, j);
+                        else{
+                            pether = (struct ETHER *)buf;
+                            type = pether->eth_type[0];
+                            type = (type << 8) + pether->eth_type[1];
+                            
+                            switch (type) {
+                                case TYPE_ARP:
+                                    //printf("eth_type -> %d[ARP]\n", TYPE_ARP);
+                                    break;
+                                case TYPE_IP4:
+                                    //printf("eth_type -> %d[IPv4]\n", TYPE_IP4);
+                                    break;
+                                default:
+                                    //printf("eth_type -> [Unknown type]\n");
+                                    continue;
+                                    break;
+                            }
+                            
+                            //printf("[receive]interface:%s\n", netif[i].ifname);
+                            //hexdump(buf, s);
+                            
+                            for (j = 0; j < 2; j++){
+                                if(i == j){
+                                    continue;
+                                }
+                                if(write(netif[j].pd, buf, s) <= 0){
+                                    perror("read");
+                                }
+                                //printf("[send]interface:%s\n", netif[j].ifname);
+                            }
+                            //printf("\n");
+                        }
                     }
                 }
                 break;
         }
-        /*
-        j = recv(netif[0].pd, buf, sizeof(buf), 0);
-        if (j < 0) {
-            perror("recv():");
-            exit(1);
-        }
-        if (j == 0){
-            continue;
-        }
-        printf("[receive]interface:%s\n", netif[0].ifname);
-        hexdump(buf, j);
-        printf("-----------------------------\n");
-        */
-        
-        /*
-        for (i = 0; i < 2; i++){
-            printf("%d", i);
-            j = recv(netif[i].pd, buf, sizeof(buf), 0);
-            if (j < 0) {
-                perror("recv():");
-                exit(1);
-            }
-            if (j == 0){
-                continue;
-            }
-            
-            pether = (struct ETHER *)buf;
-            type = pether->eth_type[0];
-            type = (type << 8) + pether->eth_type[1];
-            
-            switch (type) {
-                case TYPE_ARP:
-                    printf("eth_type -> %d[ARP]\n", TYPE_ARP);
-                    break;
-                case TYPE_IP4:
-                    printf("eth_type -> %d[IPv4]\n", TYPE_IP4);
-                    break;
-                default:
-                    printf("eth_type -> [Unknown type]\n");
-                    continue;
-                    //break;
-            }
-            
-            printf("[receive]interface:%s\n", netif[i].ifname);
-            hexdump(buf, j);
-            printf("-----------------------------\n\n");
-       }*/
     }
     
     return(0);
-    
-    /*tmp var*/
-    char hwaddr_tmp[2048];
-    
-    interface = strdup("enp4s0");
-    
-    //割り込み
-    //signal(SIGINT, sigint);
-    
-    //socket
-    pd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    if (pd == -1) {
-        perror("socket():");
-        exit(1);
-    }
-    printf("socket_pd : %d\n", pd);
-    
-    //ifindex取得
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interface, IFNAMSIZ);
-    if (ioctl(pd, SIOCGIFINDEX, &ifr) == -1) {
-        perror("SIOCGIFINDEX");
-        exit(1);
-    }
-    ifindex = ifr.ifr_ifindex;
-    printf("ifindex : %d\n", ifindex);
-    
-    //HWADDR取得
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interface, IFNAMSIZ);
-    if (ioctl(pd, SIOCGIFHWADDR, &ifr) == -1){
-        perror("SIOCGHIFWADDR");
-        exit(1);
-    }
-    myaddr = ifr.ifr_hwaddr;
-    myaddr_p = &myaddr;
-    
-    hexdump((unsigned char *)myaddr_p, sizeof(myaddr));
-    //printf("\n\n");
-    //hexdump((unsigned char *)strnget(myaddr_p->sa_data, 14), 2048);
-    //strnget(hwaddr_tmp, myaddr_p->sa_data, 14);
-    //hexdump((unsigned char *)hwaddr_tmp, 2048);
-    //printf("hwaddr : %.2x, %x \n", (unsigned char)myaddr_p->sa_family, (unsigned char *)hwaddr_tmp);
-    printf("hwaddr : %.2x, %.2x:%.2x:%.2x:%.2x:%.2x:%.2x \n", 
-            (unsigned char)myaddr_p->sa_family,
-            (unsigned char)myaddr_p->sa_data[0],
-            (unsigned char)myaddr_p->sa_data[1],
-            (unsigned char)myaddr_p->sa_data[2],
-            (unsigned char)myaddr_p->sa_data[3],
-            (unsigned char)myaddr_p->sa_data[4],
-            (unsigned char)myaddr_p->sa_data[5]);
-    
-    switch (myaddr.sa_family) {
-        case ARPHRD_ARCNET:
-            addrlen = 1;
-            printf("family:ARPHRD_ARCNET(%d)\n", ARPHRD_ARCNET);
-            break;
-        case ARPHRD_ETHER:
-            printf("family:ARPHRD_ETHER(%d)\n", ARPHRD_ETHER);
-            addrlen = 6;
-            break;
-        default:
-            printf("family:default(%d, %lu)\n", myaddr.sa_family, sizeof(myaddr.sa_data));
-            addrlen = sizeof(myaddr.sa_data);
-    }
-    
-    //bind interface
-    //sll = sockadrr_ll = socket address link layer?
-    
-    //memset(&sll, 0xff, sizeof(sll));
-    sll.sll_addr[0] = 0x00;
-    sll.sll_addr[1] = 0x3d;
-    sll.sll_addr[2] = 0x2c;
-    sll.sll_addr[3] = 0x15;
-    sll.sll_addr[4] = 0x24;
-    sll.sll_addr[5] = 0x57;
-    sll.sll_family = AF_PACKET; //allways AF_PACKET
-    sll.sll_protocol = htons(ETH_P_ALL);
-    sll.sll_ifindex = ifindex;
-    if (bind(pd, (struct sockaddr *)&sll, sizeof sll) == -1) {
-        perror("bind():");
-        exit(1);
-    }
-    
-    printf("%.2x %2.x %.2x %.2x %.2x %.2x \n",
-        sll.sll_addr[0],
-        sll.sll_addr[1],
-        sll.sll_addr[2],
-        sll.sll_addr[3],
-        sll.sll_addr[4],
-        sll.sll_addr[5]
-    );
-    
-    //Send ARP
-    for(;;){
-        pether = &ether;
-        memset(&ether, 0, sizeof(ether));
-        
-        nts(ether.dst_mac, strtoll("FFFFFFFFFFFF", NULL, 16), 6);
-        nts(ether.src_mac, strtoll("003d2c152457", NULL, 16), 6);
-        //for(i=0; i<18; i++){
-        //    ether.payload.arp.padding[i] = 0;
-        //}
-        nts(ether.eth_type, 0x0806, 2);
-        
-        //arp request
-        //*ether.payload.arp.hw_type = (uint16_t)0x1122;
-        nts(ether.payload.arp.hw_type, strtoll("0001", NULL, 16), 2);
-        //ether.payload.arp.hw_type[0] = (uint8_t)0x00;
-        //ether.payload.arp.hw_type[0] = (uint8_t)0x01;
-        //*ether.payload.arp.proto_type = (uint16_t)0x0800;
-        nts(ether.payload.arp.proto_type, strtoll("0800", NULL, 16), 2);
-        nts(ether.payload.arp.hlen, strtoll("6", NULL, 10), 1);
-        nts(ether.payload.arp.plen, strtoll("4", NULL, 10), 1);
-        //*ether.payload.arp.hlen = (uint8_t)48;
-        //*ether.payload.arp.plen = (uint8_t)32;
-        //*ether.payload.arp.op_code = (uint16_t)1;
-        nts(ether.payload.arp.op_code, strtoll("0001", NULL, 16), 2);
-        nts(ether.payload.arp.src_mac, strtoll("003d2c152457", NULL, 16), 6);
-        nts(ether.payload.arp.src_ip, iptoi("192.168.30.2"), 4);
-        nts(ether.payload.arp.dst_mac, strtoll("000000000000", NULL, 16), 6);
-        nts(ether.payload.arp.dst_ip, iptoi("192.168.30.1"), 4);
-        
-        
-        hexdump((unsigned char *)&ether, sizeof(ether));
-        printf("%d bytes\n", sizeof(ether));
-        
-        ret = sendto(pd, &ether, 60, 0, (struct sockaddr *)&sll, sizeof(sll));
-        
-        printf("!!%d!!\n", ret);
-        
-        sleep(1);
-    }
-    
-    /* NOT REACHED */
-    exit(0);
 }
 
 void sigint(int signum)

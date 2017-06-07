@@ -94,6 +94,7 @@ int main(int argc, char **argv)
             perror("socket()");
             exit(1);
         }
+        
         //printf("!%d\n", netif[i].pd);
         memset(&netif[i].ifr, 0, sizeof(netif[i].ifr));
         //hexdump(&netif[i].ifr, sizeof(netif[i].ifr));
@@ -141,6 +142,7 @@ int main(int argc, char **argv)
             perror("bind():");
             exit(1);
         }
+        
         
         printf("\n");
     }
