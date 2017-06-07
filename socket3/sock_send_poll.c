@@ -12,6 +12,7 @@
 #include <net/if_arp.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <poll.h>
 #include "calcaddr.h"
 
 char *interface = NULL;
@@ -85,6 +86,7 @@ int main(int argc, char **argv)
     
     char ifnames[2][8] ={"enp3s0", "enp4s0"};
     struct NETIF netif[2];
+    struct pollfd pfds[2];
     
     for(i = 0; i < 2; i++){
         printf("%d\n", i);
@@ -142,12 +144,33 @@ int main(int argc, char **argv)
             exit(1);
         }
         
+        pfds[i].fd = netif[i].pd;
+        pfds[i].events = POLLIN|POLLERR;
+        
         printf("\n");
     }
     
     printf("receiving packets...\n");
     for(;;){
-        
+        switch(poll(pfds,2,10)){
+            case -1:
+                perror("polling");
+                break;
+            case 0:
+                break;
+            default:
+                for(i = 0; i< 2; i++){
+                    if(pfds[i].revents&(POLLIN|POLLERR)){
+                        if((j=read(netif[i].pd, buf, sizeof(buf))) <= 0){
+                            perror("read");
+                        }
+                        
+                        printf("[receive]interface:%s\n", netif[i].ifname);
+                        hexdump(buf, j);
+                    }
+                }
+                break;
+        }
         /*
         j = recv(netif[0].pd, buf, sizeof(buf), 0);
         if (j < 0) {
@@ -162,6 +185,7 @@ int main(int argc, char **argv)
         printf("-----------------------------\n");
         */
         
+        /*
         for (i = 0; i < 2; i++){
             printf("%d", i);
             j = recv(netif[i].pd, buf, sizeof(buf), 0);
@@ -193,7 +217,7 @@ int main(int argc, char **argv)
             printf("[receive]interface:%s\n", netif[i].ifname);
             hexdump(buf, j);
             printf("-----------------------------\n\n");
-       }
+       }*/
     }
     
     return(0);
