@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -13,7 +15,9 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <sched.h>
 #include "calcaddr.h"
+
 
 char *interface = NULL;
 int pd = -1;
@@ -59,6 +63,7 @@ void sigint(int signum);
 void hexdump(unsigned char *buf, int nbytes);
 void strnget(char *buf, char *str, int n);
 void nts(unsigned char *str, unsigned long long int n, int bytes);
+void set_cpu(void);
 
 void strnget(char *buf, char *str, int n){
     memcpy(buf, str, n);
@@ -84,9 +89,11 @@ int main(int argc, char **argv)
     char tmp[2048];
     int ret;
     
-    char ifnames[2][8] ={"enp3s0", "enp4s0"};
+    char ifnames[2][8] ={"enp4s0", "enp3s0"};
     struct NETIF netif[2];
     struct pollfd pfds[2];
+    
+    set_cpu();
     
     for(i = 0; i < 2; i++){
         strcpy(netif[i].ifname, ifnames[i]);
@@ -156,7 +163,7 @@ int main(int argc, char **argv)
     printf("\n");
     
     for(;;){
-        switch(poll(pfds,2,1)){
+        switch(poll(pfds,2,10)){
             case -1:
                 perror("polling");
                 break;
@@ -169,6 +176,7 @@ int main(int argc, char **argv)
                             perror("read");
                         }
                         else{
+                            /*
                             pether = (struct ETHER *)buf;
                             type = pether->eth_type[0];
                             type = (type << 8) + pether->eth_type[1];
@@ -185,7 +193,7 @@ int main(int argc, char **argv)
                                     continue;
                                     break;
                             }
-                            
+                            */
                             //printf("[receive]interface:%s\n", netif[i].ifname);
                             //hexdump(buf, s);
                             
@@ -208,6 +216,25 @@ int main(int argc, char **argv)
     
     return(0);
 }
+
+void set_cpu(void)
+{
+    pid_t pid;
+    cpu_set_t cpu_set;
+    int result;
+    
+    pid = getpid();
+    CPU_ZERO(&cpu_set);
+    CPU_SET(3, &cpu_set);
+    
+    
+    printf("PID:%d\n", pid);
+    result = sched_setaffinity(pid, sizeof(cpu_set_t), &cpu_set);
+    if (result != 0) {
+        printf("cpu set error\n");
+    }
+}
+
 
 void sigint(int signum)
 //int signum;
