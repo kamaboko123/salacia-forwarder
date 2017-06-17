@@ -1,8 +1,8 @@
 # Makefile
 
-sock_send : sock_send_poll.c calcaddr.c
-	gcc -o sock_send sock_send_poll.c calcaddr.c
+switch: l2sw.c calcaddr.c hashtable.c
+	gcc -o switch l2sw.c calcaddr.c hashtable.c
 
 clean:
-	rm -f sock_send
+	rm -f switch
 
