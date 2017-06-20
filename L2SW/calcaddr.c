@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 unsigned int iptoi(char *addr);
 uint64_t mactol(uint8_t *addr);

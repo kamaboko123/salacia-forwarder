@@ -17,47 +17,11 @@
 #include <poll.h>
 #include <sched.h>
 #include "calcaddr.h"
+#include "mynet.h"
 
 
 char *interface = NULL;
 int pd = -1;
-
-#define TYPE_ARP 0x0806
-#define TYPE_IP4 0x0800
-
-struct ARP{
-    uint8_t hw_type[2];
-    uint8_t proto_type[2];
-    uint8_t hlen[1];
-    uint8_t plen[1];
-    uint8_t op_code[2];
-    uint8_t src_mac[6];
-    uint8_t src_ip[4];
-    uint8_t dst_mac[6];
-    uint8_t dst_ip[4];
-    uint8_t padding[18];
-} __attribute__((__packed__));
-
-struct ETHER{
-    uint8_t dst_mac[6];
-    uint8_t src_mac[6];
-    uint8_t eth_type[2];
-    
-    union {
-        struct ARP arp;
-    }payload;
-    
-    //uint8_t padding[18];
-} __attribute__((__packed__));
-
-struct NETIF{
-    char ifname[IFNAMSIZ];
-    int pd;
-    int ifindex;
-    struct ifreq ifr;
-    struct sockaddr myaddr;
-    struct sockaddr_ll sll;
-};
 
 void sigint(int signum);
 void hexdump(unsigned char *buf, int nbytes);
@@ -65,10 +29,6 @@ void strnget(char *buf, char *str, int n);
 void nts(unsigned char *str, unsigned long long int n, int bytes);
 void set_cpu(void);
 
-void strnget(char *buf, char *str, int n){
-    memcpy(buf, str, n);
-    buf[n] = '\0';
-}
 
 int main(int argc, char **argv)
 {
