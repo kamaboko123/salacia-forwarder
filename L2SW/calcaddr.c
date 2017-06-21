@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 
 unsigned int iptoi(char *addr);
 uint64_t mactol(uint8_t *addr);
@@ -49,6 +50,27 @@ unsigned int iptoi(char *addr){
     //printf("%s\n", addr);
     //printf("!%u\n", dec);
     return(dec);
+}
+
+uint8_t *ltomac(uint8_t *ret , uint64_t addr_l){
+    //uint8_t ret[18] = {0};
+    uint8_t tmp[13] = {0};
+    int i;
+    int j = 0;
+    
+    sprintf(tmp, "%012lx", addr_l);
+    for(i = 1; tmp[i-1] != '\0'; i++){
+        ret[j] = tmp[i-1];
+        if((i > 0) && (i % 2 == 0)){
+            j++;
+            ret[j] = ':';
+        }
+        j++;
+        //printf("%s", tmp);
+    }
+    ret[j-1] = '\0';
+    //printf("%s\n", ret);
+    return(ret);
 }
 
 uint64_t mactol(uint8_t *addr){
