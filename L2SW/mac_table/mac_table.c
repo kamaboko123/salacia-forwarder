@@ -2,16 +2,16 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <time.h>
 #include "../calcaddr.h"
 #include "../mynet.h"
-
 
 #define HASH_SIZE 256
 
 struct MAC_TABLE_ENTRY {
     uint64_t mac_addr;
-    //struct NETIF netif;
     uint8_t netif_index;
+    uint64_t last_time;
     struct MAC_TABLE_ENTRY *next;
 };
 
@@ -34,11 +34,14 @@ uint8_t update_mac_table(struct MAC_TABLE *tbl, uint8_t *addr, uint8_t netif_ind
         //printf("not found!\n");
         tbl->entry[hash8(mactol(addr))].mac_addr = mactol(addr);
         tbl->entry[hash8(mactol(addr))].netif_index = netif_index;
+        tbl->entry[hash8(mactol(addr))].last_time = time(NULL);
+        
         return(0);
     }
     else if(first->mac_addr == mactol(addr)){
         tbl->entry[hash8(mactol(addr))].mac_addr = mactol(addr);
         tbl->entry[hash8(mactol(addr))].netif_index = netif_index;
+        tbl->entry[hash8(mactol(addr))].last_time = time(NULL);
         return(0);
     }
     else{
@@ -49,6 +52,7 @@ uint8_t update_mac_table(struct MAC_TABLE *tbl, uint8_t *addr, uint8_t netif_ind
             if(p->mac_addr == mactol(addr)){
                 p->mac_addr = mactol(addr);
                 p->netif_index = netif_index;
+                p->last_time = time(NULL);
                 return(0);
             }
         }
@@ -56,6 +60,7 @@ uint8_t update_mac_table(struct MAC_TABLE *tbl, uint8_t *addr, uint8_t netif_ind
         p->next = malloc(sizeof(struct MAC_TABLE_ENTRY));
         p->next->mac_addr = mactol(addr);
         p->next->netif_index = netif_index;
+        p->next->last_time = time(NULL);
         p->next->next = NULL;
         return(0);
     }
@@ -66,11 +71,13 @@ struct MAC_TABLE_ENTRY *get_mac_entry(struct MAC_TABLE *tbl, uint8_t *addr){
     p = &tbl->entry[hash8(mactol(addr))];
     
     if(p->mac_addr == mactol(addr)){
+        p->last_time = time(NULL);
         return(p);
     }
     while(p->next != NULL){
         p = p->next;
         if(p->mac_addr == mactol(addr)){
+            p->last_time = time(NULL);
             return(p);
         }
     }
@@ -90,7 +97,7 @@ void dump_mac_entry(struct MAC_TABLE_ENTRY *entry){
     //printf("{%" PRId64 ", %d} %s ", entry->mac_addr, entry->netif_index, (entry->next == NULL ? "-> NULL" : "->"));
     uint8_t mac_str[18];
     ltomac(mac_str, entry->mac_addr);
-    printf("{%s, %d} %s ", mac_str, entry->netif_index, (entry->next == NULL ? "-> NULL" : "->"));
+    printf("{%s, %d, %" PRIu64 "} %s ", mac_str, entry->netif_index, entry->last_time, (entry->next == NULL ? "-> NULL" : "->"));
 }
 
 void dump_mac_table(struct MAC_TABLE *tbl){
