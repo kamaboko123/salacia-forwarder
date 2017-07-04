@@ -13,6 +13,7 @@ struct MAC_TABLE_ENTRY {
     uint8_t netif_index;
     uint64_t last_time;
     struct MAC_TABLE_ENTRY *next;
+    struct MAC_TABLE_ENTRY *prev;
 };
 
 struct MAC_TABLE {
@@ -23,6 +24,9 @@ struct MAC_TABLE {
 uint8_t hash8(uint64_t value){
     return(value % 256);
 }
+
+void init_entry(struct MAC_TABLE_ENTRY *entry);
+void refresh_mac_table(struct MAC_TABLE *tbl);
 
 /* MAC_TABLE 制御関連関数 */
 uint8_t update_mac_table(struct MAC_TABLE *tbl, uint8_t *addr, uint8_t netif_index){
@@ -62,6 +66,7 @@ uint8_t update_mac_table(struct MAC_TABLE *tbl, uint8_t *addr, uint8_t netif_ind
         p->next->netif_index = netif_index;
         p->next->last_time = time(NULL);
         p->next->next = NULL;
+        p->next->prev = p;
         return(0);
     }
 }
@@ -84,12 +89,113 @@ struct MAC_TABLE_ENTRY *get_mac_entry(struct MAC_TABLE *tbl, uint8_t *addr){
     return(NULL);
 }
 
+uint8_t delete_mac_entry(struct MAC_TABLE *tbl, uint8_t *addr){
+    struct MAC_TABLE_ENTRY *target;
+    target = get_mac_entry(tbl, addr);
+    if(target == NULL){
+        printf("not found![%s]\n", addr);
+    }
+    else{
+        //first entry
+        if(target->prev == NULL){
+            if(target->next == NULL){
+                //最初のエントリかつ次のエントリがない
+                init_entry(target);
+                return(0);
+            }
+            else{
+                //最初のエントリ、次のエントリ有り
+                tbl->entry[hash8(mactol(addr))].mac_addr = target->next->mac_addr;
+                tbl->entry[hash8(mactol(addr))].netif_index = target->next->netif_index;
+                tbl->entry[hash8(mactol(addr))].last_time = target->next->last_time;
+                tbl->entry[hash8(mactol(addr))].next = NULL;
+                //tbl->entry[hash8(mactol(addr))].prev = NULL;
+                free(target->next);
+            }
+        }else{
+            if(target->next == NULL){
+                //最後のエントリ(最初のエントリではなく、後ろに続くエントリがない)
+                target->prev->next = NULL;
+                free(target);
+            }
+            else{
+                //中間のエントリ（最初のエントリではなく、後ろに続くエントリが存在する）
+                //target->prev->mac_addr = target->next->mac_addr;
+                //target->prev->netif_index = target->next->netif_index;
+                //target->prev->last_time = target->next->last_time;
+                target->prev->next = target->next;
+                free(target);
+            }
+        }
+        //printf("found!\n");
+    }
+    return(0);
+}
+
+/*
+struct MAC_TABLE_ENTRY[] *find_expire_entry(tbl){
+
+}*/
+
+
+struct MAC_TABLE_ENTRY *delete_chain(struct MAC_TABLE_ENTRY *entry){
+    struct MAC_TABLE_ENTRY *ret;
+    if(entry->next == NULL){
+        return(entry);
+    }
+    ret = entry->prev;
+    delete_chain(entry);
+    return(ret);
+}
+
+
+void refresh_mac_table(struct MAC_TABLE *tbl){
+    int i;
+    struct MAC_TABLE_ENTRY *p;
+    //struct MAC_TABLE_ENTRY *p2;
+    uint64_t now = time(NULL);
+    uint8_t buf[36] = {0};
+    
+    for(i=0; i<HASH_SIZE; i++){
+        p = &tbl->entry[i];
+        do{
+            //if(p->mac_addr != 0){
+                ltomac(buf, p->mac_addr);
+                if((now - p->last_time > 0) && p->mac_addr != 0){
+                    printf("delete : %s\n", buf);
+                }
+                p = p->next;
+                delete_mac_entry(tbl, buf);
+            //}
+            
+            /*
+            if(now - p->prev->last_time > 0){
+                if(p->prev->mac_addr != 0){
+                    ltomac(buf, p->prev->mac_addr);
+                    delete_mac_entry(tbl, buf);
+                    printf("delete : %s\n", buf);
+                }
+            }*/
+        }while(p != NULL);
+    }
+}
+
+void init_entry(struct MAC_TABLE_ENTRY *entry){
+    entry->next = NULL;
+    entry->prev = NULL;
+    entry->mac_addr = 0;
+    entry->netif_index = 0;
+    entry->last_time = 0;
+}
+
 void init_mac_table(struct MAC_TABLE *tbl){
     int i;
     
     for(i = 0; i < HASH_SIZE; i++){
+        init_entry(&tbl->entry[i]);
         //printf("%d\n", i);
-        tbl->entry[i].next = NULL;
+        //tbl->entry[i].next = NULL;
+        //tbl->entry[i].prev = NULL;
     }
 }
 
@@ -141,8 +247,21 @@ int main(void){
     update_mac_table(&mac_table, "11:22:33:aa:b2:ca", 10);
     update_mac_table(&mac_table, "11:22:33:aa:b1:cd", 11);
     update_mac_table(&mac_table, "11:22:33:aa:b0:c2", 12);
+    update_mac_table(&mac_table, "11:22:33:aa:c0:cd", 13);
     
     dump_mac_table(&mac_table);
+    
+    //delete_mac_entry(&mac_table, "11:22:33:aa:b5:c2");
+    //delete_mac_entry(&mac_table, "11:22:33:aa:ba:1c");
+    //delete_mac_entry(&mac_table, "11:22:33:af:b8:cc");
+    //delete_mac_entry(&mac_table, "11:22:33:aa:b1:cd");
+    //dump_mac_table(&mac_table);
+    
+    //sleep(2);
+    //delete_chain(&mac_table.entry[205]);
+    refresh_mac_table(&mac_table);
+    dump_mac_table(&mac_table);
+    
     
     printf("---\n");
     //tmp = get_mac_entry(&mac_table, "11:22:33:aa:bb:cc");
