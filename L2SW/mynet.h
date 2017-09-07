@@ -1,3 +1,6 @@
+#ifndef MYNET_H
+#define MYNET_H
+
 #include <sys/socket.h>
 #include <linux/if_packet.h>
 #include <net/if.h>
@@ -39,4 +42,4 @@ struct NETIF{
     struct sockaddr_ll sll;
 };
 
-
+#endif

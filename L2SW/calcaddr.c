@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#include <string.h>
-
-unsigned int iptoi(char *addr);
-uint64_t mactol(uint8_t *addr);
-
+#include "calcaddr.h"
 
 unsigned int iptoi(char *addr){
     //アドレス形式例 : 192.168.1.1
@@ -52,7 +44,7 @@ unsigned int iptoi(char *addr){
     return(dec);
 }
 
-uint8_t *ltomac(uint8_t *ret , uint64_t addr_l){
+uint8_t *ltomac(uint8_t *ret, uint64_t addr_l){
     //uint8_t ret[18] = {0};
     uint8_t tmp[13] = {0};
     int i;
