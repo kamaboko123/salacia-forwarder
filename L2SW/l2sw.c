@@ -5,30 +5,32 @@
 #include <ctype.h>
 #include <string.h>
 #include <unistd.h>
-#include <signal.h>
 #include <net/if.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if_arp.h>
-#include <sys/types.h>
 #include <netinet/in.h>
 #include <poll.h>
-#include <sched.h>
-#include "calcaddr.h"
 #include "mynet.h"
-
+#include "mac_table/mac_table.h"
 
 char *interface = NULL;
 int pd = -1;
 
-void sigint(int signum);
-void hexdump(unsigned char *buf, int nbytes);
-void strnget(char *buf, char *str, int n);
-void nts(unsigned char *str, unsigned long long int n, int bytes);
-void set_cpu(void);
+#define IFMAX 4
+#define MAC_REF_INTERVAL 10
 
+//network interface
+struct NETIF{
+    char ifname[IFNAMSIZ];
+    int pd;
+    int ifindex;
+    struct ifreq ifr;
+    struct sockaddr myaddr;
+    struct sockaddr_ll sll;
+};
+
+void hexdump(uint8_t *buf, int nbytes);
 
 int main(int argc, char **argv)
 {
@@ -49,30 +51,58 @@ int main(int argc, char **argv)
     char tmp[2048];
     int ret;
     
-    char ifnames[2][8] ={"enp4s0", "enp3s0"};
-    struct NETIF netif[2];
-    struct pollfd pfds[2];
+    int inter_n;
     
-    set_cpu();
+    char ifnames[IFMAX][IFNAMSIZ];
+    struct NETIF netif[IFMAX];
+    struct pollfd pfds[IFMAX];
     
-    for(i = 0; i < 2; i++){
+    uint32_t mac_ref_time_last = 0;
+    
+    //mac-address-table
+    struct MAC_TABLE mac_table = {0};
+    
+    //mac-address-table 初期化
+    init_mac_table(&mac_table);
+    mac_ref_time_last = time(NULL);
+    
+    //引数からbridgeするinterfaceを取ってくる
+    inter_n = argc - 1;
+    if(inter_n <= 1){
+        fprintf(stderr, "Args Error : You need specify 2 interfaces at leaset.\n");
+        exit(-1);
+    }
+    if(inter_n > IFMAX){
+        fprintf(stderr, "Args Error : Too many interfaces. IFMAX : %d.\n", IFMAX);
+        exit(-1);
+    }
+    for(i = 0; i < inter_n; i++){
+        if(strlen(argv[i+1]) > IFNAMSIZ){
+            fprintf(stderr, "Invaild Args.\n");
+            exit(-1);
+        }
+        strcpy(ifnames[i], argv[i+1]);
+    }
+    
+    //raw socketで扱うために色々やる
+    for(i = 0; i < inter_n; i++){
+        
+        //socket作る
         strcpy(netif[i].ifname, ifnames[i]);
         netif[i].pd = -1;
         if((netif[i].pd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1){
             perror("socket()");
             exit(1);
         }
-        //printf("!%d\n", netif[i].pd);
+        
+        //interfaceの名前からifindexを取ってくる
         memset(&netif[i].ifr, 0, sizeof(netif[i].ifr));
-        //hexdump(&netif[i].ifr, sizeof(netif[i].ifr));
         strncpy(netif[i].ifr.ifr_name, netif[i].ifname, IFNAMSIZ);
-        //hexdump(&netif[i].ifr, sizeof(netif[i].ifr));
         if (ioctl(netif[i].pd, SIOCGIFINDEX, &netif[i].ifr) == -1) {
             perror("SIOCGIFINDEX");
             exit(1);
         }
         netif[i].ifindex = netif[i].ifr.ifr_ifindex;
-        //printf("ifindex : %d\n", netif[i].ifindex);
         
         //HWADDR取得
         memset(&netif[i].ifr, 0, sizeof(netif[i].ifr));
@@ -82,36 +112,23 @@ int main(int argc, char **argv)
             exit(1);
         }
         netif[i].myaddr = netif[i].ifr.ifr_hwaddr;
-        //hexdump(&netif[i].myaddr, sizeof(netif[i].myaddr));
-        //myaddr_p = &myaddr;
-        //printf("%s\n", netif[i].ifname);
-        
-        
-        //netif[i].sll.sll_addr = netif[i].myaddr;
         
         memset(&netif[i].sll, 0x00, sizeof(netif[i].sll));
-        //hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
-        //netif[i].sll.sll_addr[0] = (netif[i].myaddr.sa_data[0]);
-        //netif[i].sll.sll_addr[1] = (netif[i].myaddr.sa_data[1]);
-        //netif[i].sll.sll_addr[2] = (netif[i].myaddr.sa_data[2]);
-        //netif[i].sll.sll_addr[3] = (netif[i].myaddr.sa_data[3]);
-        //netif[i].sll.sll_addr[4] = (netif[i].myaddr.sa_data[4]);
-        //netif[i].sll.sll_addr[5] = (netif[i].myaddr.sa_data[5]);
         
-        //hexdump((char *)&netif[i].sll.sll_addr, sizeof(netif[i].sll.sll_addr));
-        
+        //socketにinterfaceをbind
         netif[i].sll.sll_family = AF_PACKET; //allways AF_PACKET
         netif[i].sll.sll_protocol = htons(ETH_P_ALL);
         netif[i].sll.sll_ifindex = netif[i].ifindex;
         
-        //hexdump((char *)&netif[i].sll, sizeof(netif[i].sll));
         if (bind(netif[i].pd, (struct sockaddr *)&netif[i].sll, sizeof(netif[i].sll)) == -1) {
             perror("bind():");
             exit(1);
         }
         
+        //ノンブロッキングモードに
         ioctl(netif[i].pd, FIONBIO, 1);
         
+        //poll()を使うのでそっちで使う構造体にもデータ渡しておく
         pfds[i].fd = netif[i].pd;
         pfds[i].events = POLLIN|POLLERR;
         
@@ -123,50 +140,116 @@ int main(int argc, char **argv)
     printf("\n");
     
     for(;;){
-        switch(poll(pfds,2,10)){
+        if (time(NULL) - mac_ref_time_last >= MAC_REF_INTERVAL){
+            printf("\n//////////[[refresh mac table]]//////////\n");
+            refresh_mac_table(&mac_table);
+            mac_ref_time_last = time(NULL);
+            dump_mac_table(&mac_table);
+            printf("//////////////////////////////////////////\n");
+        }
+        switch(poll(pfds, inter_n, 10)){
             case -1:
                 perror("polling");
                 break;
             case 0:
                 break;
             default:
-                for(i = 0; i < 2; i++){
+                //イベントを受けたらパケット処理
+                for(i = 0; i < inter_n; i++){
                     if(pfds[i].revents&(POLLIN|POLLERR)){
+                        //何かしらデータを受けたら
                         if((s=read(netif[i].pd, buf, sizeof(buf))) <= 0){
                             perror("read");
                         }
                         else{
-                            /*
+                            
+                            //フレーム処理用の変数
+                            uint8_t tmp_dst[32] = {0};
+                            uint8_t tmp_src[32] = {0};
+                            struct MAC_TABLE_ENTRY *sw_dst;
+                            struct MAC_TABLE_ENTRY *sw_src;
+                            
+                            
+                            //受信したデータをdump(debug)
                             pether = (struct ETHER *)buf;
                             type = pether->eth_type[0];
                             type = (type << 8) + pether->eth_type[1];
                             
+                            printf("[receive]interface:%s\n ", netif[i].ifname);
                             switch (type) {
                                 case TYPE_ARP:
-                                    //printf("eth_type -> %d[ARP]\n", TYPE_ARP);
+                                    printf("eth_type -> 0x%.2x%.2x[ARP]\n", pether->eth_type[0], pether->eth_type[1]);
                                     break;
                                 case TYPE_IP4:
                                     //printf("eth_type -> %d[IPv4]\n", TYPE_IP4);
+                                    printf("eth_type -> 0x%.2x%.2x[IPv4]\n", pether->eth_type[0], pether->eth_type[1]);
                                     break;
                                 default:
-                                    //printf("eth_type -> [Unknown type]\n");
+                                    printf("eth_type -> 0x%.2x%.2x[Unknown type]\n", pether->eth_type[0], pether->eth_type[1]);
                                     continue;
                                     break;
                             }
-                            */
-                            //printf("[receive]interface:%s\n", netif[i].ifname);
-                            //hexdump(buf, s);
                             
-                            for (j = 0; j < 2; j++){
-                                if(i == j){
-                                    continue;
+                            
+                            //送信元MAC、Table更新
+                            ltomac(tmp_src, mactol_bin(pether->src_mac));
+                            printf("src:%s\n", tmp_src);
+                            update_mac_table(&mac_table, tmp_src, netif[i].ifindex);
+                            
+                            //送信先MAC
+                            ltomac(tmp_dst, mactol_bin(pether->dst_mac));
+                            printf("dst:%s\n", tmp_dst);
+                            
+                            //mac-address-tableのdump
+                            dump_mac_table(&mac_table);
+                            
+                            //ブロードキャストは受信したinterface以外のinterfaceに送信する
+                            hexdump((uint8_t *)pether, 14);
+                            //printf("%"PRIu64"\n", (uint64_t)mactol_bin(pether->dst_mac));
+                            if (mactol_bin(pether->dst_mac) == 0xFFFFFFFFFFFF){
+                                printf("broad-cast packet\n");
+                                for (j = 0; j < inter_n; j++){
+                                    if(i == j){
+                                        continue;
+                                    }
+                                    if(write(netif[j].pd, buf, s) <= 0){
+                                        perror("send");
+                                    }
+                                    printf("[send]interface:%s\n", netif[j].ifname);
                                 }
-                                if(write(netif[j].pd, buf, s) <= 0){
-                                    perror("read");
-                                }
-                                //printf("[send]interface:%s\n", netif[j].ifname);
                             }
-                            //printf("\n");
+                            else{
+                                //hexdump(tmp_dst ,30);
+                                
+                                sw_dst = get_mac_entry(&mac_table, tmp_dst);
+                                
+                                if(sw_dst == NULL){
+                                    printf("!send all ports\n");
+                                    for (j = 0; j < inter_n; j++){
+                                        if(i == j){
+                                            continue;
+                                        }
+                                        if(write(netif[j].pd, buf, s) <= 0){
+                                            perror("send");
+                                        }
+                                        printf("[send]interface:%s\n", netif[j].ifname);
+                                    }
+                                }
+                                else{
+                                    int k;
+                                    for(k = 0; k < inter_n; k++){
+                                        if(netif[k].ifindex == sw_dst->netif_index){
+                                            if(write(netif[k].pd, buf, s) <= 0){
+                                                perror("send");
+                                            }
+                                            printf("[send]interface:%s\n", netif[k].ifname);
+                                            break;
+                                        }
+                                    }
+                                }
+                                printf("non-broad-cast packet\n");
+                            }
+                            printf("-------------------------\n");
                         }
                     }
                 }
@@ -177,46 +260,8 @@ int main(int argc, char **argv)
     return(0);
 }
 
-void set_cpu(void)
-{
-    pid_t pid;
-    cpu_set_t cpu_set;
-    int result;
-    
-    pid = getpid();
-    CPU_ZERO(&cpu_set);
-    CPU_SET(3, &cpu_set);
-    
-    
-    printf("PID:%d\n", pid);
-    result = sched_setaffinity(pid, sizeof(cpu_set_t), &cpu_set);
-    if (result != 0) {
-        printf("cpu set error\n");
-    }
-}
 
-
-void sigint(int signum)
-//int signum;
-{
-    printf("signum:%d\n", signum);
-    
-    struct ifreq ifr;
-
-    if (pd == -1)
-        return;
-
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interface, IFNAMSIZ);
-    ioctl(pd, SIOCGIFFLAGS,&ifr);
-    ifr.ifr_flags &= ~IFF_PROMISC;
-    ioctl(pd, SIOCSIFFLAGS,&ifr);
-
-    close(pd);
-    exit(0);
-}
-
-void hexdump(unsigned char *p, int count)
+void hexdump(uint8_t *p, int count)
 {
     int i, j;
 
@@ -236,16 +281,3 @@ void hexdump(unsigned char *p, int count)
     }
 }
 
-void nts(unsigned char *str, unsigned long long int n, int bytes){
-    int i, j;
-    int shift;
-    
-    for(i=1; i<=bytes; i++){
-        shift = (bytes-i) * 8;
-        str[i-1] = (unsigned char)(n >> shift);
-        printf("shift:%d -> %.2x\n", shift, (unsigned char)(n >> shift));
-        //printf("!%d : %.2x\n", bytes-i, (unsigned char)(n >> shift));
-    }
-    printf("?%.2x\n", (unsigned char)(n>>8));
-    printf("?%.2x\n", (unsigned char)(n>>0));
-}

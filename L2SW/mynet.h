@@ -33,13 +33,4 @@ struct ETHER{
     //uint8_t padding[18];
 } __attribute__((__packed__));
 
-struct NETIF{
-    char ifname[IFNAMSIZ];
-    int pd;
-    int ifindex;
-    struct ifreq ifr;
-    struct sockaddr myaddr;
-    struct sockaddr_ll sll;
-};
-
 #endif
