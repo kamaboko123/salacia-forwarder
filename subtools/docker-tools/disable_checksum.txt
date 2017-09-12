@@ -1,0 +1,4 @@
+#Dockerコンテナ内のethでのchecksum-offloadを切る
+docker exec -it host1 ethtool -K eth0 tx off
+docker exec -it host2 ethtool -K eth0 tx off
+

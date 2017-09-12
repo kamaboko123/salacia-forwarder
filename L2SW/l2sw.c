@@ -190,6 +190,7 @@ int main(int argc, char **argv)
                                     break;
                             }
                             
+                            hexdump(buf, s);
                             
                             //送信元MAC、Table更新
                             ltomac(tmp_src, mactol_bin(pether->src_mac));

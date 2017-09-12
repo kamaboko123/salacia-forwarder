@@ -21,6 +21,27 @@ struct ARP{
     uint8_t padding[18];
 } __attribute__((__packed__));
 
+struct IP{
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ihl:4;
+    unsigned int version:4;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int version:4;
+    unsigned int ihl:4;
+#else
+# error "Please fix <bits/endian.h>"
+#endif
+    uint8_t tos;
+    uint16_t tot_len;
+    uint16_t id;
+    uint16_t frag_off;
+    uint8_t ttl;
+    uint8_t protocol;
+    uint16_t check;
+    uint32_t saddr;
+    uint32_t daddr;
+} __attribute__((__packed__));
+
 struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
@@ -28,6 +49,7 @@ struct ETHER{
     
     union {
         struct ARP arp;
+        struct IP ip;
     }payload;
     
     //uint8_t padding[18];
