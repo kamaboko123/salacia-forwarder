@@ -18,6 +18,10 @@ uint16_t checksum_ip(uint8_t *iph){
     
     p = (uint8_t *)iph;
     for(i = 0; i < pip->ihl*4; i+=2){
+        if (i == 10){
+            continue;
+        }
+        
         tmp = (uint16_t)(p[i] << 8);
         tmp += p[i+1];
         sum += tmp;
