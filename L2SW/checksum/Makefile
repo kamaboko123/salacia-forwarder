@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = checksum.c checksum_test.c
+SRC = checksum.c checksum_test.c ../swap_endian.c
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/checksum
 
