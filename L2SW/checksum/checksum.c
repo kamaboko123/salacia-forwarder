@@ -85,6 +85,10 @@ uint16_t checksum_tcp(struct IP *ip){
     //疑似ヘッダのチェックサムにさらにTCPヘッダのチェックサムを足し込む
     p = (uint8_t *)tcp;
     for(i = 0; i < tcp->d_offset*4; i+=2){
+        //TCPのチェックサムフィールドを無視
+        if(i == 16){
+            continue;
+        }
         
         tmp = (uint16_t)(p[i] << 8);
         tmp += p[i+1];
