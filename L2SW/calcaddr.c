@@ -22,24 +22,22 @@ uint32_t iptoi(const char *addr){
     return(dec);
 }
 
-uint8_t *ltomac(uint8_t *ret, uint64_t addr_l){
-    //uint8_t ret[18] = {0};
-    uint8_t tmp[13] = {0};
+char *ltomac(char *ret, uint64_t addr_l){
+    char tmp[13] = {0};
+    char *p = ret;
     int i;
-    int j = 0;
-    
-    sprintf(tmp, "%012lx", addr_l);
-    for(i = 1; tmp[i-1] != '\0'; i++){
-        ret[j] = tmp[i-1];
-        if((i > 0) && (i % 2 == 0)){
-            j++;
-            ret[j] = ':';
+
+    sprintf(tmp, "%012" PRIx64, addr_l);
+    for(i = 0; i < 12; i += 2){
+        if (i > 0) {
+            *p = ':';
+            ++p;
         }
-        j++;
-        //printf("%s", tmp);
+        p[0] = tmp[i];
+        p[1] = tmp[i + 1];
+        p += 2;
     }
-    ret[j-1] = '\0';
-    //printf("%s\n", ret);
+    *p = '\0';
     return(ret);
 }
 
