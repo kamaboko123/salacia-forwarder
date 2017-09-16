@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <poll.h>
 #include "mynet.h"
-#include "mac_table/mac_table.h"
+#include "mac_table.h"
 
 char *interface = NULL;
 int pd = -1;

@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include "../mynet.h"
-#include "../swap_endian.h"
 #include "checksum.h"
 
 

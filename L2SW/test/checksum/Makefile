@@ -1,10 +1,10 @@
 # Makefile
 
-SRC = src/l2sw.c src/calcaddr.c src/mac_table.c
+SRC = ../../src/checksum.c ../../src/endian.c checksum_test.c 
 TARGET_DIR = ./bin
-TARGET = $(TARGET_DIR)/l2sw
+TARGET = $(TARGET_DIR)/checksum
 
-l2sw : $(SRC)
+checksum : $(SRC)
 	mkdir -p $(TARGET_DIR)
 	gcc -o $(TARGET) $(SRC)
 

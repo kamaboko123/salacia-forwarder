@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "checksum.h"
-#include "../mynet.h"
+#include "../../src/checksum.h"
+#include "../../src/mynet.h"
 
 int main(void){
     struct ETHER *pether;

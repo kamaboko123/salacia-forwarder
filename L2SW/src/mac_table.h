@@ -7,8 +7,8 @@
 #include <inttypes.h>
 #include <time.h>
 #include <unistd.h>
-#include "../calcaddr.h"
-#include "../mynet.h"
+#include "calcaddr.h"
+#include "mynet.h"
 
 #define HASH_SIZE 256
 #define MAC_TABLE_AGING_TIME 5

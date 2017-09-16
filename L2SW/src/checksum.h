@@ -1,7 +1,10 @@
 #ifndef CALCADDR_H
 #define CALCADDR_H
 
-#include "../mynet.h"
+#include <stdio.h>
+#include <stdint.h>
+#include "mynet.h"
+#include "endian.h"
 
 struct PSEUDO_IP{
     uint32_t ip_src;

@@ -1,4 +1,4 @@
-#include "mac_table.h"
+#include "../../src/mac_table.h"
 
 int main(void){
     struct MAC_TABLE mac_table = {0};

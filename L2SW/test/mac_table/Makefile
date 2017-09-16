@@ -1,8 +1,8 @@
 # Makefile
 
-SRC = checksum.c checksum_test.c ../swap_endian.c
+SRC = ../../src/mac_table.c ../../src/calcaddr.c mac_table_test.c
 TARGET_DIR = ./bin
-TARGET = $(TARGET_DIR)/checksum
+TARGET = $(TARGET_DIR)/mac_table
 
 checksum : $(SRC)
 	mkdir -p $(TARGET_DIR)

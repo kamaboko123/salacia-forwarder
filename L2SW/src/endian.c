@@ -1,4 +1,4 @@
-#include "swap_endian.h"
+#include "endian.h"
 
 uint32_t swap_32(uint32_t n){
     uint32_t ret = 0;
