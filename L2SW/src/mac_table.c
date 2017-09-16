@@ -52,7 +52,7 @@ struct MAC_TABLE_ENTRY *get_mac_entry(struct MAC_TABLE *tbl, uint8_t *addr){
     struct MAC_TABLE_ENTRY *p;
     p = &tbl->entry[hash8(mactol(addr))];
     
-    printf("[mac_table]get : %s\n", addr);
+    //printf("[mac_table]get : %s\n", addr);
     
     if ((p->mac_addr == 0) && p->next == NULL){
         return(NULL);

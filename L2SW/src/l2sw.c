@@ -13,6 +13,7 @@
 #include <poll.h>
 #include "mynet.h"
 #include "mac_table.h"
+#include "debug.h"
 
 char *interface = NULL;
 int pd = -1;
@@ -141,11 +142,11 @@ int main(int argc, char **argv)
     
     for(;;){
         if (time(NULL) - mac_ref_time_last >= MAC_REF_INTERVAL){
-            printf("\n//////////[[refresh mac table]]//////////\n");
+            _printf("\n//////////[[refresh mac table]]//////////\n");
             refresh_mac_table(&mac_table);
             mac_ref_time_last = time(NULL);
-            dump_mac_table(&mac_table);
-            printf("//////////////////////////////////////////\n");
+            _dump_mac_table(&mac_table);
+            _printf("//////////////////////////////////////////\n");
         }
         switch(poll(pfds, inter_n, 10)){
             case -1:
@@ -175,40 +176,39 @@ int main(int argc, char **argv)
                             type = pether->eth_type[0];
                             type = (type << 8) + pether->eth_type[1];
                             
-                            printf("[receive]interface:%s\n ", netif[i].ifname);
+                            _printf("[receive]interface:%s\n", netif[i].ifname);
                             switch (type) {
                                 case TYPE_ARP:
-                                    printf("eth_type -> 0x%.2x%.2x[ARP]\n", pether->eth_type[0], pether->eth_type[1]);
+                                    _printf("eth_type -> 0x%.2x%.2x[ARP]\n", pether->eth_type[0], pether->eth_type[1]);
                                     break;
                                 case TYPE_IP4:
-                                    //printf("eth_type -> %d[IPv4]\n", TYPE_IP4);
-                                    printf("eth_type -> 0x%.2x%.2x[IPv4]\n", pether->eth_type[0], pether->eth_type[1]);
+                                    _printf("eth_type -> 0x%.2x%.2x[IPv4]\n", pether->eth_type[0], pether->eth_type[1]);
                                     break;
                                 default:
-                                    printf("eth_type -> 0x%.2x%.2x[Unknown type]\n", pether->eth_type[0], pether->eth_type[1]);
+                                    _printf("eth_type -> 0x%.2x%.2x[Unknown type]\n", pether->eth_type[0], pether->eth_type[1]);
                                     continue;
                                     break;
                             }
                             
-                            hexdump(buf, s);
+                            _hexdump(buf, s);
                             
                             //送信元MAC、Table更新
                             ltomac(tmp_src, mactol_bin(pether->src_mac));
-                            printf("src:%s\n", tmp_src);
+                            _printf("src:%s\n", tmp_src);
                             update_mac_table(&mac_table, tmp_src, netif[i].ifindex);
                             
                             //送信先MAC
                             ltomac(tmp_dst, mactol_bin(pether->dst_mac));
-                            printf("dst:%s\n", tmp_dst);
+                            _printf("dst:%s\n", tmp_dst);
                             
                             //mac-address-tableのdump
-                            dump_mac_table(&mac_table);
+                            _dump_mac_table(&mac_table);
                             
                             //ブロードキャストは受信したinterface以外のinterfaceに送信する
-                            hexdump((uint8_t *)pether, 14);
+                            _hexdump((uint8_t *)pether, 14);
                             //printf("%"PRIu64"\n", (uint64_t)mactol_bin(pether->dst_mac));
                             if (mactol_bin(pether->dst_mac) == 0xFFFFFFFFFFFF){
-                                printf("broad-cast packet\n");
+                                _printf("broad-cast packet\n");
                                 for (j = 0; j < inter_n; j++){
                                     if(i == j){
                                         continue;
@@ -216,16 +216,16 @@ int main(int argc, char **argv)
                                     if(write(netif[j].pd, buf, s) <= 0){
                                         perror("send");
                                     }
-                                    printf("[send]interface:%s\n", netif[j].ifname);
+                                    _printf("[send]interface:%s\n", netif[j].ifname);
                                 }
                             }
                             else{
-                                //hexdump(tmp_dst ,30);
+                                //_hexdump(tmp_dst ,30);
                                 
                                 sw_dst = get_mac_entry(&mac_table, tmp_dst);
                                 
                                 if(sw_dst == NULL){
-                                    printf("!send all ports\n");
+                                    _printf("!send all ports\n");
                                     for (j = 0; j < inter_n; j++){
                                         if(i == j){
                                             continue;
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
                                         if(write(netif[j].pd, buf, s) <= 0){
                                             perror("send");
                                         }
-                                        printf("[send]interface:%s\n", netif[j].ifname);
+                                        _printf("[send]interface:%s\n", netif[j].ifname);
                                     }
                                 }
                                 else{
@@ -243,14 +243,14 @@ int main(int argc, char **argv)
                                             if(write(netif[k].pd, buf, s) <= 0){
                                                 perror("send");
                                             }
-                                            printf("[send]interface:%s\n", netif[k].ifname);
+                                            _printf("[send]interface:%s\n", netif[k].ifname);
                                             break;
                                         }
                                     }
                                 }
-                                printf("non-broad-cast packet\n");
+                                _printf("non-broad-cast packet\n");
                             }
-                            printf("-------------------------\n");
+                            _printf("-------------------------\n");
                         }
                     }
                 }
