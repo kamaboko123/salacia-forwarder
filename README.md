@@ -1,6 +1,6 @@
 # The Salacia forwarder(tentative)
-This is packet forwarder with Linux raw socket.
-Currently, support only Layer 2, but this will be multi layer switch in future.
+This is packet forwarder with Linux raw socket.  
+Currently, support only Layer 2, but this will be multi layer switch in future.  
 
 ## Features
 - Layer 2 switching
@@ -19,8 +19,8 @@ $ cd rawsocket_switch/L2SW
 $ make
 $ ./bin/l2sw enp3s0 enp4s0
 ```
-You need to specify interfaces as argument.
-The interfaces is need to set promiscuous mode.
+You need to specify interfaces as argument.  
+The interfaces is need to set promiscuous mode.  
 Example:
 ```
 $ ifconfig enp3s0 promisc
@@ -28,9 +28,9 @@ $ ifconfig enp4s0 promisc
 ```
 
 ## Limitation
-This forwarder is not tested in except develop enviroment.
-Especially, this is not support big endian CPU.
-(Probably, this work with intel CPU.)
+This forwarder is not tested in except develop enviroment.  
+Especially, this is not support big endian CPU.  
+(Probably, this work with intel CPU.)  
 
 ## Develop environment
 - CPU : intel J1900
