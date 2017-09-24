@@ -22,6 +22,16 @@ uint32_t iptoi(const char *addr){
     return(dec);
 }
 
+char *itoip(char *ret, int addr){
+    int octet;
+    ret[0] = '\0';
+    for(int i = 0; i < 4; i++){
+        octet = (addr & (0xFF000000 >> (i * 8))) >> ((3 - i) * 8);
+        sprintf(ret, "%s%u%s", ret, octet, (i < 3)?".":"");
+    }
+    return(ret);
+}
+
 char *ltomac(char *ret, uint64_t addr_l){
     char tmp[13] = {0};
     char *p = ret;

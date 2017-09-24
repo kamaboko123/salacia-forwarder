@@ -8,8 +8,10 @@
 #include <string.h>
 
 uint32_t iptoi(const char *addr);
+char *itoip(char *ret, int addr);
 uint64_t mactol(uint8_t *addr);
 char *ltomac(char *ret, uint64_t addr_l);
 uint64_t mactol_bin(uint8_t *addr);
+
 
 #endif
