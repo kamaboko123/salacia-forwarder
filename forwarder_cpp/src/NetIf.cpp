@@ -66,10 +66,10 @@ string NetIf::getMacStr(){
     for(int i = 0; i < 6; i++){
         char tmp[4];
         if(i == 0){
-            sprintf(tmp, "%.2x", this->myaddr.sa_data[i]);
+            sprintf(tmp, "%.2x", (uint8_t)this->myaddr.sa_data[i]);
         }
         else{
-            sprintf(tmp, ":%.2x", this->myaddr.sa_data[i]);
+            sprintf(tmp, ":%.2x", (uint8_t)this->myaddr.sa_data[i]);
         }
         ret += tmp;
     }
