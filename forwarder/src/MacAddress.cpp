@@ -1,0 +1,49 @@
+#include "MacAddress.hpp"
+
+/**
+ * シスコ表記対応 -> 1122.3344.ffee
+ * コロン区切り対応 -> 11:22:33:44:ff:ee
+ * 区切り文字なし対応 -> 11223344ffee
+ * バリデーション未実装
+ */
+MacAddress::MacAddress(char *addr_str){
+    this->addr = 0;
+    char *p = addr_str;
+    int hex = 0;
+    
+    for (p = addr_str; *(p+1) != '\0'; p++){
+        if((*p == ':') || (*p == '-') || (*p == '.')){
+            continue;
+        }
+        hex++;
+    }
+    
+    for(p = addr_str; *p != '\0'; p++){
+        if((*p >= 'a') && (*p <= 'f')){
+            this->addr += ((uint64_t)(*p - 'a' + 10) << (hex * 4));
+        }
+        else if((*p >= 'A') && (*p <= 'F')){
+            this->addr += ((uint64_t)(*p - 'A' + 10) << (hex * 4));
+        }
+        else if((*p >= '0') && (*p <= '9')){
+            this->addr += ((uint64_t)(*p - '0') << (hex * 4));
+        }
+        else{
+            continue;
+        }
+        hex--;
+    }
+}
+
+MacAddress::MacAddress(uint64_t addr_int){
+    this->addr = addr_int;
+}
+
+uint64_t MacAddress::toInt(){
+    return(this->addr);
+}
+
+uint64_t MacAddress::getHash(){
+    return(this->addr % this->hbase);
+}
+
