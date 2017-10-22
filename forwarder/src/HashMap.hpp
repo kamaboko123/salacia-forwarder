@@ -59,25 +59,6 @@ public:
     bool isEmpty(){
         return(this->empty);
     }
-    
-    /*
-    bool del(){
-        if(getNext() == nullptr){
-            if(getPrev() == nullptr){a
-                //最初(次なし)
-                return false;
-            }
-            //最後
-            getPrev()->setNext(nullptr);
-            init();
-            return(true);
-        }
-
-    /*
-    HashMapEntry(K key){
-        
-    }*/
-    
 };
 
 template <typename K, typename V>
@@ -112,21 +93,15 @@ public:
     }
     
     ~HashMap(){
-        std::cout << "destructer HashMap" << std::endl;
+        //std::cout << "destructer HashMap" << std::endl;
         
-        //TBD : 全部deleteする処理書く
-        //delete this->tbl;
         int size = getSize();
         K *keys = new K[size];
         getKeys(keys);
         
         for(int i = 0; i < size; i++){
-            std::cout << "delete : ";
-            std::cout << keys[i].toInt() << std::endl;
-            /*
-            if(getEntry(keys[i])->getPrev() != nullptr){
-                del(keys[i]);
-            }*/
+            //std::cout << "delete : ";
+            //std::cout << keys[i].toInt() << std::endl;
             del(keys[i]);
         }
         
@@ -134,19 +109,12 @@ public:
         delete[] this->tbl;
     }
     
-    /*
-    void update(){
-        
-    }*/
-    
     void update(K key, V value){
         
-        //std::cout << getSize() << std::endl;
         int index = hash(key);
         if(tbl[index].isEmpty()){
             //fist node is empty
             tbl[index].set(key, value, nullptr, nullptr);
-            //std::cout << "d" << std::endl;
             return;
         }
         
@@ -173,30 +141,11 @@ public:
         //create new node
         HashMapEntry<K, V> *ne = new HashMapEntry<K, V>();
         p->setNext(ne);
-        //p->getNext()->set(key, value, nullptr, p);
         ne->set(key, value, nullptr, p);
     }
     
     V get(K key){
         return(getEntry(key)->get());
-        /*
-        int index = hash(key);
-        if(tbl[index].isEmpty()) return(nullptr);
-        
-        if(tbl[index].getKey() == key){
-            return(tbl[index].get());
-        }
-        
-        HashMapEntry<K, V> *p = &tbl[index];
-        do{
-            p = p->getNext();
-            if(p->getKey() == key){
-                return(p->get());
-            }
-        }while(p->getNext() != nullptr);
-        
-        return(nullptr);
-        */
     }
     
     int getSize(){
@@ -233,10 +182,8 @@ public:
             HashMapEntry<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             ret[j] = tbl[i].getKey();
-            //std::cout << tbl[i].getKey().toInt() << std::endl;
             j++;
             while(p->getNext() != nullptr){
-                //std::cout << p->getNext()->getKey().toInt() << std::endl;
                 ret[j] = p->getNext()->getKey();
                 j++;
                 p = p->getNext();

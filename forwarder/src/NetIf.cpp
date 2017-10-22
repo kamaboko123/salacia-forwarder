@@ -15,6 +15,10 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     }
 }
 
+NetIf::~NetIf(){
+    delete this->mac_addr;
+}
+
 void NetIf::initL2aIf(uint16_t vlan){
     //socket作る
     this->pd = -1;
@@ -73,3 +77,7 @@ MacAddress NetIf::getMac(){
     return(*this->mac_addr);
 }
 
+/*
+void sendPacket(){
+    
+}*/

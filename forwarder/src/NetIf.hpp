@@ -35,6 +35,7 @@ public:
     int pd;
     
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
+    ~NetIf();
     void initL2aIf(uint16_t vlan);
     MacAddress getMac();
 };
