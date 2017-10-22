@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = hash_map_test.cpp
+SRC = hash_map_test.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/comlib.cpp
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/hashmap
 
@@ -15,3 +15,7 @@ debug : $(SRC)
 clean:
 	rm -rf $(TARGET_DIR)
 
+all:
+	make clean
+	make
+	make debug

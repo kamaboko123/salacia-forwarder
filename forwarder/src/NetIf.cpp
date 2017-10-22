@@ -1,7 +1,6 @@
 #include "NetIf.hpp"
 
 NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
-    //strncpy(this->ifname, ifname, sizeof(this->ifname));
     comlib::strncpy(this->ifname, ifname, sizeof(this->ifname));
     
     this->iftype = iftype;
@@ -25,9 +24,7 @@ void NetIf::initL2aIf(uint16_t vlan){
     }
     
     //interfaceの名前からifindexを取ってくる
-    //memset(&(this->ifr), 0, sizeof(this->ifr));
     this->ifr = {0};
-    //strncpy(this->ifr.ifr_name, this->ifname, IFNAMSIZ);
     comlib::strncpy(this->ifr.ifr_name, this->ifname, IFNAMSIZ);
     if (ioctl(this->pd, SIOCGIFINDEX, &(this->ifr)) == -1) {
         perror("SIOCGIFINDEX");
@@ -36,9 +33,7 @@ void NetIf::initL2aIf(uint16_t vlan){
     this->ifindex = this->ifr.ifr_ifindex;
     
     //HWADDR取得
-    //memset(&(this->ifr), 0, sizeof(this->ifr));
     this->ifr = {0};
-    //strncpy(this->ifr.ifr_name, this->ifname, IFNAMSIZ);
     comlib::strncpy(this->ifr.ifr_name, this->ifname, IFNAMSIZ);
     if(ioctl(this->pd, SIOCGIFHWADDR, &(this->ifr)) == -1){
         perror("SIOCGHIFWADDR");
@@ -46,7 +41,6 @@ void NetIf::initL2aIf(uint16_t vlan){
     }
     this->myaddr = this->ifr.ifr_hwaddr;
     
-    //memset(&(this->sll), 0x00, sizeof(this->sll));
     this->sll = {0};
     
     //socketにinterfaceをbind
@@ -79,20 +73,3 @@ MacAddress NetIf::getMac(){
     return(*this->mac_addr);
 }
 
-/*
-uint8_t NetIf::getMacStr(){
-    string ret = "";
-    
-    for(int i = 0; i < 6; i++){
-        char tmp[4];
-        if(i == 0){
-            sprintf(tmp, "%.2x", (uint8_t)this->myaddr.sa_data[i]);
-        }
-        else{
-            sprintf(tmp, ":%.2x", (uint8_t)this->myaddr.sa_data[i]);
-        }
-        ret += tmp;
-    }
-    
-    return(ret);
-}*/

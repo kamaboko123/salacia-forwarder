@@ -1,5 +1,9 @@
 #include "MacAddress.hpp"
 
+MacAddress::MacAddress(){
+    this->addr = 0;
+}
+
 /**
  * シスコ表記対応 -> 1122.3344.ffee
  * コロン区切り対応 -> 11:22:33:44:ff:ee
@@ -47,3 +51,10 @@ uint64_t MacAddress::getHash(){
     return(this->addr % this->hbase);
 }
 
+bool MacAddress::operator==(MacAddress v){
+    return(this->toInt() == v.toInt());
+}
+
+bool MacAddress::operator!=(MacAddress v){
+    return(!(*this == v));
+}

@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cstdint>
 #include "../../src/MacAddress.hpp"
 
 using namespace std;
