@@ -1,4 +1,5 @@
 #include<iostream>
+#include<cinttypes>
 #include "../../src/Ethernet.hpp"
 
 int main(void){
@@ -11,7 +12,13 @@ int main(void){
         0x01, 0x03, 0x03, 0x07
     };
     
-    Ethernet *eth = new Ethernet(packet, sizeof(packet));
+    Ethernet *eth = new Ethernet();
+    eth->set(packet, sizeof(packet));
+    
+    printf("[eth]type : %.4x\n", eth->getType());
+    
+    printf("[src]%" PRIx64 "\n", eth->getSrc().toLong());
+    printf("[dst]%" PRIx64 "\n", eth->getSrc().toLong());
     
     return(0);
 }

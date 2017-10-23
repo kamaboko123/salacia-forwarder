@@ -43,7 +43,13 @@ MacAddress::MacAddress(uint64_t addr_int){
     this->addr = addr_int;
 }
 
+
+[[deprecated("please use toLong() function")]]
 uint64_t MacAddress::toInt(){
+    return(toLong());
+}
+
+uint64_t MacAddress::toLong(){
     return(this->addr);
 }
 
@@ -52,7 +58,7 @@ uint64_t MacAddress::getHash(){
 }
 
 bool MacAddress::operator==(MacAddress v){
-    return(this->toInt() == v.toInt());
+    return(this->toLong() == v.toLong());
 }
 
 bool MacAddress::operator!=(MacAddress v){
