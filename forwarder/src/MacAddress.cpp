@@ -39,7 +39,7 @@ MacAddress::MacAddress(char *addr_str){
     }
 }
 
-MacAddress::MacAddress(uint64_t addr_int){
+MacAddress::MacAddress(const uint64_t addr_int){
     this->addr = addr_int;
 }
 
@@ -64,3 +64,14 @@ bool MacAddress::operator==(MacAddress v){
 bool MacAddress::operator!=(MacAddress v){
     return(!(*this == v));
 }
+
+
+//代入演算
+//こんな感じに使えるようにする
+//MacAddress mac
+//mac = 0x112233445566
+MacAddress &MacAddress::operator=(const uint64_t addr){
+    this->addr = addr;
+    return(*this);
+}
+

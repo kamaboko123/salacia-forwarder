@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cstdint>
+#include <string>
 #include "../../src/MacAddress.hpp"
 
 using namespace std;
 
 int main(void){
-    //11:22:33:44:ff:ee -> 18838586676582
+    //11:22:33:44:ff:ee -> 18838586720238
     
     const uint64_t correct = 18838586720238;
     const uint64_t hash_correct = 238;
@@ -39,6 +40,17 @@ int main(void){
     if(mac->toInt() !=  correct){
         ng = true;
     }
+    
+    MacAddress mac_static = (uint64_t)18838586720238;
+    if(mac_static.toInt() !=  correct){
+        ng = true;
+    }
+    
+    mac_static = (uint64_t)18838586720239;
+    if(mac_static.toInt() !=  correct + 1){
+        ng = true;
+    }
+    
     
     if (mac->getHash() != hash_correct){
         ng = true;

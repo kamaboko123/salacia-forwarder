@@ -20,5 +20,7 @@ int main(void){
     printf("[src]%" PRIx64 "\n", eth->getSrc().toLong());
     printf("[dst]%" PRIx64 "\n", eth->getSrc().toLong());
     
+    delete eth;
+    
     return(0);
 }

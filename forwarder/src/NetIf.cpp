@@ -15,10 +15,6 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     }
 }
 
-NetIf::~NetIf(){
-    delete this->mac_addr;
-}
-
 void NetIf::initL2aIf(uint16_t vlan){
     //socket作る
     this->pd = -1;
@@ -70,14 +66,11 @@ void NetIf::initL2aIf(uint16_t vlan){
     for(int i = 0; i < 6; i++){
         mac_int += (((uint64_t)this->myaddr.sa_data[i]) << ((6 - 1 - i)*8));
     }
-    this->mac_addr = new MacAddress(mac_int);
+    
+    this->mac_addr = mac_int;
 }
 
 MacAddress NetIf::getMac(){
-    return(*this->mac_addr);
+    return(this->mac_addr);
 }
 
-/*
-void sendPacket(){
-    
-}*/

@@ -22,7 +22,7 @@ enum IfType {
 class NetIf{
 private:
     char ifname[IFNAMSIZ];
-    MacAddress *mac_addr;
+    MacAddress mac_addr;
     IfType iftype;
     uint16_t vlan;
     
@@ -35,7 +35,6 @@ public:
     int pd;
     
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
-    ~NetIf();
     void initL2aIf(uint16_t vlan);
     MacAddress getMac();
 };

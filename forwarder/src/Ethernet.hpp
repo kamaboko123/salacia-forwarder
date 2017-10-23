@@ -38,7 +38,6 @@ private:
     
 public:
     Ethernet();
-    ~Ethernet();
     Ethernet(uint8_t *data, int length);
     void set(uint8_t *data, int length);
     
