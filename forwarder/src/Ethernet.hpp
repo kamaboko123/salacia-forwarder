@@ -7,6 +7,8 @@
 #include "MacAddress.hpp"
 #include "comlib.hpp"
 
+#define ETH_BUF_SIZE 2048
+
 enum EthType{
     ETHTYPE_ARP = 0x0806,
     ETHTYPE_IPV4 = 0x0800,
@@ -30,7 +32,7 @@ struct ETHER{
 
 class Ethernet{
 private:
-    uint8_t data[1500];
+    uint8_t data[ETH_BUF_SIZE];
     struct ETHER *eth;
     int length;
     

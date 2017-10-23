@@ -18,7 +18,7 @@ int main(void){
     printf("[eth]type : %.4x\n", eth->getType());
     
     printf("[src]%" PRIx64 "\n", eth->getSrc().toLong());
-    printf("[dst]%" PRIx64 "\n", eth->getSrc().toLong());
+    printf("[dst]%" PRIx64 "\n", eth->getDst().toLong());
     
     delete eth;
     

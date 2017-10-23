@@ -25,7 +25,6 @@ uint64_t comlib::bytestol(uint8_t *head, int n){
     uint64_t ret = 0;
     for(int i = 0; i < n; i++){
         ret += ((uint64_t)head[i] << (8 * (n - i - 1)));
-        printf("%d\n", (8 * (n - i - 1)));
     }
     return(ret);
 }
