@@ -10,7 +10,7 @@ Ethernet::Ethernet(uint8_t *eth_data, int len){
 
 void Ethernet::set(uint8_t *eth_data, int len){
     this->length = len;
-    comlib::strncpy((char *)this->data, (char *)eth_data, length);
+    comlib::memcpy(this->data, eth_data, length);
     this->eth = (struct ETHER *)this->data;
     
     //printf("%.02x %.02x\n", this->eth->eth_type[0], this->eth->eth_type[1]);
