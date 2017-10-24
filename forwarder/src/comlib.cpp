@@ -5,7 +5,8 @@
  */
 void comlib::strncpy(char *s1, char *s2, int n){
     bool end = false;
-    for(int i = 0; i < n; i++){
+    int i;
+    for(i = 0; i < n; i++){
         if(end){
             s1[i] = '\0';
             continue;
@@ -16,6 +17,20 @@ void comlib::strncpy(char *s1, char *s2, int n){
         }
         s1[i] = s2[i];
     }
+}
+
+void comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
+    comlib::strncpy((char *)s1, (char *)s2, n);
+}
+
+/**
+ * copy buf2 to buf1
+ */
+uint8_t *comlib::memcpy(uint8_t *buf1, const uint8_t *buf2, int n){
+    for(int i = 0; i < n; i++){
+        buf1[i] = buf2[i];
+    }
+    return buf1;
 }
 
 /**

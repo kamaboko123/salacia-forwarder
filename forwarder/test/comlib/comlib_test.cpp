@@ -20,5 +20,7 @@ int main(void){
         printf("[%02d]%02u(%c), %02u(%c)\n", i, s1[i], s1[i], s_s1[i], s_s1[i]);
     }
     
+    printf("\n\n");
+    
     return(0);
 }
