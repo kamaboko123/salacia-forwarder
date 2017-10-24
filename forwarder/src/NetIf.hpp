@@ -8,6 +8,7 @@
 #include <linux/if_packet.h>
 #include <net/ethernet.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #include "MacAddress.hpp"
 #include "comlib.hpp"
 
@@ -31,12 +32,18 @@ private:
     struct sockaddr myaddr;
     struct sockaddr_ll sll;
     
+    int sendL2a(uint8_t *data, int length);
+    int sendRaw(uint8_t *data, int length);
+    
 public:
     int pd;
     
+    NetIf();
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
     void initL2aIf(uint16_t vlan);
     MacAddress getMac();
+    
+    int send(uint8_t *data, int length, uint16_t vlan = 1);
 };
 
 #endif

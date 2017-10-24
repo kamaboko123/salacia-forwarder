@@ -1,5 +1,9 @@
 #include "NetIf.hpp"
 
+NetIf::NetIf(){
+    return;
+}
+
 NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     comlib::strncpy(this->ifname, ifname, sizeof(this->ifname));
     
@@ -74,3 +78,27 @@ MacAddress NetIf::getMac(){
     return(this->mac_addr);
 }
 
+int NetIf::send(uint8_t *data, int length, uint16_t vlan){
+    // return
+    // -1 : error
+    
+    int ret;
+    
+    switch(this->iftype){
+        case IFTYPE_L2_ACCESS:
+            ret = sendL2a(data, length);
+            break;
+        default:
+            return(0);
+    }
+    
+    return(ret);
+}
+
+int NetIf::sendL2a(uint8_t *data, int length){
+    return(sendRaw(data, length));
+}
+
+int NetIf::sendRaw(uint8_t *data, int length){
+    return(write(this->pd, data, length));
+}
