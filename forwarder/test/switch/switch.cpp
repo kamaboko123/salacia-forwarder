@@ -9,28 +9,41 @@
 #include "../../src/MacAddress.hpp"
 #include "../../src/Ethernet.hpp"
 #include "../../src/HashMap.hpp"
+#include "../../src/comlib.hpp"
 
-#define IF_NUM 2
+#define IFMAX 4
 
-int main(void){
-    const int inter_n = IF_NUM;
+int main(int argc, char **argv){
+    int inter_n = 0;
     
     //perser
     Ethernet packet;
     
+    
+    inter_n = argc - 1;
+    if(inter_n <= 1){
+        fprintf(stderr, "Args Error : You need specify 2 interfaces at leaset.\n");
+        exit(-1);
+    }
+    if(inter_n > IFMAX){
+        fprintf(stderr, "Args Error : Too many interfaces. IFMAX : %d.\n", IFMAX);
+        exit(-1);
+    }
+    
     //descriptor for polling
-    struct pollfd pfds[IF_NUM];
+    struct pollfd *pfds = new struct pollfd[inter_n];
+    NetIf *netif = new NetIf[inter_n];
     
-    //Interface
-    NetIf netif[2];
-    new(netif + 0) NetIf((char *)"enp3s0", IFTYPE_L2_ACCESS, 1);
-    new(netif + 1) NetIf((char *)"enp4s0", IFTYPE_L2_ACCESS, 1);
-   
-    pfds[0].fd = netif[0].pd;
-    pfds[0].events = POLLIN|POLLERR;
-    
-    pfds[1].fd = netif[1].pd;
-    pfds[1].events = POLLIN|POLLERR;
+    for(int i = 0; i < inter_n; i++){
+        if(comlib::strlen(argv[i + 1]) > IFNAMSIZ){
+            fprintf(stderr, "Invaild Args.\n");
+            exit(-1);
+        }
+        new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 1);
+        pfds[i].fd = netif[i].pd;
+        pfds[i].events = POLLIN|POLLERR;
+        
+    }
     
     //MacAddrTable
     HashMap<MacAddress, NetIf *> mac_tbl(256);
