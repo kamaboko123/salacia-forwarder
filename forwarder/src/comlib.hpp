@@ -1,3 +1,6 @@
+#ifndef INCLUDED_COMLIB
+#define INCLUDED_COMLIB
+
 #include <cstdint>
 #include <cstdio>
 
@@ -10,4 +13,7 @@ namespace comlib{
     void strncpy(uint8_t *s1, uint8_t *s2, int n);
     uint64_t bytestol(uint8_t *head, int n);
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
+    int strlen(char *str);
 }
+
+#endif

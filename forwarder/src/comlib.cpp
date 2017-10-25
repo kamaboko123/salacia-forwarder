@@ -43,3 +43,12 @@ uint64_t comlib::bytestol(uint8_t *head, int n){
     }
     return(ret);
 }
+
+/**
+ * return length of str
+ */
+int comlib::strlen(char *str){
+    int i;
+    for(i = 0; str[i] != '\0'; i++);
+    return(i + 1);
+}
