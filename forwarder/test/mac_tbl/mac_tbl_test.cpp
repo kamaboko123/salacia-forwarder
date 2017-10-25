@@ -27,6 +27,7 @@ int main(void){
     cout << mac_tbl->get(MacAddress((char *)"11:22:33:44:55:61"))->getMac().toInt() << endl;
     cout << mac_tbl->get(MacAddress((char *)"11:22:33:44:55:51"))->getMac().toInt() << endl;
     cout << mac_tbl->get(MacAddress((char *)"11:22:33:44:55:21"))->getMac().toInt() << endl;
+    mac_tbl->get(MacAddress((char *)"21:22:33:44:55:21"));
     
     delete mac_tbl;
     delete nif1;

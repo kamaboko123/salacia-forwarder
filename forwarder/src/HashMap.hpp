@@ -76,8 +76,8 @@ private:
         }
         
         HashMapEntry<K, V> *p = &tbl[index];
+        if((p = p->getNext()) == nullptr) return(nullptr);
         do{
-            p = p->getNext();
             if(p->getKey() == key){
                 return(p);
             }
@@ -123,7 +123,6 @@ public:
         while(p->getNext() != nullptr){
             //keyが同じなら中身更新
             if(p->getKey() == key){
-                std::cout << "d" << std::endl;
                 p->setValue(value);
                 return;
             }
@@ -133,7 +132,6 @@ public:
         //last node
         //keyが同じなら中身更新
         if(p->getKey() == key){
-            std::cout << "d" << std::endl;
             p->setValue(value);
             return;
         }
@@ -145,7 +143,9 @@ public:
     }
     
     V get(K key){
-        return(getEntry(key)->get());
+        HashMapEntry<K, V> *result = getEntry(key);
+        if(result == nullptr) return(nullptr);
+        return(result->get());
     }
     
     int getSize(){
