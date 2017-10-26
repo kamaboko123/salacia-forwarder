@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstdio>
 #include "MacAddress.hpp"
+#include "Vlan.hpp"
 #include "comlib.hpp"
 
 #define ETH_BUF_SIZE 2048
@@ -12,14 +13,32 @@
 enum EthType{
     ETHTYPE_ARP = 0x0806,
     ETHTYPE_IPV4 = 0x0800,
+    ETHTYPE_DOT1Q = 0x8100,
     ETHTYPE_UNKNOWN = 0xFFFF //RFC的にはreservd
 };
+
+struct DOT1Q{
+    uint16_t cfi:1;
+    uint16_t priority:3;
+    uint16_t vlan2:4;
+    uint16_t vlan1:8;
+    
+    /*
+    union{
+        
+    }payload;
+    */
+    
+} __attribute__((__packed__));
 
 struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
     uint8_t eth_type[2];
     
+    union{
+        struct DOT1Q dot1q;
+    }payload;
     /*
     union {
         struct ARP arp;
@@ -34,6 +53,7 @@ class Ethernet{
 private:
     uint8_t data[ETH_BUF_SIZE];
     struct ETHER *eth;
+    struct ETHER_DOT1Q *eth_dot1q;
     int length;
     
     uint64_t mactol(uint8_t *mac_addr);
@@ -46,6 +66,8 @@ public:
     EthType getType();
     MacAddress getDst();
     MacAddress getSrc();
+    
+    uint16_t getVlanId();
 };
 
 #endif
