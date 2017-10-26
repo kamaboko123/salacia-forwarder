@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <cstdio>
 #include "MacAddress.hpp"
-#include "Vlan.hpp"
 #include "comlib.hpp"
 
 #define ETH_BUF_SIZE 2048
@@ -18,10 +17,11 @@ enum EthType{
 };
 
 struct DOT1Q{
-    uint16_t cfi:1;
-    uint16_t priority:3;
-    uint16_t vlan2:4;
-    uint16_t vlan1:8;
+    //for little endian
+    uint8_t vlan1:4;
+    uint8_t cfi:1;
+    uint8_t priority:3;
+    uint8_t vlan2:8;
     
     /*
     union{

@@ -12,12 +12,6 @@ void Ethernet::set(uint8_t *eth_data, int len){
     this->length = len;
     comlib::memcpy(this->data, eth_data, length);
     this->eth = (struct ETHER *)this->data;
-    /*
-    if(getType() == ETHTYPE_DOT1Q){
-        this->eth_dot1q = (struct ETHER_DOT1Q *)this->data;
-    }*/
-    //printf("%.02x %.02x\n", this->eth->eth_type[0], this->eth->eth_type[1]);
-    //std::cout << this->eth->eth_type << std::endl;
 }
 
 EthType Ethernet::getType(){
@@ -58,9 +52,10 @@ uint64_t Ethernet::mactol(uint8_t *mac_addr){
 uint16_t Ethernet::getVlanId(){
     uint16_t id = 0;
     if(getType() == ETHTYPE_DOT1Q){
-        printf("!%.02x %.02x", eth->payload.dot1q.vlan1, eth->payload.dot1q.vlan2);
-        id = (uint16_t)eth->payload.dot1q.vlan2 << 4;
-        id += (uint16_t)eth->payload.dot1q.vlan1;
+        //printf("!%.02x %.02x\n", eth->payload.dot1q.vlan1, eth->payload.dot1q.vlan2);
+        //printf("!!%.02x\n", eth->payload.dot1q.priority);
+        id = (uint16_t)eth->payload.dot1q.vlan1 << 8;
+        id += (uint16_t)eth->payload.dot1q.vlan2;
     }
     
     return(id);
