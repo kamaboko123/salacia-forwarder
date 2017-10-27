@@ -1,6 +1,8 @@
 #include<iostream>
 #include<cinttypes>
 #include "../../src/Ethernet.hpp"
+#include "../../src/comlib.hpp"
+#include "../../src/dlib.hpp"
 
 int main(void){
     uint8_t packet1[] = {
@@ -39,7 +41,9 @@ int main(void){
     };
     
     Ethernet *eth = new Ethernet();
-    eth->set(packet4, sizeof(packet4));
+    eth->set(packet3, sizeof(packet3));
+    
+    dlib::hexdump(eth->RawData(), eth->getLength());
     
     printf("[eth]type : %.4x\n", eth->getType());
     
@@ -47,6 +51,9 @@ int main(void){
     printf("[dst]%012" PRIx64 "\n", eth->getDst().toLong());
     
     printf("[vlan]%u\n", eth->getVlanId());
+    
+    eth->removeVlanTag();
+    dlib::hexdump(eth->RawData(), eth->getLength());
     
     delete eth;
     

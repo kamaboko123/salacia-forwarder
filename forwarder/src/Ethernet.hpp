@@ -8,6 +8,9 @@
 #include "comlib.hpp"
 
 #define ETH_BUF_SIZE 2048
+#define ETH_MIN_SIZE 64
+#define ETH_H_SIZE 14
+#define DOT1Q_TAG_SIZE 2
 
 enum EthType{
     ETHTYPE_ARP = 0x0806,
@@ -22,30 +25,13 @@ struct DOT1Q{
     uint8_t cfi:1;
     uint8_t priority:3;
     uint8_t vlan2:8;
-    
-    /*
-    union{
-        
-    }payload;
-    */
-    
 } __attribute__((__packed__));
 
 struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
     uint8_t eth_type[2];
-    
-    union{
-        struct DOT1Q dot1q;
-    }payload;
-    /*
-    union {
-        struct ARP arp;
-        struct IP ip;
-    }payload;
-    */
-    //uint8_t padding[18];
+    //uint16_t eth_type;
 } __attribute__((__packed__));
 
 
@@ -54,20 +40,27 @@ private:
     uint8_t data[ETH_BUF_SIZE];
     struct ETHER *eth;
     struct ETHER_DOT1Q *eth_dot1q;
-    int length;
+    uint16_t length;
     
     uint64_t mactol(uint8_t *mac_addr);
     
 public:
     Ethernet();
-    Ethernet(uint8_t *data, int length);
-    void set(uint8_t *data, int length);
+    Ethernet(uint8_t *data, uint16_t length);
+    void set(uint8_t *data, uint16_t length);
+    
+    uint16_t getLength();
+    void setLength(uint16_t len);
     
     EthType getType();
+    void setType(EthType type);
+    
     MacAddress getDst();
     MacAddress getSrc();
     
     uint16_t getVlanId();
+    uint16_t removeVlanTag();
+    uint8_t *RawData();
 };
 
 #endif
