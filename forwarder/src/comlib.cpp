@@ -52,3 +52,15 @@ int comlib::strlen(char *str){
     for(i = 0; str[i] != '\0'; i++);
     return(i + 1);
 }
+
+/**
+ * set [byte] to memory from [buf] to [n] byte.
+ * return set num
+ */
+uint64_t comlib::memset(uint8_t *buf, uint8_t byte, uint64_t n){
+    for(uint64_t i = 0; i < n; i++){
+        buf[i] = byte;
+    }
+    return(n);
+}
+

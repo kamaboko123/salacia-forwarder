@@ -2,7 +2,6 @@
 #define INCLUDED_COMLIB
 
 #include <cstdint>
-#include <cstdio>
 
 /**
  * Common Library
@@ -14,6 +13,7 @@ namespace comlib{
     uint64_t bytestol(uint8_t *head, int n);
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
     int strlen(char *str);
+    uint64_t memset(uint8_t *buf, uint8_t byte, uint64_t n);
 }
 
 #endif
