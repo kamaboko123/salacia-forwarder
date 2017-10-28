@@ -12,10 +12,16 @@ Currently, support only Layer 2, but this will be multi layer switch in future.
 - support RIPv2 (Dynamic Routing Protocol)
 
 ## How to use
-Download, Build, Run
+Download
 ```
-$ git clone https://salacia@bitbucket.org/salacia/rawsocket_switch.git
-$ cd rawsocket_switch/L2SW
+$ git clone https://bitbucket.org/salacia/rawsocket_switch.git
+or
+$ git clone https://github.com/kamaboko123/salacia-forwarder.git
+```
+
+Build, Run
+```
+$ cd salacia-forwarder/L2SW
 $ make
 $ ./bin/l2sw enp3s0 enp4s0
 ```
