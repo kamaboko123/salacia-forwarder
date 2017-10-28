@@ -27,6 +27,13 @@ void NetIf::initL2aIf(uint16_t vlan){
         exit(1);
     }
     
+    //option
+    int on = 1;
+    if (setsockopt(this->pd, SOL_PACKET, PACKET_AUXDATA, &on, sizeof(on)) == -1){
+        perror("bind():");
+        exit(1);
+    }
+    
     //interfaceの名前からifindexを取ってくる
     this->ifr = {0};
     comlib::strncpy(this->ifr.ifr_name, this->ifname, IFNAMSIZ);
@@ -56,7 +63,7 @@ void NetIf::initL2aIf(uint16_t vlan){
         perror("bind():");
         exit(1);
     }
-   
+    
     //ノンブロッキングモードに
     //ioctl(this->pd, FIONBIO, 1);
     

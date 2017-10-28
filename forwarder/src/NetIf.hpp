@@ -33,7 +33,6 @@ private:
     struct sockaddr_ll sll;
     
     int sendL2a(uint8_t *data, int length);
-    int sendRaw(uint8_t *data, int length);
     
 public:
     int pd;
@@ -44,6 +43,7 @@ public:
     MacAddress getMac();
     
     int send(uint8_t *data, int length, uint16_t vlan = 1);
+    int sendRaw(uint8_t *data, int length);
 };
 
 #endif
