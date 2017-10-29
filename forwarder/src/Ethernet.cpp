@@ -76,10 +76,8 @@ uint16_t Ethernet::getVlanId(){
 uint16_t Ethernet::removeVlanTag(){
     if(getType() != ETHTYPE_DOT1Q) return(length);
     
-    uint8_t tmp_payload[ETH_BUF_SIZE];
-    comlib::memcpy(tmp_payload, &data[ETH_H_SIZE + DOT1Q_TAG_SIZE], length - (ETH_H_SIZE + DOT1Q_TAG_SIZE));
-    comlib::memcpy(&data[ETH_H_SIZE], tmp_payload, length - (ETH_H_SIZE + DOT1Q_TAG_SIZE));
-    length -= DOT1Q_TAG_SIZE;
+    //VLANの中身を前に上書く
+    comlib::memmove(&data[MAC_ADDR_SIZE * 2], &data[(MAC_ADDR_SIZE * 2) + DOT1Q_TAG_SIZE], length - DOT1Q_TAG_SIZE);
     
     if(length < ETH_MIN_SIZE){
         comlib::memset(&data[length], 0x00, ETH_MIN_SIZE - length);

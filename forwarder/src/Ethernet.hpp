@@ -11,7 +11,7 @@
 #define ETH_MIN_SIZE 64
 #define MAC_ADDR_SIZE 6
 #define ETH_H_SIZE 14
-#define DOT1Q_TAG_SIZE 2
+#define DOT1Q_TAG_SIZE 4
 
 enum EthType{
     ETHTYPE_ARP = 0x0806,

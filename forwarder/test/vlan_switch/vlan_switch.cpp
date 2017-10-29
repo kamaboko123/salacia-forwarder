@@ -66,11 +66,19 @@ int main(int argc, char **argv){
                     //何かしらデータを受けたら
                     int s =  netif[i].recvPacket(buf, sizeof(buf));
                     packet.set(buf, s);
+                    for(int j = 0; j < inter_n; j++){
+                        if(j == i) continue;
+                        packet.removeVlanTag();
+                        netif[j].sendRaw(packet.RawData(), packet.getLength());
+                    }
+                    
                     printf("len  : %ubyte\n", packet.getLength());
                     printf("dst : %.12" PRIx64 "\n", packet.getDst().toLong());
                     printf("src : %.12" PRIx64 "\n", packet.getSrc().toLong());
                     printf("type : %.04x\n", packet.getType());
                     dlib::hexdump(buf, s);
+                    printf("\n");
+                    
                 }
             }
         }

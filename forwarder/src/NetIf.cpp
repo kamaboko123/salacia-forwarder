@@ -197,7 +197,7 @@ uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){
         p[1] = comlib::htons(auxdata->tp_vlan_tci);
         
         //4byte伸ばす
-        pktlen += 4;
+        pktlen += DOT1Q_TAG_SIZE;
         /*
         memmove(&p[2], p, pktlen - MAC_ADDR_SIZE * 2);
         p[0] = comlib::htons(ether_type);
