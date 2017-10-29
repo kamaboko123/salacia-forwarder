@@ -22,5 +22,22 @@ int main(void){
     
     printf("\n\n");
     
+    unsigned int iValue = 0xAABBCCDD;
+    unsigned char *pc = (unsigned char *)&iValue;
+    
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    iValue = comlib::ntohl(iValue);
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    iValue = comlib::htonl(iValue);
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    
+    /*
+    iValue = comlib::rbyte32(iValue);
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    iValue = comlib::rbyte16((uint16_t)iValue);
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    iValue = comlib::rbyte16((uint16_t)iValue);
+    printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    */
     return(0);
 }

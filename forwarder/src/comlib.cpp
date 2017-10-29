@@ -34,6 +34,17 @@ uint8_t *comlib::memcpy(uint8_t *buf1, const uint8_t *buf2, int n){
 }
 
 /**
+ * move bytes buf2 to buf1
+ */
+uint8_t *comlib::memmove(uint8_t *buf1, const uint8_t *buf2, uint64_t n){
+    uint8_t *tmp = new uint8_t[sizeof(uint8_t) * n];
+    memcpy(tmp, buf2, n);
+    memcpy(buf1, tmp, n);
+    delete[] tmp;
+    return(buf1);
+}
+
+/**
  * convert byte array to long(uint64_t)
  */
 uint64_t comlib::bytestol(uint8_t *head, int n){
@@ -64,3 +75,43 @@ uint64_t comlib::memset(uint8_t *buf, uint8_t byte, uint64_t n){
     return(n);
 }
 
+/**
+ * convert byte order
+ */
+
+//[32bit] Host byte order to Network byte order
+uint32_t comlib::rbyte32(uint32_t in){
+    uint32_t ret = 0;
+    uint8_t *rp = (uint8_t *)&ret;
+    uint8_t *ip = (uint8_t *)&in;
+    
+    for(int i = 0; i < 4; i++){
+        rp[i] = ip[3 - i];
+    }
+    return(ret);
+}
+
+//[16bit] Host byte order to Network byte order
+uint16_t comlib::rbyte16(uint16_t in){
+    uint32_t ret = 0;
+    uint8_t *rp = (uint8_t *)&ret;
+    uint8_t *ip = (uint8_t *)&in;
+    
+    rp[0] = ip[1];
+    rp[1] = ip[0];
+    
+    return(ret);
+}
+
+uint32_t comlib::ntohl(uint32_t in){
+    return(rbyte32(in));
+}
+uint16_t comlib::ntohs(uint16_t in){
+    return(rbyte16(in));
+}
+uint32_t comlib::htonl(uint32_t in){
+    return(rbyte32(in));
+}
+uint16_t comlib::htons(uint16_t in){
+    return(rbyte16(in));
+}
