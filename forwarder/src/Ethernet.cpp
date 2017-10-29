@@ -58,7 +58,7 @@ MacAddress Ethernet::getSrc(){
 }
 
 uint64_t Ethernet::mactol(uint8_t *mac_addr){
-    return(comlib::bytestol(mac_addr, 6));
+    return(comlib::bytestol(mac_addr, MAC_ADDR_SIZE));
 }
 
 uint16_t Ethernet::getVlanId(){
