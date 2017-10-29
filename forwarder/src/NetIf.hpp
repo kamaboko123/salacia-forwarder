@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include "MacAddress.hpp"
 #include "comlib.hpp"
+#include "dlib.hpp"
+#include "Ethernet.hpp"
 
 using namespace std;
 
@@ -44,6 +46,8 @@ public:
     
     int send(uint8_t *data, int length, uint16_t vlan = 1);
     int sendRaw(uint8_t *data, int length);
+    
+    uint16_t recvPacket(uint8_t *buf, uint16_t buflen);
 };
 
 #endif
