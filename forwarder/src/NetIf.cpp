@@ -8,11 +8,13 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     comlib::strncpy(this->ifname, ifname, sizeof(this->ifname));
     
     this->iftype = iftype;
-    switch(iftype){
+    switch(this->iftype){
         case IFTYPE_L2_ACCESS:
             initL2aIf(vlan);
             break;
         case IFTYPE_L2_TRUNK:
+            //暫定的実装
+            initL2aIf(vlan);
             break;
         default:
             break;
@@ -68,7 +70,7 @@ void NetIf::initL2aIf(uint16_t vlan){
     //ioctl(this->pd, FIONBIO, 1);
     
     //config
-    this->iftype = IFTYPE_L2_ACCESS;
+    //this->iftype = IFTYPE_L2_ACCESS;
     this->vlan = vlan;
     
     
@@ -83,6 +85,14 @@ void NetIf::initL2aIf(uint16_t vlan){
 
 MacAddress NetIf::getMac(){
     return(this->mac_addr);
+}
+
+IfType NetIf::getIfType(){
+    return(this->iftype);
+}
+
+char *NetIf::getIfName(){
+    return(this->ifname);
 }
 
 int NetIf::send(uint8_t *data, int length, uint16_t vlan){
@@ -207,4 +217,8 @@ uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){
     }
     
     return pktlen;
+}
+
+uint16_t NetIf::getVlanId(){
+    return(vlan);
 }

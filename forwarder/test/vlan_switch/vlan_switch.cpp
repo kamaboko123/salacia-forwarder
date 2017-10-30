@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     int inter_n = 0;
     
     //perser
-    Ethernet packet;
+    //Ethernet packet;
     
     inter_n = argc - 1;
     if(inter_n <= 1){
@@ -39,7 +39,15 @@ int main(int argc, char **argv){
             fprintf(stderr, "Invaild Args.\n");
             exit(-1);
         }
-        new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 1);
+        if(i == 0){
+            //first interface is trunk port
+            new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_TRUNK, 0);
+            printf("set : %s(t)\n", netif[i].getIfName());
+        }
+        else{
+            new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 3100);
+            printf("set : %s(a)\n", netif[i].getIfName());
+        }
         pfds[i].fd = netif[i].pd;
         pfds[i].events = POLLIN|POLLERR;
     }
@@ -50,9 +58,15 @@ int main(int argc, char **argv){
     //receive buffer
     uint8_t buf[2048];
     
+    
+    /*
+    for(int j = 0; j < inter_n; j++){
+        printf("%s %d\n", netif[j].getIfName(), netif[j].getIfType());
+    }
+    */
+    
     //送信先
     //NetIf *outif;
-    
     for(;;){
         switch(poll(pfds, inter_n, 10)){
             case -1:
@@ -65,20 +79,49 @@ int main(int argc, char **argv){
                 if(pfds[i].revents&(POLLIN|POLLERR)){
                     //何かしらデータを受けたら
                     int s =  netif[i].recvPacket(buf, sizeof(buf));
-                    packet.set(buf, s);
-                    for(int j = 0; j < inter_n; j++){
-                        if(j == i) continue;
-                        packet.removeVlanTag();
-                        netif[j].sendRaw(packet.RawData(), packet.getLength());
+                    Ethernet packet(buf, s);
+                    
+                    Ethernet tag(buf, s);
+                    Ethernet untag(buf, s);
+                    
+                    if(netif[i].getIfType() == IFTYPE_L2_ACCESS){
+                        tag.setVlanTag(netif[i].getVlanId());
+                    }
+                    else if(netif[i].getIfType() == IFTYPE_L2_TRUNK){
+                        untag.removeVlanTag();
                     }
                     
+                    if(s > 1500){
+                        printf("too long : %d\n", s);
+                        continue;
+                    }
+                    
+                    printf("recv : %s\n", netif[i].getIfName());
+                    printf("type : %.04x\n", packet.getType());
+                    printf("len : %dbyte\n", packet.getLength());
+                    
+                    for(int j = 0; j < inter_n; j++){
+                        if(j == i) continue;
+                        
+                        printf("to_name:<%s>\n", netif[j].getIfName());
+                        printf("to_type<%d>\n", netif[j].getIfType());
+                        if(netif[j].getIfType() == IFTYPE_L2_ACCESS){
+                            netif[j].sendRaw(untag.RawData(), untag.getLength());
+                            printf("send to access\n");
+                        }
+                        else if(netif[j].getIfType() == IFTYPE_L2_TRUNK){
+                            netif[j].sendRaw(tag.RawData(), tag.getLength());
+                            printf("send to trunk(%dbyte)\n", packet.getLength());
+                        }
+                    }
+                    printf("----\n");
+                    /*
                     printf("len  : %ubyte\n", packet.getLength());
                     printf("dst : %.12" PRIx64 "\n", packet.getDst().toLong());
                     printf("src : %.12" PRIx64 "\n", packet.getSrc().toLong());
-                    printf("type : %.04x\n", packet.getType());
                     dlib::hexdump(buf, s);
                     printf("\n");
-                    
+                    */
                 }
             }
         }

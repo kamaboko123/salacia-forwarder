@@ -42,7 +42,11 @@ public:
     NetIf();
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
     void initL2aIf(uint16_t vlan);
+    
     MacAddress getMac();
+    IfType getIfType();
+    char *getIfName();
+    uint16_t getVlanId();
     
     int send(uint8_t *data, int length, uint16_t vlan = 1);
     int sendRaw(uint8_t *data, int length);

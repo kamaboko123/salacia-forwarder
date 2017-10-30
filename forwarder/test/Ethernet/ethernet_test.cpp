@@ -52,7 +52,12 @@ int main(void){
     
     printf("[vlan]%u\n", eth->getVlanId());
     
+    std::cout << "remove VLAN tag" << std::endl;
     eth->removeVlanTag();
+    dlib::hexdump(eth->RawData(), eth->getLength());
+    
+    std::cout << "set VLAN tag(10)" << std::endl;
+    eth->setVlanTag(10);
     dlib::hexdump(eth->RawData(), eth->getLength());
     
     delete eth;

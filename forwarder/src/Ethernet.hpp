@@ -6,9 +6,10 @@
 #include <cstdio>
 #include "MacAddress.hpp"
 #include "comlib.hpp"
+#include "dlib.hpp"
 
 #define ETH_BUF_SIZE 2048
-#define ETH_MIN_SIZE 64
+#define ETH_MIN_SIZE 56
 #define MAC_ADDR_SIZE 6
 #define ETH_H_SIZE 14
 #define DOT1Q_TAG_SIZE 4
@@ -61,6 +62,7 @@ public:
     
     uint16_t getVlanId();
     uint16_t removeVlanTag();
+    uint16_t setVlanTag(uint16_t vlan_id);
     uint8_t *RawData();
 };
 

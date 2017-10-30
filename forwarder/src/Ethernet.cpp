@@ -79,10 +79,24 @@ uint16_t Ethernet::removeVlanTag(){
     //VLANの中身を前に上書く
     comlib::memmove(&data[MAC_ADDR_SIZE * 2], &data[(MAC_ADDR_SIZE * 2) + DOT1Q_TAG_SIZE], length - DOT1Q_TAG_SIZE);
     
-    if(length < ETH_MIN_SIZE){
-        comlib::memset(&data[length], 0x00, ETH_MIN_SIZE - length);
-        length = ETH_MIN_SIZE;
-    }
+    length -= DOT1Q_TAG_SIZE;
+    return(length);
+}
+
+uint16_t Ethernet::setVlanTag(uint16_t vlan_id){
+    if(getType() == ETHTYPE_DOT1Q) return(length);
+    
+    //tagの分ずらす
+    comlib::memmove(&data[(MAC_ADDR_SIZE * 2) + DOT1Q_TAG_SIZE], &data[(MAC_ADDR_SIZE * 2)], length + DOT1Q_TAG_SIZE);
+    
+    //tagセット
+    data[(MAC_ADDR_SIZE * 2)] = ETHTYPE_DOT1Q >> 8;
+    data[(MAC_ADDR_SIZE * 2) + 1] = (uint8_t)(ETHTYPE_DOT1Q & 0x0FF);
+    
+    DOT1Q *tag = (struct DOT1Q *)&data[ETH_H_SIZE];
+    tag->vlan1 = (uint16_t) vlan_id >> 8;
+    tag->vlan2 = (uint16_t) vlan_id;
+    length += DOT1Q_TAG_SIZE;
     
     return(length);
 }
