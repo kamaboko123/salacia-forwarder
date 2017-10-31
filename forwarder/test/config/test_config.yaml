@@ -1,0 +1,9 @@
+config:
+    ports:
+        - name : enp3s0
+          mode : access
+          vlan : 3100
+        
+        - name : enp4s0
+          mode : trunk
+        
