@@ -53,11 +53,11 @@ int main(int argc, char **argv){
     }
     
     //MacAddrTable
-    HashMap<MacAddress, NetIf *> mac_tbl(256);
+    //HashMap<MacAddress, NetIf *> mac_tbl(256);
     
     //receive buffer
-    uint8_t buf[2048];
-    
+    //uint8_t buf[2048];
+    Ethernet pbuf;
     
     /*
     for(int j = 0; j < inter_n; j++){
@@ -67,6 +67,7 @@ int main(int argc, char **argv){
     
     //送信先
     //NetIf *outif;
+    
     for(;;){
         switch(poll(pfds, inter_n, 10)){
             case -1:
@@ -78,12 +79,11 @@ int main(int argc, char **argv){
             for(int i = 0; i < inter_n; i++){
                 if(pfds[i].revents&(POLLIN|POLLERR)){
                     //何かしらデータを受けたら
-                    int s =  netif[i].recvPacket(buf, sizeof(buf));
-                    Ethernet packet(buf, s);
+                    if(netif[i].recvPacket(&pbuf) == 0) continue;
                     
                     for(int j = 0; j < inter_n; j++){
                         if(j == i) continue;
-                        netif[j].send(packet, netif[i].getVlanId());
+                        netif[j].send(pbuf, netif[i].getVlanId());
                     }
                     
                     /*
