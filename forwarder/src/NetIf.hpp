@@ -53,7 +53,8 @@ public:
     //int send(uint8_t *data, int length, uint16_t vlan = 1);
     int sendRaw(uint8_t *data, int length);
     
-    uint16_t recvPacket(uint8_t *buf, uint16_t buflen);
+    uint16_t recvRaw(uint8_t *buf, uint16_t buflen);
+    uint16_t recv(Ethernet *eth);
 };
 
 #endif

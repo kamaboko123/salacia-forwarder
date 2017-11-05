@@ -141,7 +141,17 @@ int NetIf::send(Ethernet packet, uint16_t vlan){
     return(ret);
 }
 
-uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){
+uint16_t NetIf::recv(Ethernet *eth){
+    uint8_t buf[2048];
+    uint16_t s = recvRaw(buf, sizeof(buf));
+    if(s == 0){
+        return(0);
+    }
+    eth->set(buf, s);
+    return(eth->getLength());
+}
+
+uint16_t NetIf::recvRaw(uint8_t *buf, uint16_t buflen){
     struct iovec iov;
     struct msghdr msg;
     union {
@@ -150,7 +160,7 @@ uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){
     } cmsgbuf;
     struct cmsghdr *cmsg;
     struct tpacket_auxdata *auxdata;
-    uint16_t pktlen;
+    int pktlen = 0;
     
     iov.iov_base = buf;
     iov.iov_len = buflen;
@@ -164,12 +174,12 @@ uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){
     msg.msg_controllen = sizeof(cmsgbuf);
     msg.msg_flags = 0;
     
-    pktlen = recvmsg(this->pd, &msg, MSG_TRUNC);
+    pktlen = recvmsg(this->pd, &msg, (MSG_TRUNC | MSG_DONTWAIT));
     
     if (pktlen == -1) {
+        pktlen = 0;
         if (errno == EAGAIN) {
             perror("recvmsg:");
-            pktlen = 0;
         }
         return(pktlen);
     }

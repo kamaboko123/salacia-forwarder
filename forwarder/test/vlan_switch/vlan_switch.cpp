@@ -12,61 +12,43 @@
 #include "../../src/comlib.hpp"
 #include "../../src/dlib.hpp"
 
-#define IFMAX 4
+#define IF_NUM 2
+
+struct IF_CONFIG{
+    char name[IFNAMSIZ];
+    IfType type;
+    uint16_t vlan;
+};
 
 int main(int argc, char **argv){
-    int inter_n = 0;
+    int inter_n = IF_NUM;
     
-    //perser
-    //Ethernet packet;
-    
-    inter_n = argc - 1;
-    if(inter_n <= 1){
-        fprintf(stderr, "Args Error : You need specify 2 interfaces at leaset.\n");
-        exit(-1);
-    }
-    if(inter_n > IFMAX){
-        fprintf(stderr, "Args Error : Too many interfaces. IFMAX : %d.\n", IFMAX);
-        exit(-1);
-    }
+    IF_CONFIG ifc[IF_NUM] = {
+        {
+            "enp3s0",
+            IFTYPE_L2_ACCESS,
+            3100
+        },
+        {
+            "enp4s0",
+            IFTYPE_L2_TRUNK,
+            0
+        }
+    };
     
     //descriptor for polling
     struct pollfd *pfds = new struct pollfd[inter_n];
     NetIf *netif = new NetIf[inter_n];
     
     for(int i = 0; i < inter_n; i++){
-        if(comlib::strlen(argv[i + 1]) > IFNAMSIZ){
-            fprintf(stderr, "Invaild Args.\n");
-            exit(-1);
-        }
-        if(i == 0){
-            //first interface is trunk port
-            new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_TRUNK, 0);
-            printf("set : %s(t)\n", netif[i].getIfName());
-        }
-        else{
-            new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 3100);
-            printf("set : %s(a)\n", netif[i].getIfName());
-        }
+        new(netif + i) NetIf(ifc[i].name, ifc[i].type, ifc[i].vlan);
+        printf("set : %s(%d)\n", netif[i].getIfName(), ifc[i].type);
         pfds[i].fd = netif[i].getFD();
         pfds[i].events = POLLIN|POLLERR;
     }
     
-    //MacAddrTable
-    //HashMap<MacAddress, NetIf *> mac_tbl(256);
-    
     //receive buffer
-    //uint8_t buf[2048];
     Ethernet pbuf;
-    
-    /*
-    for(int j = 0; j < inter_n; j++){
-        printf("%s %d\n", netif[j].getIfName(), netif[j].getIfType());
-    }
-    */
-    
-    //送信先
-    //NetIf *outif;
     
     for(;;){
         switch(poll(pfds, inter_n, 10)){
