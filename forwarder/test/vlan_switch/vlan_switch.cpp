@@ -79,7 +79,7 @@ int main(int argc, char **argv){
             for(int i = 0; i < inter_n; i++){
                 if(pfds[i].revents&(POLLIN|POLLERR)){
                     //何かしらデータを受けたら
-                    if(netif[i].recvPacket(&pbuf) == 0) continue;
+                    if(netif[i].recv(&pbuf) == 0) continue;
                     
                     for(int j = 0; j < inter_n; j++){
                         if(j == i) continue;
@@ -123,8 +123,9 @@ int main(int argc, char **argv){
                             dlib::hexdump((uint8_t *)tag.RawData(), tag.getLength());
                         }
                     }*/
-                    printf("----\n");
                     /*
+                    printf("----\n");
+                    
                     printf("len  : %ubyte\n", packet.getLength());
                     printf("dst : %.12" PRIx64 "\n", packet.getDst().toLong());
                     printf("src : %.12" PRIx64 "\n", packet.getSrc().toLong());
