@@ -142,7 +142,7 @@ int main(int argc, char **argv){
     */
     while(true){
         //受信サイズ
-        int s = read_packet(netif.pd, buf, buflen);
+        int s = read_packet(netif.getFD(), buf, buflen);
         dlib::hexdump(buf, s);
         Ethernet eth(buf, s);
         printf("%0.4x\n", eth.getType());

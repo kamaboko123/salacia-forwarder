@@ -40,7 +40,7 @@ int main(int argc, char **argv){
             exit(-1);
         }
         new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 1);
-        pfds[i].fd = netif[i].pd;
+        pfds[i].fd = netif[i].getFD();
         pfds[i].events = POLLIN|POLLERR;
         
     }
@@ -66,7 +66,7 @@ int main(int argc, char **argv){
                 if(pfds[i].revents&(POLLIN|POLLERR)){
                     //何かしらデータを受けたら
                     int s;
-                    if((s = read(netif[i].pd, buf, sizeof(buf))) <= 0){
+                    if((s = read(netif[i].getFD(), buf, sizeof(buf))) <= 0){
                         perror("read");
                     }
                     else{
@@ -81,12 +81,12 @@ int main(int argc, char **argv){
                         if((packet.getDst().toLong() == 0xFFFFFFFFFFFF) || (outif == nullptr)){
                            for(int j = 0; j < inter_n; j++){
                                 if(j == i) continue;
-                                netif[j].send(buf, s);
+                                netif[j].sendRaw(buf, s);
                             }
                            continue;
                         }
                         
-                        outif->send(buf, s);
+                        outif->sendRaw(buf, s);
                         
                         /*
                         printf("[size]%d\n", s);

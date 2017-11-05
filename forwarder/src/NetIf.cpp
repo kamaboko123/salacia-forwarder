@@ -8,20 +8,23 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     comlib::strncpy(this->ifname, ifname, sizeof(this->ifname));
     
     this->iftype = iftype;
+    this->vlan = vlan;
+    
+    initIf();
+    /*
     switch(this->iftype){
         case IFTYPE_L2_ACCESS:
-            initL2aIf(vlan);
+            initIf(vlan);
             break;
         case IFTYPE_L2_TRUNK:
-            //暫定的実装
-            initL2aIf(vlan);
+            initIf(vlan);
             break;
         default:
             break;
-    }
+    }*/
 }
 
-void NetIf::initL2aIf(uint16_t vlan){
+void NetIf::initIf(){
     //socket作る
     this->pd = -1;
     if((this->pd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1){
@@ -67,12 +70,7 @@ void NetIf::initL2aIf(uint16_t vlan){
     }
     
     //ノンブロッキングモードに
-    //ioctl(this->pd, FIONBIO, 1);
-    
-    //config
-    //this->iftype = IFTYPE_L2_ACCESS;
-    this->vlan = vlan;
-    
+    ioctl(this->pd, FIONBIO, 1);
     
     //取ってきたMacAddressを扱いやすいようにする
     uint64_t mac_int = 0;
@@ -95,6 +93,11 @@ char *NetIf::getIfName(){
     return(this->ifname);
 }
 
+int NetIf::getFD(){
+    return(this->pd);
+}
+
+/*
 int NetIf::send(uint8_t *data, int length, uint16_t vlan){
     // return
     // -1 : error
@@ -115,9 +118,27 @@ int NetIf::send(uint8_t *data, int length, uint16_t vlan){
 int NetIf::sendL2a(uint8_t *data, int length){
     return(sendRaw(data, length));
 }
-
+*/
 int NetIf::sendRaw(uint8_t *data, int length){
     return(write(this->pd, data, length));
+}
+
+int NetIf::send(Ethernet packet, uint16_t vlan){
+    int ret;
+    switch(this->iftype){
+        case IFTYPE_L2_ACCESS:
+            packet.removeVlanTag();
+            ret = sendRaw(packet.RawData(), packet.getLength());
+            break;
+        case IFTYPE_L2_TRUNK:
+            packet.setVlanTag(vlan);
+            ret = sendRaw(packet.RawData(), packet.getLength());
+            break;
+        default:
+            ret = 0;
+            break;
+    }
+    return(ret);
 }
 
 uint16_t NetIf::recvPacket(uint8_t *buf, uint16_t buflen){

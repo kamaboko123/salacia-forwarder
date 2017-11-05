@@ -48,7 +48,7 @@ int main(int argc, char **argv){
             new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 3100);
             printf("set : %s(a)\n", netif[i].getIfName());
         }
-        pfds[i].fd = netif[i].pd;
+        pfds[i].fd = netif[i].getFD();
         pfds[i].events = POLLIN|POLLERR;
     }
     
@@ -81,6 +81,13 @@ int main(int argc, char **argv){
                     int s =  netif[i].recvPacket(buf, sizeof(buf));
                     Ethernet packet(buf, s);
                     
+                    for(int j = 0; j < inter_n; j++){
+                        if(j == i) continue;
+                        netif[j].send(packet, netif[i].getVlanId());
+                    }
+                    
+                    /*
+                    dlib::hexdump((uint8_t *)packet.RawData(), packet.getLength());
                     Ethernet tag(buf, s);
                     Ethernet untag(buf, s);
                     
@@ -108,12 +115,14 @@ int main(int argc, char **argv){
                         if(netif[j].getIfType() == IFTYPE_L2_ACCESS){
                             netif[j].sendRaw(untag.RawData(), untag.getLength());
                             printf("send to access\n");
+                            dlib::hexdump((uint8_t *)untag.RawData(), untag.getLength());
                         }
                         else if(netif[j].getIfType() == IFTYPE_L2_TRUNK){
                             netif[j].sendRaw(tag.RawData(), tag.getLength());
-                            printf("send to trunk(%dbyte)\n", packet.getLength());
+                            printf("send to trunk(%dbyte)\n", tag.getLength());
+                            dlib::hexdump((uint8_t *)tag.RawData(), tag.getLength());
                         }
-                    }
+                    }*/
                     printf("----\n");
                     /*
                     printf("len  : %ubyte\n", packet.getLength());
