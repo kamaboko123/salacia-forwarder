@@ -18,26 +18,17 @@ enum EthType{
     ETHTYPE_ARP = 0x0806,
     ETHTYPE_IPV4 = 0x0800,
     ETHTYPE_DOT1Q = 0x8100,
-    ETHTYPE_UNKNOWN = 0xFFFF //RFC的にはreservd
+    ETHTYPE_UNKNOWN = 0xFFFF //RFC的にはreserved
 };
 
 struct DOT1Q{
-    //for little endian
-    
-    uint8_t vlan1:4;
-    uint8_t cfi:1;
-    uint8_t priority:3;
-    uint8_t vlan2:8;
-    
-    //uint8_t tag[2];
-    
+    uint16_t tci;
 } __attribute__((__packed__));
 
 struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
     uint16_t eth_type;
-    //uint16_t eth_type;
 } __attribute__((__packed__));
 
 

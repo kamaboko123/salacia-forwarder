@@ -15,10 +15,7 @@ void Ethernet::set(uint8_t *eth_data, uint16_t len){
 }
 
 EthType Ethernet::getType(){
-    //uint16_t type = (uint16_t)eth->eth_type;
-    
-    uint16_t type;
-    type = comlib::ntohs(eth->eth_type);
+    uint16_t type = comlib::ntohs(eth->eth_type);
     
     EthType ret;
     switch(type){
@@ -62,9 +59,9 @@ uint16_t Ethernet::getVlanId(){
     uint16_t id = 0;
     struct DOT1Q *tag = (struct DOT1Q *)&this->data[ETH_H_SIZE];
     if(getType() == ETHTYPE_DOT1Q){
-        //printf("!%.02x %.02x\n", tag->vlan1, tag->vlan2);
-        id = (uint16_t)tag->vlan1 << 8;
-        id += (uint16_t)tag->vlan2;
+        //ホストのバイトオーダにして12bit取り出し
+        uint16_t tmp = comlib::ntohs(tag->tci);
+        id = tmp & 0x0FFF;
     }
     
     return(id);
@@ -91,8 +88,8 @@ uint16_t Ethernet::setVlanTag(uint16_t vlan_id){
     data[(MAC_ADDR_SIZE * 2) + 1] = (uint8_t)(ETHTYPE_DOT1Q & 0x0FF);
     
     DOT1Q *tag = (struct DOT1Q *)&data[ETH_H_SIZE];
-    tag->vlan1 = (uint16_t) vlan_id >> 8;
-    tag->vlan2 = (uint16_t) vlan_id;
+    //ネットワークバイトオーダにしてセット(CoSとかは現状未対応)
+    tag->tci = comlib::htons(vlan_id);
     length += DOT1Q_TAG_SIZE;
     
     return(length);
