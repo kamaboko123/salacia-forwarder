@@ -23,16 +23,20 @@ enum EthType{
 
 struct DOT1Q{
     //for little endian
+    
     uint8_t vlan1:4;
     uint8_t cfi:1;
     uint8_t priority:3;
     uint8_t vlan2:8;
+    
+    //uint8_t tag[2];
+    
 } __attribute__((__packed__));
 
 struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
-    uint8_t eth_type[2];
+    uint16_t eth_type;
     //uint16_t eth_type;
 } __attribute__((__packed__));
 

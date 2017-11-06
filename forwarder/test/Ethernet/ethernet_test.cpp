@@ -55,10 +55,12 @@ int main(void){
     std::cout << "remove VLAN tag" << std::endl;
     eth->removeVlanTag();
     dlib::hexdump(eth->RawData(), eth->getLength());
+    printf("[eth]type : %.4x\n", eth->getType());
     
     std::cout << "set VLAN tag(10)" << std::endl;
     eth->setVlanTag(10);
     dlib::hexdump(eth->RawData(), eth->getLength());
+    printf("[eth]type : %.4x\n", eth->getType());
     
     delete eth;
     

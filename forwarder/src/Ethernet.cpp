@@ -18,8 +18,7 @@ EthType Ethernet::getType(){
     //uint16_t type = (uint16_t)eth->eth_type;
     
     uint16_t type;
-    type = (uint16_t)eth->eth_type[0] << 8;
-    type += (uint16_t)eth->eth_type[1];
+    type = comlib::ntohs(eth->eth_type);
     
     EthType ret;
     switch(type){
@@ -44,9 +43,7 @@ uint16_t Ethernet::getLength(){
 }
 
 void Ethernet::setType(EthType type){
-    //eth->eth_type = type;
-    eth->eth_type[0] = (uint8_t)type >> 8;
-    eth->eth_type[1] = (uint8_t)type;
+    eth->eth_type = comlib::htons(type);
 }
 
 MacAddress Ethernet::getDst(){
