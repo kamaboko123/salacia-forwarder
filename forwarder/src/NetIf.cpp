@@ -24,6 +24,10 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     }*/
 }
 
+NetIf::~NetIf(){
+    close(this->pd);
+}
+
 void NetIf::initIf(){
     //socket作る
     this->pd = -1;
@@ -70,7 +74,8 @@ void NetIf::initIf(){
     }
     
     //ノンブロッキングモードに
-    ioctl(this->pd, FIONBIO, 1);
+    //fcntl(this->pd, F_SETFL, O_NONBLOCK);
+    ioctl(this->pd, FIONBIO, &on);
     
     //取ってきたMacAddressを扱いやすいようにする
     uint64_t mac_int = 0;

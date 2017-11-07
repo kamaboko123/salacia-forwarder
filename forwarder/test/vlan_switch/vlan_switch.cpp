@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <csignal>
 #include <poll.h>
 #include <unistd.h>
 #include <cinttypes>
@@ -14,11 +15,20 @@
 
 #define IF_NUM 2
 
+bool exit_flg = false;
+
 struct IF_CONFIG{
     char name[IFNAMSIZ];
     IfType type;
     uint16_t vlan;
 };
+
+void handler_sigint(int signal){
+    if(signal == SIGINT){
+        printf("receive SIGINT\n");
+        exit_flg = true;
+    }
+}
 
 int main(int argc, char **argv){
     int inter_n = IF_NUM;
@@ -50,7 +60,10 @@ int main(int argc, char **argv){
     //receive buffer
     Ethernet pbuf;
     
+    signal(SIGINT, handler_sigint);
+    
     for(;;){
+        if(exit_flg) break;
         switch(poll(pfds, inter_n, 10)){
             case -1:
                 perror("polling");
@@ -119,5 +132,10 @@ int main(int argc, char **argv){
         }
     }
     
+    delete[] netif;
+    delete[] pfds;
+    
+    
+    printf("Exit\n");
     return(0);
 }

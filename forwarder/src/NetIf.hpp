@@ -9,6 +9,7 @@
 #include <net/ethernet.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "MacAddress.hpp"
 #include "comlib.hpp"
 #include "dlib.hpp"
@@ -41,6 +42,7 @@ private:
 public:
     NetIf();
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
+    ~NetIf();
     
     int getFD();
     
