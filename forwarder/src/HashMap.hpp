@@ -81,7 +81,7 @@ private:
             if(p->getKey() == key){
                 return(p);
             }
-        }while(p->getNext() != nullptr);
+        }while((p = p->getNext()) != nullptr);
         
         return(nullptr);
     }

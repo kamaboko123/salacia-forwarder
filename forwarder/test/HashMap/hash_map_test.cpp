@@ -9,6 +9,8 @@ using namespace std;
 void _dump(HashMap<MacAddress, int*> *map){
     MacAddress *keys = map->getKeys();
     
+    printf("size:%d\n", map->getSize());
+    
     for(int i = 0; i < map->getSize(); i++){
         cout << keys[i].toInt();
         cout << ":";
@@ -18,7 +20,6 @@ void _dump(HashMap<MacAddress, int*> *map){
     }
     
     delete[] keys;
-    
 }
 
 int main(void){
@@ -68,7 +69,7 @@ int main(void){
     map->_dump();
     _dump(map);
     
-    MacAddress m7((char *)"11:22:33:44:54:63");
+    MacAddress m7((char *)"11:22:33:44:52:63");
     int *pi7 = new int(7);
     map->update(m7, pi7);
     
