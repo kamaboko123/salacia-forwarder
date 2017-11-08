@@ -10,8 +10,10 @@
 #include "../../src/Ethernet.hpp"
 #include "../../src/HashMap.hpp"
 #include "../../src/comlib.hpp"
+#include "../../src/MacTable.hpp"
 
 #define IFMAX 4
+#define MAC_REFRESH_INTERVAL 20
 
 int main(int argc, char **argv){
     int inter_n = 0;
@@ -39,14 +41,14 @@ int main(int argc, char **argv){
             fprintf(stderr, "Invaild Args.\n");
             exit(-1);
         }
-        new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 1);
+        new(netif + i) NetIf(argv[i + 1], IFTYPE_L2_ACCESS, 3100);
         pfds[i].fd = netif[i].getFD();
         pfds[i].events = POLLIN|POLLERR;
         
     }
     
     //MacAddrTable
-    HashMap<MacAddress, NetIf *> mac_tbl(256);
+    MacTable mac_tbl(256);
     
     //receive buffer
     uint8_t buf[2048];
@@ -54,7 +56,14 @@ int main(int argc, char **argv){
     //送信先
     NetIf *outif;
     
+    uint64_t last_refresh = time(NULL);
+    
     for(;;){
+        if((time(NULL) - last_refresh) > MAC_REFRESH_INTERVAL){
+            mac_tbl.refresh();
+            last_refresh = time(NULL);
+        }
+        
         switch(poll(pfds, inter_n, 10)){
             case -1:
                 perror("polling");
