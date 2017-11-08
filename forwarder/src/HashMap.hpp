@@ -1,3 +1,6 @@
+#ifndef INCLUDED_HASH_MAP
+#define INCLUDED_HASH_MAP
+
 #include <iostream>
 
 template <typename K, typename V>
@@ -250,3 +253,4 @@ public:
     
 };
 
+#endif
