@@ -58,10 +58,9 @@ void MacTable::refresh(){
     tbl->getKeys(keys);
     for(int i = 0; i < size; i++){
         MacTableEntry *entry = tbl->get(keys[i]);
-        if((entry->getRefTime() - c_time) > MAC_TBL_EXPIRE_TIME){
+        if((c_time - entry->getRefTime()) > MAC_TBL_EXPIRE_TIME){
             tbl->del(keys[i]);
             delete entry;
-            printf("!delete!\n");
         }
     }
     
