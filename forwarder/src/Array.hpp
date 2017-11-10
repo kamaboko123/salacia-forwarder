@@ -20,6 +20,10 @@ public:
         return(item);
     }
     
+    void set(T item){
+        this->item = item;
+    }
+    
     void setNext(ArrayItem<T> *next_item){
         next = next_item;
     }
@@ -36,10 +40,27 @@ private:
     uint32_t size;
     ArrayItem<T> *root;
     
+    ArrayItem<T> *getArrayItem(uint32_t index){
+        if(index >= size) return(nullptr);
+        
+        ArrayItem<T> *p = root;
+        for(uint32_t i = 0; i < index; i++){
+            p = p->getNext();
+        }
+        return(p);
+    }
+    
 public:
     Array<T>(){
         size = 0;
         root = nullptr;
+    }
+    
+    ~Array<T>(){
+        uint32_t s = size;
+        for(uint32_t i = 0; i < s; i++){
+            del(0);
+        }
     }
     
     void add(T item){
@@ -58,23 +79,46 @@ public:
         size++;
     }
     
-    /*
-    void del(uint32_t index){
-        a
-    }*/
+    bool set(uint32_t index, T item){
+        ArrayItem<T> *target = getArrayItem(index);
+        if(target == nullptr){
+            return(false);
+        }
+        target->set(item);
+        return(true);
+    }
+    
+    bool del(uint32_t index){
+        if(index >= size) return(false);
+        
+        //root node
+        if(index == 0){
+            ArrayItem<T> *n_root = root->getNext();
+            delete root;
+            root = n_root;
+            size--;
+            
+            return(true);
+        }
+        
+        ArrayItem<T> *prev = getArrayItem(index-1);
+        ArrayItem<T> *target = getArrayItem(index);
+        
+        prev->setNext(target->getNext());
+        delete target;
+        size--;
+        return(true);
+    }
     
     uint32_t getSize(){
         return(size);
     }
     
     T get(uint32_t index){
-        if(index >= size) return(nullptr);
+        ArrayItem<T> *ret = getArrayItem(index);
+        if(ret == nullptr) return(nullptr);
         
-        ArrayItem<T> *p = root;
-        for(uint32_t i = 0; i < index; i++){
-            p = p->getNext();
-        }
-        return(p->get());
+        return(ret->get());
     }
 };
 
