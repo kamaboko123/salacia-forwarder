@@ -65,5 +65,13 @@ void MacTable::refresh(){
     }
     
     delete[] keys;
-    
 }
+
+MacAddress *MacTable::getKeys(){
+    return(tbl->getKeys());
+}
+
+int MacTable::getSize(){
+    return(tbl->getSize());
+}
+

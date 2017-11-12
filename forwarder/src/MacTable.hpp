@@ -27,11 +27,14 @@ private:
     HashMap<MacAddress, MacTableEntry *> *tbl;
 
 public:
-    MacTable(int size);
+    MacTable(int size = 256);
     ~MacTable();
     void update(MacAddress addr, NetIf *interface);
     NetIf *get(MacAddress addr);
     void refresh();
+    
+    MacAddress *getKeys();
+    int getSize();
 };
 
 #endif
