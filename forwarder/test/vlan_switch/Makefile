@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = vlan_switch.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/dlib.cpp
+SRC = vlan_switch.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/dlib.cpp ../../src/MacTable.cpp
 C_OPT = -std=c++11 -Wall
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/switch

@@ -10,10 +10,25 @@
 #include "../../src/MacAddress.hpp"
 #include "../../src/Ethernet.hpp"
 #include "../../src/HashMap.hpp"
+#include "../../src/MacTable.hpp"
+#include "../../src/Array.hpp"
 #include "../../src/comlib.hpp"
 #include "../../src/dlib.hpp"
 
 #define IF_NUM 2
+#define MAC_REFRESH_INTERVAL 10
+
+class Vlan{
+public:
+    uint16_t id;
+    MacTable mtbl;
+    Array<NetIf *> ifs;
+};
+
+template<>
+int HashMap<uint16_t, Vlan *>::hash(uint16_t key){
+    return(key % this->size);
+}
 
 bool exit_flg = false;
 
@@ -50,20 +65,69 @@ int main(int argc, char **argv){
     struct pollfd *pfds = new struct pollfd[inter_n];
     NetIf *netif = new NetIf[inter_n];
     
+    HashMap<uint16_t, Vlan *> *vlan_db = new HashMap<uint16_t, Vlan *>(256);
+    
     for(int i = 0; i < inter_n; i++){
         new(netif + i) NetIf(ifc[i].name, ifc[i].type, ifc[i].vlan);
         printf("set : %s(%d)\n", netif[i].getIfName(), ifc[i].type);
         pfds[i].fd = netif[i].getFD();
         pfds[i].events = POLLIN|POLLERR;
+        
+        if(ifc[i].type == IFTYPE_L2_ACCESS){
+            Vlan *vlan = vlan_db->get(ifc[i].vlan);
+            if(vlan == nullptr){
+                printf("!%s!\n", netif[i].getIfName());
+                Vlan *new_vlan = new Vlan();
+                new_vlan->id = ifc[i].vlan;
+                new_vlan->ifs.add(&netif[i]);
+                vlan_db->update(ifc[i].vlan, new_vlan);
+                continue;
+            }
+            vlan->ifs.add(&netif[i]);
+        }
     }
+    
+    for(int i = 0; i < inter_n; i++){
+        if(netif[i].getIfType() == IFTYPE_L2_TRUNK){
+            uint16_t *vlans = vlan_db->getKeys();
+            for(int j = 0; j < vlan_db->getSize(); j++){
+                vlan_db->get(vlans[j])->ifs.add(&netif[i]);
+            }
+        }
+    }
+    
+    uint16_t *vlans;
+    vlans = vlan_db->getKeys();
+    for(int i = 0; i < vlan_db->getSize(); i++){
+        printf("[%u]\n", vlans[i]);
+        for(uint32_t j = 0; j < vlan_db->get(vlans[i])->ifs.getSize(); j++){
+            printf("  %s\n", vlan_db->get(vlans[i])->ifs.get(j)->getIfName());
+        }
+    }
+    delete[] vlans;
     
     //receive buffer
     Ethernet pbuf;
     
+    NetIf *outif;
+    Vlan *vlan;
+    
     signal(SIGINT, handler_sigint);
+    
+    uint64_t last_refresh = time(NULL);
     
     for(;;){
         if(exit_flg) break;
+        
+        if((time(NULL) - last_refresh) > MAC_REFRESH_INTERVAL){
+            vlans = vlan_db->getKeys();
+            for(int l = 0; l < vlan_db->getSize(); l++){
+                printf("refresh : mac-table[vlan : %d]\n", vlans[l]);
+                vlan_db->get(vlans[l])->mtbl.refresh();
+                last_refresh = time(NULL);
+            }
+        }
+        
         switch(poll(pfds, inter_n, 10)){
             case -1:
                 perror("polling");
@@ -75,58 +139,31 @@ int main(int argc, char **argv){
                 if(pfds[i].revents&(POLLIN|POLLERR)){
                     //何かしらデータを受けたら
                     if(netif[i].recv(&pbuf) == 0) continue;
+                    if(pbuf.getType() == ETHTYPE_UNKNOWN) continue;
                     
-                    for(int j = 0; j < inter_n; j++){
-                        if(j == i) continue;
-                        netif[j].send(pbuf, netif[i].getVlanId());
+                    if(netif[i].getIfType() == IFTYPE_L2_TRUNK){
+                        vlan = vlan_db->get(pbuf.getVlanId());
+                    }
+                    else if(netif[i].getIfType() == IFTYPE_L2_ACCESS){
+                        vlan = vlan_db->get(netif[i].getVlanId());
                     }
                     
-                    /*
-                    dlib::hexdump((uint8_t *)packet.RawData(), packet.getLength());
-                    Ethernet tag(buf, s);
-                    Ethernet untag(buf, s);
-                    
-                    if(netif[i].getIfType() == IFTYPE_L2_ACCESS){
-                        tag.setVlanTag(netif[i].getVlanId());
-                    }
-                    else if(netif[i].getIfType() == IFTYPE_L2_TRUNK){
-                        untag.removeVlanTag();
-                    }
-                    
-                    if(s > 1500){
-                        printf("too long : %d\n", s);
+                    if(vlan == nullptr){
+                        printf("error : vlan not found!\n");
                         continue;
                     }
                     
-                    printf("recv : %s\n", netif[i].getIfName());
-                    printf("type : %.04x\n", packet.getType());
-                    printf("len : %dbyte\n", packet.getLength());
+                    vlan->mtbl.update(pbuf.getSrc(), &netif[i]);
+                    outif = vlan->mtbl.get(pbuf.getDst());
                     
-                    for(int j = 0; j < inter_n; j++){
-                        if(j == i) continue;
-                        
-                        printf("to_name:<%s>\n", netif[j].getIfName());
-                        printf("to_type<%d>\n", netif[j].getIfType());
-                        if(netif[j].getIfType() == IFTYPE_L2_ACCESS){
-                            netif[j].sendRaw(untag.RawData(), untag.getLength());
-                            printf("send to access\n");
-                            dlib::hexdump((uint8_t *)untag.RawData(), untag.getLength());
+                    if((pbuf.getDst().toLong() == 0xFFFFFFFFFFFF) || (outif == nullptr)){
+                        for(uint32_t j = 0; j < vlan->ifs.getSize(); j++){
+                            if(&netif[i] == vlan->ifs.get(j)) continue;
+                            vlan->ifs.get(j)->send(pbuf, vlan->id);
                         }
-                        else if(netif[j].getIfType() == IFTYPE_L2_TRUNK){
-                            netif[j].sendRaw(tag.RawData(), tag.getLength());
-                            printf("send to trunk(%dbyte)\n", tag.getLength());
-                            dlib::hexdump((uint8_t *)tag.RawData(), tag.getLength());
-                        }
-                    }*/
-                    /*
-                    printf("----\n");
-                    
-                    printf("len  : %ubyte\n", packet.getLength());
-                    printf("dst : %.12" PRIx64 "\n", packet.getDst().toLong());
-                    printf("src : %.12" PRIx64 "\n", packet.getSrc().toLong());
-                    dlib::hexdump(buf, s);
-                    printf("\n");
-                    */
+                        continue;
+                    }
+                    outif->send(pbuf, vlan->id);
                 }
             }
         }
