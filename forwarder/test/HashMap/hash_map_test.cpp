@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 template<>
 int HashMap<int, int *>::hash(int key){
     return(key % this->size);

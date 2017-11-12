@@ -30,7 +30,6 @@ void mac_table_ref(MacTable *mac_tbl){
             mac_tbl->refresh();
             last_refresh = time(NULL);
         }
-        sleep(1);
     }
 }
 
