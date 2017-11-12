@@ -6,6 +6,12 @@
 
 using namespace std;
 
+
+template<>
+int HashMap<int, int *>::hash(int key){
+    return(key % this->size);
+}
+
 void _dump(HashMap<MacAddress, int*> *map){
     MacAddress *keys = map->getKeys();
     
@@ -77,6 +83,20 @@ int main(void){
     
     map->_dump();
     _dump(map);
+    
+    printf("------\n");
+    HashMap<int, int *> *map_int = new HashMap<int, int *>(256);
+    map_int->update(10, pi1);
+    map_int->update(11, pi2);
+    
+    printf("!!!!!!!!!\n");
+    int * keys = map_int->getKeys();
+    for(int i = 0; i < map_int->getSize(); i++){
+        printf("%d : %d\n", keys[i], *map_int->get(keys[i]));
+    }
+    map_int->update(10, pi1);
+    delete[] keys;
+    printf("!!!!!!!!!\n");
     
     /*
     map->del(m5);
