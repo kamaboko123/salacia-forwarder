@@ -15,7 +15,7 @@
 #include "../../src/comlib.hpp"
 #include "../../src/dlib.hpp"
 
-#define IF_NUM 2
+#define IF_NUM 3
 #define MAC_REFRESH_INTERVAL 10
 
 class Vlan{
@@ -49,6 +49,11 @@ int main(int argc, char **argv){
     int inter_n = IF_NUM;
     
     IF_CONFIG ifc[IF_NUM] = {
+        {
+            "enp2s0",
+            IFTYPE_L2_ACCESS,
+            3200
+        },
         {
             "enp3s0",
             IFTYPE_L2_ACCESS,
