@@ -115,3 +115,28 @@ uint32_t comlib::htonl(uint32_t in){
 uint16_t comlib::htons(uint16_t in){
     return(rbyte16(in));
 }
+
+//not implement orverflow checking
+int comlib::atoi(char *s){
+    int result = 0;
+    bool sign = false;
+    
+    //符号付き
+    if(*s == '-'){
+        sign = true;
+        s++;
+    }
+    
+    while(isdigit(*s)){
+        //すでに入ってるものを桁上げ + その桁の数値を加算
+        result = (result * 10) + (*s - '0');
+        s++;
+    }
+    
+    if (sign){
+        result = -result;
+    }
+    
+    return result;
+}
+

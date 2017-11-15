@@ -7,6 +7,10 @@
  * Common Library
  */
 
+namespace sfwdr{
+    typedef uint32_t size_t;
+}
+
 namespace comlib{
     void strncpy(char *s1, char *s2, int n);
     void strncpy(uint8_t *s1, uint8_t *s2, int n);
@@ -23,6 +27,10 @@ namespace comlib{
     uint16_t ntohs(uint16_t in);
     uint32_t htonl(uint32_t in);
     uint16_t htons(uint16_t in);
+    
+    int atoi(char *s);
+    
+    inline bool isdigit(char c){ return(c >= '0' && c <= '9'); };
 }
 
 #endif
