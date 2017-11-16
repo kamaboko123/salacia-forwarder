@@ -20,6 +20,9 @@ IPAddress::IPAddress(char *addr_str){
     set(addr_str);
 }
 
+IPAddress::~IPAddress(){
+    delete[] addr_str;
+}
 
 void IPAddress::set(uint32_t addr_uint){
     addr = addr_uint;

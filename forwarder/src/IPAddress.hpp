@@ -15,6 +15,8 @@ public:
     IPAddress();
     IPAddress(uint32_t addr_uint);
     IPAddress(char *addr_str);
+    ~IPAddress();
+    
     void set(uint32_t addr_uint);
     void set(char *addr_str);
     
@@ -24,3 +26,5 @@ public:
     static uint32_t iptoui(char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::size_t retbuf_len);
 };
+
+
