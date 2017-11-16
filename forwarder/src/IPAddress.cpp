@@ -8,6 +8,7 @@ void IPAddress::_init(){
 
 IPAddress::IPAddress(){
     _init();
+    set(addr);
 }
 
 IPAddress::IPAddress(uint32_t addr_uint){
@@ -95,5 +96,80 @@ uint32_t IPAddress::iptoui(char *addr_str){
     printf("%u\n", addr);
     
     return(addr);
+}
+
+IPNetMask::IPNetMask() : IPAddress(){
+    _validate();
+}
+
+IPNetMask::IPNetMask(char *addr_str) : IPAddress(addr_str){
+    _validate();
+}
+
+IPNetMask::IPNetMask(uint32_t addr_uint) : IPAddress(addr_uint){
+    _validate();
+}
+
+sfwdr::size_t IPNetMask::set(uint32_t addr_uint){
+    IPAddress::set(addr_uint);
+    _validate();
+    return(getLength());
+}
+
+sfwdr::size_t IPNetMask::set(char *addr_str){
+    IPAddress::set(addr_str);
+    _validate();
+    return(getLength());
+}
+
+sfwdr::size_t IPNetMask::setLength(sfwdr::size_t mask_length){
+    if(mask_length == 0) return(set((uint32_t)0));
+    if(mask_length < 0 || mask_length > 32){
+        set(IP_NETMASK_INVALID_VAL);
+    }
+    
+    uint32_t mask = 0;
+    uint8_t shift;
+    for(int i = mask_length; i > 0; i--){
+        shift = i + 31 - mask_length;
+        mask += (1 << shift);
+    }
+    set(mask);
+    
+    return(getLength());
+}
+
+void IPNetMask::_validate(){
+    valid = true;
+    length = 0;
+    
+    uint32_t mask = IPAddress::touInt();
+    uint32_t cmask = 0x80000000;
+    uint8_t buf;
+    bool find_0 = false;
+    
+    for(int i = 32; i > 0 && valid; i--){
+        buf = (mask & cmask) >> (i-1);
+        
+        if(find_0 && buf == 1) valid = false;
+        if(buf == 0) find_0 = true;
+        if(!find_0) length++;
+        
+        cmask = cmask >> 1;
+    }
+    if(!valid) length = -1;
+}
+
+bool IPNetMask::isValid(){
+    return(valid);
+}
+
+sfwdr::size_t IPNetMask::getLength(){
+    return(length);
+}
+
+
+IPNetwork::IPNetwork(IPAddress prefix, sfwdr::size_t prefix_len){
+    return;
 }
 

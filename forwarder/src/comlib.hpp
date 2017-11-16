@@ -8,7 +8,7 @@
  */
 
 namespace sfwdr{
-    typedef uint32_t size_t;
+    typedef int32_t size_t;
 }
 
 namespace comlib{
