@@ -36,14 +36,18 @@ int main(void){
     
     printf("----\n");
     
-    IPNetwork network((char *)"10.1.2.0", 24);
-    if(network.isValid()){
+    IPAddress network1_addr((char*)"192.168.0.0");
+    IPNetMask network1_mask((char*)"255.255.252.0");
+
+    //IPNetwork network1((char *)"10.1.2.0/24");
+    IPNetwork network1(network1_addr, network1_mask);
+    if(network1.isValid()){
         printf("OK!\n");
     }
     else{
         printf("NG!\n");
     }
-    //printf("%s\n", network.toStr());
+    printf("%s\n", network1.toStr());
     
     return(0);
 }

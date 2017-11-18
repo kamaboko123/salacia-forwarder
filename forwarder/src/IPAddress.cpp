@@ -172,6 +172,27 @@ sfwdr::size_t IPNetMask::getLength(){
     return(length);
 }
 
+IPNetwork::IPNetwork(char *ipnet_str){
+    _init();
+    if(!validPrefixFormat(ipnet_str)){
+        //invalidな値を入れる
+        this->netaddr->set(IP_NETWORK_INVALID_NWADDR);
+        this->netmask->setLength(IP_NETWORK_INVALID_MASK);
+    }
+    else{
+        int pindex = comlib::strchr_index(ipnet_str, '/');
+        char *netaddr_str = new char[pindex + 1]();
+        comlib::strncpy(netaddr_str, ipnet_str, pindex);
+        int plen = comlib::atoi(ipnet_str + pindex + 1);
+        
+        this->netaddr->set(netaddr_str);
+        this->netmask->setLength(plen);
+        
+        delete[] netaddr_str;
+    }
+    _validate();
+}
+
 IPNetwork::IPNetwork(char *addr_str, sfwdr::size_t mask_length){
     _init();
     IPAddress ipaddr(addr_str);
@@ -184,6 +205,13 @@ IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length){
     _init();
     this->netaddr->set(ipaddr.touInt());
     this->netmask->setLength(mask_length);
+    _validate();
+}
+
+IPNetwork::IPNetwork(IPAddress &ipaddr, IPNetMask &netmask){
+    _init();
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->set(netmask.touInt());
     _validate();
 }
 
@@ -231,4 +259,24 @@ bool IPNetwork::isValid(){
 
 char *IPNetwork::toStr(){
     return(prefix);
+}
+
+//与えられた文字列がIPのPrefixフォーマットか検査
+bool IPNetwork::validPrefixFormat(char *str){
+    // strから/を探す、見つからなかったら不正
+    int prefix_index = comlib::strchr_index(str, '/');
+    if(prefix_index == -1) return(false);
+    
+    //次の文字が終端なら不正
+    if((str = str + prefix_index + 1) == '\0') return(false);
+    //数字じゃなけくても不正
+    if(!comlib::isdigit(*str)) return(false);
+    
+    //数値変換して範囲チェック
+    //数値の桁数、残りの文字数が一致しているか（無駄な文字が入ってないか）
+    int plen = comlib::atoi(str);
+    if(plen < 0 && plen > 32) return(false);
+    if(comlib::ndigit(plen) != comlib::strlen(str)) return(false);
+    
+    return(true);
 }

@@ -2,9 +2,16 @@
 #include <cstdio>
 #include "comlib.hpp"
 
+//IPAddressとIPNetMaskを文字列にしたときに必要なバッファ
 #define IP_ADDR_STR_LEN 16
-#define IP_NETMASK_INVALID_VAL 3
 #define IP_PREFIX_STR_LEN 19
+
+//IPNetMaskをinvalidにする時の定数
+#define IP_NETMASK_INVALID_VAL 3
+
+//IPNetowrkをinvalidにする時の定数
+#define IP_NETWORK_INVALID_NWADDR 1
+#define IP_NETWORK_INVALID_MASK 0
 
 class IPAddress{
 private:
@@ -62,8 +69,15 @@ private:
     bool _validate();
     
 public:
-    IPNetwork(char *addr_str, sfwdr::size_t netmask);
-    IPNetwork(IPAddress &ipaddr, sfwdr::size_t netmask);
+    //prefix形式の文字列 (例:192.168.0.0/24)
+    IPNetwork(char *ipnet_str);
+    //ネットワークアドレスは文字列、マスクはマスク長
+    IPNetwork(char *addr_str, sfwdr::size_t mask_length);
+    //ネットワークアドレスは文字列、マスクはマスク長
+    IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length);
+    //ネットワークアドレスとマスクのオブジェクト
+    IPNetwork(IPAddress &ipaddr, IPNetMask &netmask);
+    
     ~IPNetwork();
     
     IPAddress *getNetAddr();
@@ -72,5 +86,7 @@ public:
     char *toStr();
     
     bool isValid();
+    
+    static bool validPrefixFormat(char *str);
 };
 
