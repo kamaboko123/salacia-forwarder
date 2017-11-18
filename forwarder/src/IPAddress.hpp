@@ -1,3 +1,6 @@
+#ifndef INCLUDED_IPADDRESS
+#define INCLUDED_IPADDRESS
+
 #include <cstdint>
 #include <cstdio>
 #include "comlib.hpp"
@@ -80,8 +83,10 @@ public:
     
     ~IPNetwork();
     
-    IPAddress *getNetAddr();
-    IPAddress *getNetMask();
+    IPAddress &getNetaddr();
+    IPNetmask &getNetmask();
+    
+    bool set(IPNetwork &ipnet);
     
     char *toStr();
     
@@ -90,3 +95,4 @@ public:
     static bool validPrefixFormat(char *str);
 };
 
+#endif

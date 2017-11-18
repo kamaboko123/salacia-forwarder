@@ -245,12 +245,18 @@ bool IPNetwork::_validate(){
     return(false);
 }
 
-IPAddress *IPNetwork::getNetAddr(){
-    return(netaddr);
+bool IPNetwork::set(IPNetwork &ipnet){
+    this->netaddr->set(ipnet.getNetaddr().touInt());
+    this->netmask->set(ipnet.getNetmask().getLength());
+    return(_validate());
 }
 
-IPAddress *IPNetwork::getNetMask(){
-    return(netmask);
+IPAddress &IPNetwork::getNetaddr(){
+    return(*netaddr);
+}
+
+IPNetmask &IPNetwork::getNetmask(){
+    return(*netmask);
 }
 
 bool IPNetwork::isValid(){
