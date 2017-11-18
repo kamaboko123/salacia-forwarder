@@ -55,7 +55,13 @@ int main(void){
     char chars3[100] = "123";
     printf("%s\n", comlib::strcat(chars3, (char *)"aaa"));
     
-    printf("strlen : \"abc\" -> %d\n", comlib::strlen("abc"));
+    printf("strlen : \"abc\" -> %d\n", comlib::strlen((char *)"abc"));
+    
+    printf("[strchr]\n");
+    char str[] = "string";
+    char c = 'r';
+    printf("[strchr] %s, %c, %s\n", str, c, comlib::strchr(str, c));
+    printf("[strchr_index] %s, %c, %d\n", str, c, comlib::strchr_index(str, c));
     
     /*
     iValue = comlib::rbyte32(iValue);

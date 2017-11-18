@@ -43,6 +43,20 @@ char *comlib::strncat(char *s1, char *s2, int n){
     return(s1);
 }
 
+char *comlib::strchr(char *s, char c){
+    for(int i = 0; s[i] != '\0'; i++){
+        if(s[i] == c) return(s + i);
+    }
+    return(nullptr);
+}
+
+sfwdr::size_t comlib::strchr_index(char *s, char c){
+    for(int i = 0; s[i] != '\0'; i++){
+        if(s[i] == c) return(i);
+    }
+    return(-1);
+}
+
 /**
  * copy buf2 to buf1
  */
