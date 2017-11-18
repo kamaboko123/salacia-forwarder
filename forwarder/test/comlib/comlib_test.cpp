@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstring>
+#include <cinttypes>
 #include "../../src/comlib.hpp"
 
 #define N 2
@@ -30,6 +31,29 @@ int main(void){
     printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
     iValue = comlib::htonl(iValue);
     printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
+    
+    printf("%d\n", comlib::ndigit(1000));
+    //printf("%s\n", comlib::uitoa(1000, NULL, 1));
+    
+    char chars[6] = {0};
+    comlib::uitoa(1001, chars, sizeof(chars));
+    printf("%s\n", chars);
+    
+    printf("\n");
+    printf("[strncat]\n");
+    char chars2[100] = "abc";
+    chars2[4] = 'a';
+    chars2[5] = 'a';
+    chars2[6] = 'a';
+    chars2[7] = 'a';
+    chars2[8] = 'a';
+    printf("%s\n", chars2);
+    comlib::strncat(chars2, (char *)"123", 2);
+    printf("%s\n", chars2);
+    
+    printf("[strcat]\n");
+    char chars3[100] = "123";
+    printf("%s\n", comlib::strcat(chars3, (char *)"aaa"));
     
     /*
     iValue = comlib::rbyte32(iValue);

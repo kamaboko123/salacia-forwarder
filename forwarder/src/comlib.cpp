@@ -3,7 +3,7 @@
 /**
  * copy s2 to s1
  */
-void comlib::strncpy(char *s1, char *s2, int n){
+char *comlib::strncpy(char *s1, char *s2, int n){
     bool end = false;
     int i;
     for(i = 0; i < n; i++){
@@ -17,10 +17,30 @@ void comlib::strncpy(char *s1, char *s2, int n){
         }
         s1[i] = s2[i];
     }
+    return(s1);
 }
 
-void comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
-    comlib::strncpy((char *)s1, (char *)s2, n);
+char *comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
+    return(comlib::strncpy((char *)s1, (char *)s2, n));
+}
+
+char *comlib::strcat(char *s1, char *s2){
+    char *p = (s1 + strlen(s1) -1);
+    for(int i = 0; s2[i] != '\0'; i++){
+        p[i] = s2[i];
+    }
+    return(s1);
+}
+
+char *comlib::strncat(char *s1, char *s2, int n){
+    char *p = (s1 + strlen(s1) -1);
+    int i;
+    for(i = 0; i < n; i++){
+        p[i] = s2[i];
+        if(s2[i] == '\0') return(s1);
+    }
+    p[i] = '\0';
+    return(s1);
 }
 
 /**
@@ -140,3 +160,33 @@ int comlib::atoi(char *s){
     return result;
 }
 
+uint8_t comlib::ndigit(uint32_t n){
+    uint8_t i = 1;
+    
+    while(n >= 10){
+        n /= 10;
+        i++;
+    }
+    return(i);
+}
+
+char *comlib::uitoa(int n, char *buf, sfwdr::size_t buflen){
+    char *p = buf;
+    int i = ndigit(n);
+    
+    if(i >= buflen) return(nullptr);
+    while(i > 0){
+        *p = ((n / upow(10, i - 1)) % 10) + '0';
+        p++;
+        i--;
+    }
+    *p = '\0';
+    return(buf);
+}
+
+//累乗計算
+uint64_t comlib::upow(uint64_t x, uint64_t n){
+    if(n == 0) return(1);
+    if(n == 1) return(x);
+    return(x * upow(x, n-1));
+}

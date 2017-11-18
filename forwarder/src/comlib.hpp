@@ -2,6 +2,7 @@
 #define INCLUDED_COMLIB
 
 #include <cstdint>
+#include <cstdio>
 
 /**
  * Common Library
@@ -12,8 +13,10 @@ namespace sfwdr{
 }
 
 namespace comlib{
-    void strncpy(char *s1, char *s2, int n);
-    void strncpy(uint8_t *s1, uint8_t *s2, int n);
+    char *strncpy(char *s1, char *s2, int n);
+    char *strncpy(uint8_t *s1, uint8_t *s2, int n);
+    char *strcat(char *s1, char *s2);
+    char *strncat(char *s1, char *s2, int n);
     uint64_t bytestol(uint8_t *head, int n);
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
     uint8_t *memmove(uint8_t *buf1, const uint8_t *bud2, uint64_t n);
@@ -29,8 +32,12 @@ namespace comlib{
     uint16_t htons(uint16_t in);
     
     int atoi(char *s);
+    char *uitoa(int n, char *buf, sfwdr::size_t buflen);
     
+    uint8_t ndigit(uint32_t n);
     inline bool isdigit(char c){ return(c >= '0' && c <= '9'); };
+    
+    uint64_t upow(uint64_t x, uint64_t n);
 }
 
 #endif
