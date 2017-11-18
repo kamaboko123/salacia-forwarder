@@ -4,6 +4,7 @@
 
 #define IP_ADDR_STR_LEN 16
 #define IP_NETMASK_INVALID_VAL 3
+#define IP_PREFIX_LEN 19
 
 class IPAddress{
 private:
@@ -16,10 +17,12 @@ public:
     IPAddress();
     IPAddress(uint32_t addr_uint);
     IPAddress(char *addr_str);
+    
     ~IPAddress();
     
     void set(uint32_t addr_uint);
     void set(char *addr_str);
+    void set(IPAddress ipaddr);
     
     uint32_t touInt();
     char *toStr();
@@ -33,7 +36,7 @@ private:
     bool valid;
     sfwdr::size_t length;
     
-    void _validate();
+    bool _validate();
 public:
     IPNetMask();
     IPNetMask(char *addr_str);
@@ -45,15 +48,28 @@ public:
     
     bool isValid();
     sfwdr::size_t getLength();
+    
 };
 
 class IPNetwork{
 private:
-    IPAddress *prefix;
-    IPNetMask *plen;
-
-public:
-    IPNetwork(IPAddress prefix, sfwdr::size_t prefix_len);
+    bool valid;
+    IPAddress *netaddr;
+    IPNetMask *netmask;
+    char *prefix;
     
+    void _init();
+    bool _validate();
+    
+public:
+    IPNetwork(char *addr_str, sfwdr::size_t netmask);
+    IPNetwork(IPAddress &ipaddr, sfwdr::size_t netmask);
+    
+    IPAddress *getNetAddr();
+    IPAddress *getNetMask();
+    
+    char *toStr();
+    
+    bool isValid();
 };
 

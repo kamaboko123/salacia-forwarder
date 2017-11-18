@@ -8,7 +8,7 @@ void IPAddress::_init(){
 
 IPAddress::IPAddress(){
     _init();
-    set(addr);
+    set((uint32_t)0);
 }
 
 IPAddress::IPAddress(uint32_t addr_uint){
@@ -35,6 +35,9 @@ void IPAddress::set(char *addr_str){
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
 }
 
+void IPAddress::set(IPAddress ipaddr){
+    set(ipaddr.touInt());
+}
 
 uint32_t IPAddress::touInt(){
     return(addr);
@@ -43,7 +46,6 @@ uint32_t IPAddress::touInt(){
 char *IPAddress::toStr(){
     return(addr_str);
 }
-
 
 char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::size_t retbuf_len){
     if(retbuf_len < IP_ADDR_STR_LEN) return(nullptr);
@@ -93,7 +95,7 @@ uint32_t IPAddress::iptoui(char *addr_str){
             if(*addr_str == '\0') break;
         }while(*(addr_str - 1) != '.');
     }
-    printf("%u\n", addr);
+    //printf("%u\n", addr);
     
     return(addr);
 }
@@ -139,7 +141,7 @@ sfwdr::size_t IPNetMask::setLength(sfwdr::size_t mask_length){
     return(getLength());
 }
 
-void IPNetMask::_validate(){
+bool IPNetMask::_validate(){
     valid = true;
     length = 0;
     
@@ -158,6 +160,8 @@ void IPNetMask::_validate(){
         cmask = cmask >> 1;
     }
     if(!valid) length = -1;
+    
+    return(valid);
 }
 
 bool IPNetMask::isValid(){
@@ -168,8 +172,57 @@ sfwdr::size_t IPNetMask::getLength(){
     return(length);
 }
 
-
-IPNetwork::IPNetwork(IPAddress prefix, sfwdr::size_t prefix_len){
-    return;
+IPNetwork::IPNetwork(char *addr_str, sfwdr::size_t mask_length){
+    _init();
+    IPAddress ipaddr(addr_str);
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->setLength(mask_length);
+    _validate();
 }
 
+IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length){
+    _init();
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->setLength(mask_length);
+    _validate();
+}
+
+void IPNetwork::_init(){
+    netaddr = new IPAddress();
+    netmask = new IPNetMask();
+    prefix = new char[19];
+}
+
+bool IPNetwork::_validate(){
+    if((valid = netmask->isValid())){
+        if((netaddr->touInt() & netmask->touInt()) == netaddr->touInt()){
+            valid = true;
+            
+            char plen_buf[3];
+            comlib::uitoa(netmask->getLength(), plen_buf, sizeof(plen_buf));
+            comlib::strcat(prefix, netaddr->toStr());
+            comlib::strcat(prefix, (char *)"/");
+            comlib::strcat(prefix, plen_buf);
+            
+            return(true);
+        }
+    }
+    valid = false;
+    return(false);
+}
+
+IPAddress *IPNetwork::getNetAddr(){
+    return(netaddr);
+}
+
+IPAddress *IPNetwork::getNetMask(){
+    return(netmask);
+}
+
+bool IPNetwork::isValid(){
+    return(valid);
+}
+
+char *IPNetwork::toStr(){
+    return(prefix);
+}

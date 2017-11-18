@@ -9,7 +9,7 @@ int main(void){
     printf("%s\n", addr.toStr());
     
     //addr.set(3232235777);
-    addr.set((uint32_t)0);
+    //addr.set((uint32_t)0);
     printf("%s\n", addr.toStr());
     
     IPNetMask mask((char *)"255.255.255.0");
@@ -24,8 +24,7 @@ int main(void){
     
     printf("----\n");
     
-    IPNetMask mask2;
-    mask2.setLength(24);
+    IPNetMask mask2(16);
     printf("%s\n", mask2.toStr());
     printf("%d\n", mask2.getLength());
     if(mask2.isValid()){
@@ -35,6 +34,17 @@ int main(void){
         printf("NG!\n");
     }
     
+    printf("----\n");
+    
+    IPNetwork network("10.1.2.0", 24);
+    if(network.isValid()){
+        printf("OK!\n");
+    }
+    else{
+        printf("NG!\n");
+    }
+    //printf("%s\n", network.toStr());
+    printf("%s\n", network.getNetAddr()->toStr());
     
     return(0);
 }
