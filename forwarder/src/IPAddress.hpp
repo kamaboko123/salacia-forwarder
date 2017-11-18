@@ -2,11 +2,11 @@
 #include <cstdio>
 #include "comlib.hpp"
 
-//IPAddressとIPNetMaskを文字列にしたときに必要なバッファ
+//IPAddressとIPNetmaskを文字列にしたときに必要なバッファ
 #define IP_ADDR_STR_LEN 16
 #define IP_PREFIX_STR_LEN 19
 
-//IPNetMaskをinvalidにする時の定数
+//IPNetmaskをinvalidにする時の定数
 #define IP_NETMASK_INVALID_VAL 3
 
 //IPNetowrkをinvalidにする時の定数
@@ -38,16 +38,16 @@ public:
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::size_t retbuf_len);
 };
 
-class IPNetMask : public IPAddress{
+class IPNetmask : public IPAddress{
 private:
     bool valid;
     sfwdr::size_t length;
     
     bool _validate();
 public:
-    IPNetMask();
-    IPNetMask(char *addr_str);
-    IPNetMask(uint32_t addr_uint);
+    IPNetmask();
+    IPNetmask(char *addr_str);
+    IPNetmask(uint32_t addr_uint);
     
     sfwdr::size_t set(uint32_t addr_uint);
     sfwdr::size_t set(char *addr_str);
@@ -62,7 +62,7 @@ class IPNetwork{
 private:
     bool valid;
     IPAddress *netaddr;
-    IPNetMask *netmask;
+    IPNetmask *netmask;
     char *prefix;
     
     void _init();
@@ -76,7 +76,7 @@ public:
     //ネットワークアドレスは文字列、マスクはマスク長
     IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length);
     //ネットワークアドレスとマスクのオブジェクト
-    IPNetwork(IPAddress &ipaddr, IPNetMask &netmask);
+    IPNetwork(IPAddress &ipaddr, IPNetmask &netmask);
     
     ~IPNetwork();
     

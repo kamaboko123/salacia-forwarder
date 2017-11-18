@@ -100,31 +100,31 @@ uint32_t IPAddress::iptoui(char *addr_str){
     return(addr);
 }
 
-IPNetMask::IPNetMask() : IPAddress(){
+IPNetmask::IPNetmask() : IPAddress(){
     _validate();
 }
 
-IPNetMask::IPNetMask(char *addr_str) : IPAddress(addr_str){
+IPNetmask::IPNetmask(char *addr_str) : IPAddress(addr_str){
     _validate();
 }
 
-IPNetMask::IPNetMask(uint32_t addr_uint) : IPAddress(addr_uint){
+IPNetmask::IPNetmask(uint32_t addr_uint) : IPAddress(addr_uint){
     _validate();
 }
 
-sfwdr::size_t IPNetMask::set(uint32_t addr_uint){
+sfwdr::size_t IPNetmask::set(uint32_t addr_uint){
     IPAddress::set(addr_uint);
     _validate();
     return(getLength());
 }
 
-sfwdr::size_t IPNetMask::set(char *addr_str){
+sfwdr::size_t IPNetmask::set(char *addr_str){
     IPAddress::set(addr_str);
     _validate();
     return(getLength());
 }
 
-sfwdr::size_t IPNetMask::setLength(sfwdr::size_t mask_length){
+sfwdr::size_t IPNetmask::setLength(sfwdr::size_t mask_length){
     if(mask_length == 0) return(set((uint32_t)0));
     if(mask_length < 0 || mask_length > 32){
         set(IP_NETMASK_INVALID_VAL);
@@ -141,7 +141,7 @@ sfwdr::size_t IPNetMask::setLength(sfwdr::size_t mask_length){
     return(getLength());
 }
 
-bool IPNetMask::_validate(){
+bool IPNetmask::_validate(){
     valid = true;
     length = 0;
     
@@ -164,11 +164,11 @@ bool IPNetMask::_validate(){
     return(valid);
 }
 
-bool IPNetMask::isValid(){
+bool IPNetmask::isValid(){
     return(valid);
 }
 
-sfwdr::size_t IPNetMask::getLength(){
+sfwdr::size_t IPNetmask::getLength(){
     return(length);
 }
 
@@ -208,7 +208,7 @@ IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length){
     _validate();
 }
 
-IPNetwork::IPNetwork(IPAddress &ipaddr, IPNetMask &netmask){
+IPNetwork::IPNetwork(IPAddress &ipaddr, IPNetmask &netmask){
     _init();
     this->netaddr->set(ipaddr.touInt());
     this->netmask->set(netmask.touInt());
@@ -223,7 +223,7 @@ IPNetwork::~IPNetwork(){
 
 void IPNetwork::_init(){
     netaddr = new IPAddress();
-    netmask = new IPNetMask();
+    netmask = new IPNetmask();
     prefix = new char[IP_PREFIX_STR_LEN]();
 }
 
