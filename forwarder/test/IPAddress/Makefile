@@ -11,7 +11,7 @@ ipaddr : $(SRC)
 
 debug : $(SRC)
 	mkdir -p $(TARGET_DIR)
-	g++ -o $(TARGET)_debug $(C_OPT) -g $(SRC)
+	g++ -O0 -o $(TARGET)_debug $(C_OPT) -g $(SRC)
 
 clean:
 	rm -rf $(TARGET_DIR)

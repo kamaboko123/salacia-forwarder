@@ -4,7 +4,7 @@
 
 #define IP_ADDR_STR_LEN 16
 #define IP_NETMASK_INVALID_VAL 3
-#define IP_PREFIX_LEN 19
+#define IP_PREFIX_STR_LEN 19
 
 class IPAddress{
 private:
@@ -64,6 +64,7 @@ private:
 public:
     IPNetwork(char *addr_str, sfwdr::size_t netmask);
     IPNetwork(IPAddress &ipaddr, sfwdr::size_t netmask);
+    ~IPNetwork();
     
     IPAddress *getNetAddr();
     IPAddress *getNetMask();

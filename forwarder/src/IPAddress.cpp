@@ -4,6 +4,7 @@
 void IPAddress::_init(){
     addr = 0;
     addr_str = new char[IP_ADDR_STR_LEN];
+    comlib::memset((uint8_t *)addr_str, 0, IP_ADDR_STR_LEN);
 }
 
 IPAddress::IPAddress(){
@@ -187,10 +188,17 @@ IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length){
     _validate();
 }
 
+IPNetwork::~IPNetwork(){
+    delete netaddr;
+    delete netmask;
+    delete[] prefix;
+}
+
 void IPNetwork::_init(){
     netaddr = new IPAddress();
     netmask = new IPNetMask();
-    prefix = new char[19];
+    prefix = new char[IP_PREFIX_STR_LEN];
+    comlib::memset((uint8_t *)prefix, 0, IP_PREFIX_STR_LEN);
 }
 
 bool IPNetwork::_validate(){
@@ -198,7 +206,7 @@ bool IPNetwork::_validate(){
         if((netaddr->touInt() & netmask->touInt()) == netaddr->touInt()){
             valid = true;
             
-            char plen_buf[3];
+            char plen_buf[3] = {0};
             comlib::uitoa(netmask->getLength(), plen_buf, sizeof(plen_buf));
             comlib::strcat(prefix, netaddr->toStr());
             comlib::strcat(prefix, (char *)"/");

@@ -36,7 +36,7 @@ int main(void){
     
     printf("----\n");
     
-    IPNetwork network("10.1.2.0", 24);
+    IPNetwork network((char *)"10.1.2.0", 24);
     if(network.isValid()){
         printf("OK!\n");
     }
@@ -44,7 +44,6 @@ int main(void){
         printf("NG!\n");
     }
     //printf("%s\n", network.toStr());
-    printf("%s\n", network.getNetAddr()->toStr());
     
     return(0);
 }
