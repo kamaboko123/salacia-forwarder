@@ -25,7 +25,7 @@ char *comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
 }
 
 char *comlib::strcat(char *s1, char *s2){
-    char *p = (s1 + strlen(s1) -1);
+    char *p = (s1 + strlen(s1));
     for(int i = 0; s2[i] != '\0'; i++){
         p[i] = s2[i];
     }
@@ -81,7 +81,7 @@ uint64_t comlib::bytestol(uint8_t *head, int n){
 int comlib::strlen(char *str){
     int i;
     for(i = 0; str[i] != '\0'; i++);
-    return(i + 1);
+    return(i);
 }
 
 /**

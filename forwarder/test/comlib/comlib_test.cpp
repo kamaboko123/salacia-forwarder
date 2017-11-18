@@ -55,6 +55,8 @@ int main(void){
     char chars3[100] = "123";
     printf("%s\n", comlib::strcat(chars3, (char *)"aaa"));
     
+    printf("strlen : \"abc\" -> %d\n", comlib::strlen("abc"));
+    
     /*
     iValue = comlib::rbyte32(iValue);
     printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);
