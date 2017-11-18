@@ -3,8 +3,7 @@
 
 void IPAddress::_init(){
     addr = 0;
-    addr_str = new char[IP_ADDR_STR_LEN];
-    comlib::memset((uint8_t *)addr_str, 0, IP_ADDR_STR_LEN);
+    addr_str = new char[IP_ADDR_STR_LEN]();
 }
 
 IPAddress::IPAddress(){
@@ -197,8 +196,7 @@ IPNetwork::~IPNetwork(){
 void IPNetwork::_init(){
     netaddr = new IPAddress();
     netmask = new IPNetMask();
-    prefix = new char[IP_PREFIX_STR_LEN];
-    comlib::memset((uint8_t *)prefix, 0, IP_PREFIX_STR_LEN);
+    prefix = new char[IP_PREFIX_STR_LEN]();
 }
 
 bool IPNetwork::_validate(){
