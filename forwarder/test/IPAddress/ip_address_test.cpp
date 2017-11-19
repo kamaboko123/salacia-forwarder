@@ -49,5 +49,13 @@ int main(void){
     }
     printf("%s\n", network1.toStr());
     
+    
+    
+    printf("\n\n\n[copy test]\n");
+    
+    IPAddress addr1("10.0.0.0");
+    IPAddress addr2;
+    addr2 = addr1;
+    
     return(0);
 }

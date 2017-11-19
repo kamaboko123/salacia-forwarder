@@ -25,6 +25,18 @@ IPAddress::~IPAddress(){
     delete[] addr_str;
 }
 
+IPAddress::IPAddress(const IPAddress &ipaddr){
+    _init();
+    set(ipaddr);
+}
+
+IPAddress &IPAddress::operator=(const IPAddress &ipaddr){
+    if(this != &ipaddr){
+        set(ipaddr);
+    }
+    return(*this);
+}
+
 void IPAddress::set(uint32_t addr_uint){
     addr = addr_uint;
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
@@ -35,15 +47,15 @@ void IPAddress::set(char *addr_str){
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
 }
 
-void IPAddress::set(IPAddress ipaddr){
+void IPAddress::set(const IPAddress &ipaddr){
     set(ipaddr.touInt());
 }
 
-uint32_t IPAddress::touInt(){
+uint32_t IPAddress::touInt() const{
     return(addr);
 }
 
-char *IPAddress::toStr(){
+char *IPAddress::toStr() const{
     return(addr_str);
 }
 
@@ -164,11 +176,11 @@ bool IPNetmask::_validate(){
     return(valid);
 }
 
-bool IPNetmask::isValid(){
+bool IPNetmask::isValid() const{
     return(valid);
 }
 
-sfwdr::ssize_t IPNetmask::getLength(){
+sfwdr::ssize_t IPNetmask::getLength() const{
     return(length);
 }
 
@@ -256,19 +268,19 @@ bool IPNetwork::set(IPNetwork &ipnet){
     return(_validate());
 }
 
-IPAddress &IPNetwork::getNetaddr(){
+IPAddress &IPNetwork::getNetaddr() const{
     return(*netaddr);
 }
 
-IPNetmask &IPNetwork::getNetmask(){
+IPNetmask &IPNetwork::getNetmask() const{
     return(*netmask);
 }
 
-bool IPNetwork::isValid(){
+bool IPNetwork::isValid() const{
     return(valid);
 }
 
-char *IPNetwork::toStr(){
+char *IPNetwork::toStr() const{
     return(prefix);
 }
 

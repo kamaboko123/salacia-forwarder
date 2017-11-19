@@ -30,12 +30,16 @@ public:
     
     ~IPAddress();
     
+    //コピーコンストラクタと代入演算子
+    IPAddress(const IPAddress &ipaddr);
+    IPAddress &operator=(const IPAddress &ipaddr);
+    
     void set(uint32_t addr_uint);
     void set(char *addr_str);
-    void set(IPAddress ipaddr);
+    void set(const IPAddress &ipaddr);
     
-    uint32_t touInt();
-    char *toStr();
+    uint32_t touInt() const;
+    char *toStr() const;
     
     static uint32_t iptoui(char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);
@@ -56,8 +60,8 @@ public:
     sfwdr::ssize_t set(char *addr_str);
     sfwdr::ssize_t setLength(sfwdr::ssize_t mask_length);
     
-    bool isValid();
-    sfwdr::ssize_t getLength();
+    bool isValid() const;
+    sfwdr::ssize_t getLength() const;
     
 };
 
@@ -83,15 +87,15 @@ public:
     
     ~IPNetwork();
     
-    IPAddress &getNetaddr();
-    IPNetmask &getNetmask();
+    IPAddress &getNetaddr() const;
+    IPNetmask &getNetmask() const;
     
     bool set(IPNetwork &ipnet);
     bool set(char *ipnet_str);
     
-    char *toStr();
+    char *toStr() const;
     
-    bool isValid();
+    bool isValid() const;
     
     static bool validPrefixFormat(char *str);
 };
