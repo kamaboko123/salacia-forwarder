@@ -41,9 +41,12 @@ private:
     struct PBIT root;
     
     void _init();
+    void _r_delete(struct PBIT *pbit);
+    
     struct PBIT *_initPBNode(struct PBIT *pbit);
 public:
     RouteTable();
+    ~RouteTable();
     
     void addRoute(IPNetwork &network, RouteType type, IPAddress &nexthop);
     Route *getRoute(IPNetwork &network);

@@ -12,7 +12,6 @@ int main(void){
     Array<IPAddress> *nhs1 = r1.getNexthops(RTYPE_STATIC);
     printf("%s\n", nhs1->get(0).toStr());
     
-    
     IPNetwork nw2((char *)"172.16.100.0/24");
     IPAddress nh2_1((char *)"192.168.1.1");
     rtbl.addRoute(nw2, RTYPE_STATIC, nh2_1);

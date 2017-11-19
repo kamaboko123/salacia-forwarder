@@ -22,6 +22,15 @@ Route::Route(char *prefix_str){
 }
 
 Route::~Route(){
+    RouteType *keys = new RouteType[nexthops->getSize()];
+    nexthops->getKeys(keys);
+    for(int i = 0; i < nexthops->getSize(); i++){
+        if(nexthops->get(keys[i]) != nullptr){
+            delete nexthops->get(keys[i]);
+        }
+    }
+    delete[] keys;
+    
     delete prefix;
     delete nexthops;
 }
@@ -32,8 +41,7 @@ void Route::addNexthop(RouteType type, IPAddress &nexthop){
         nhs = new Array<IPAddress>();
         nexthops->update(type, nhs);
     }
-    IPAddress *nh = new IPAddress(nexthop);
-    nhs->add(*nh);
+    nhs->add(nexthop);
 }
 
 Array<IPAddress> *Route::getNexthops(RouteType type){
@@ -47,13 +55,36 @@ RouteTable::RouteTable(){
     _init();
 }
 
+RouteTable::~RouteTable(){
+    if(root.n_pbit[0] != nullptr){
+        _r_delete(root.n_pbit[0]);
+    }
+    if(root.n_pbit[1] != nullptr){
+        _r_delete(root.n_pbit[1]);
+    }
+}
+
+void RouteTable::_r_delete(struct PBIT *pbit){
+    if(pbit == nullptr) return;
+    if(pbit->n_pbit[0] != nullptr){
+        _r_delete(pbit->n_pbit[0]);
+    }
+    if(pbit->n_pbit[1] != nullptr){
+        _r_delete(pbit->n_pbit[1]);
+    }
+    if(pbit->route != nullptr){
+        delete pbit->route;
+    }
+    delete pbit;
+}
+
 void RouteTable::_init(){
     _initPBNode(&root);
 }
 
 struct PBIT *RouteTable::_initPBNode(struct PBIT *pbit){
     pbit->n_pbit[0] = nullptr;
-    pbit->n_pbit[0] = nullptr;
+    pbit->n_pbit[1] = nullptr;
     pbit->route = nullptr;
     return(pbit);
 }
