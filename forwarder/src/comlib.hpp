@@ -9,7 +9,8 @@
  */
 
 namespace sfwdr{
-    typedef int32_t size_t;
+    typedef int32_t ssize_t;
+    typedef uint32_t size_t;
 }
 
 namespace comlib{
@@ -20,7 +21,7 @@ namespace comlib{
     char *strncat(char *s1, char *s2, int n);
     
     char *strchr(char *s, char c);
-    sfwdr::size_t strchr_index(char *s, char c);
+    sfwdr::ssize_t strchr_index(char *s, char c);
     
     uint64_t bytestol(uint8_t *head, int n);
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
@@ -37,7 +38,7 @@ namespace comlib{
     uint16_t htons(uint16_t in);
     
     int atoi(char *s);
-    char *uitoa(int n, char *buf, sfwdr::size_t buflen);
+    char *uitoa(int n, char *buf, sfwdr::ssize_t buflen);
     
     uint8_t ndigit(uint32_t n);
     inline bool isdigit(char c){ return(c >= '0' && c <= '9'); };

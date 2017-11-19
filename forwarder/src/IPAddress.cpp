@@ -47,12 +47,12 @@ char *IPAddress::toStr(){
     return(addr_str);
 }
 
-char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::size_t retbuf_len){
+char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
     if(retbuf_len < IP_ADDR_STR_LEN) return(nullptr);
     
     uint32_t ext_base = 0xFF000000;
     uint8_t ls = 24;
-    size_t i = 0;
+    ssize_t i = 0;
     char buf;
     
     //上位から1byteずつ抜き出して処理
@@ -112,19 +112,19 @@ IPNetmask::IPNetmask(uint32_t addr_uint) : IPAddress(addr_uint){
     _validate();
 }
 
-sfwdr::size_t IPNetmask::set(uint32_t addr_uint){
+sfwdr::ssize_t IPNetmask::set(uint32_t addr_uint){
     IPAddress::set(addr_uint);
     _validate();
     return(getLength());
 }
 
-sfwdr::size_t IPNetmask::set(char *addr_str){
+sfwdr::ssize_t IPNetmask::set(char *addr_str){
     IPAddress::set(addr_str);
     _validate();
     return(getLength());
 }
 
-sfwdr::size_t IPNetmask::setLength(sfwdr::size_t mask_length){
+sfwdr::ssize_t IPNetmask::setLength(sfwdr::ssize_t mask_length){
     if(mask_length == 0) return(set((uint32_t)0));
     if(mask_length < 0 || mask_length > 32){
         set(IP_NETMASK_INVALID_VAL);
@@ -168,12 +168,16 @@ bool IPNetmask::isValid(){
     return(valid);
 }
 
-sfwdr::size_t IPNetmask::getLength(){
+sfwdr::ssize_t IPNetmask::getLength(){
     return(length);
 }
 
 IPNetwork::IPNetwork(char *ipnet_str){
     _init();
+    set(ipnet_str);
+}
+
+bool IPNetwork::set(char *ipnet_str){
     if(!validPrefixFormat(ipnet_str)){
         //invalidな値を入れる
         this->netaddr->set(IP_NETWORK_INVALID_NWADDR);
@@ -191,9 +195,10 @@ IPNetwork::IPNetwork(char *ipnet_str){
         delete[] netaddr_str;
     }
     _validate();
+    return(isValid());
 }
 
-IPNetwork::IPNetwork(char *addr_str, sfwdr::size_t mask_length){
+IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
     _init();
     IPAddress ipaddr(addr_str);
     this->netaddr->set(ipaddr.touInt());
@@ -201,7 +206,7 @@ IPNetwork::IPNetwork(char *addr_str, sfwdr::size_t mask_length){
     _validate();
 }
 
-IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::size_t mask_length){
+IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::ssize_t mask_length){
     _init();
     this->netaddr->set(ipaddr.touInt());
     this->netmask->setLength(mask_length);

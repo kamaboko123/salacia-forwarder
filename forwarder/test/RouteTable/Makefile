@@ -1,7 +1,7 @@
 # Makefile
 
-SRC = route_table_test.cpp ../../src/RouteTable.cpp
-C_OPT = -std=c++11 -Wall
+SRC = route_table_test.cpp ../../src/RouteTable.cpp ../../src/IPAddress.cpp ../../src/comlib.cpp
+C_OPT = -std=c++11 -Wall -O0
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/rtbl
 

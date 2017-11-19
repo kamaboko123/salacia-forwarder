@@ -1,4 +1,10 @@
+#ifndef INCLUDED_ROUTE_TABLE
+#define INCLUDED_ROUTE_TABLE
+
 #include <cstdint>
+#include "IPAddress.hpp"
+#include "HashMap.hpp"
+#include "Array.hpp"
 
 enum RouteType{
     RTYPE_LOCAL = 0,
@@ -8,19 +14,26 @@ enum RouteType{
     RTYPE_UNDEFINED = 255
 };
 
-struct ROUTE{
-    bool exist;
-    uint32_t prefix;
-    uint8_t plen;
-    uint32_t nexthop;
-    RouteType type;
+class Route{
+private:
+    IPNetwork *prefix;
+    HashMap<RouteType, Array<IPAddress *> *> *nexthops;
+    
+    void _init();
+public:
+    Route(IPNetwork prefix);
+    Route(char *prefix_str);
+    ~Route();
+    
+    void addNexthop(RouteType type, IPAddress &nexthop);
+    
+    Array<IPAddress *> *getNexthops(RouteType type);
 };
 
 struct PBIT{
     struct PBIT *n_pbit[2];
-    struct ROUTE route;
+    struct Route *route;
 };
-
 
 class  RouteTable{
 private:
@@ -32,3 +45,5 @@ public:
     RouteTable();
     
 };
+
+#endif

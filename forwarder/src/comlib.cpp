@@ -50,7 +50,7 @@ char *comlib::strchr(char *s, char c){
     return(nullptr);
 }
 
-sfwdr::size_t comlib::strchr_index(char *s, char c){
+sfwdr::ssize_t comlib::strchr_index(char *s, char c){
     for(int i = 0; s[i] != '\0'; i++){
         if(s[i] == c) return(i);
     }
@@ -184,7 +184,7 @@ uint8_t comlib::ndigit(uint32_t n){
     return(i);
 }
 
-char *comlib::uitoa(int n, char *buf, sfwdr::size_t buflen){
+char *comlib::uitoa(int n, char *buf, sfwdr::ssize_t buflen){
     char *p = buf;
     int i = ndigit(n);
     
