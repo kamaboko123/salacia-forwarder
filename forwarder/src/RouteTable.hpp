@@ -2,6 +2,7 @@
 #define INCLUDED_ROUTE_TABLE
 
 #include <cstdint>
+#include <cinttypes>
 #include "IPAddress.hpp"
 #include "HashMap.hpp"
 #include "Array.hpp"
@@ -39,11 +40,13 @@ class  RouteTable{
 private:
     struct PBIT root;
     
-    void init();
-    void initPBNode(struct PBIT *pbit);
+    void _init();
+    struct PBIT *_initPBNode(struct PBIT *pbit);
 public:
     RouteTable();
     
+    void addRoute(IPNetwork &network, RouteType type, IPAddress &nexthop);
+    Route *getRoute(IPNetwork &network);
 };
 
 #endif
