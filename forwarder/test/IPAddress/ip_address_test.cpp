@@ -53,9 +53,30 @@ int main(void){
     
     printf("\n\n\n[copy test]\n");
     
-    IPAddress addr1("10.0.0.0");
-    IPAddress addr2;
-    addr2 = addr1;
+    IPAddress cp_addr1("10.0.0.0");
+    IPAddress cp_addr2;
+    cp_addr2 = cp_addr1;
+    IPAddress cp_addr3 = cp_addr2;
     
+    
+    IPNetmask cp_mask1("255.255.255.0");
+    IPNetmask cp_mask2;
+    cp_mask2 = cp_mask1;
+    IPNetmask cp_mask3 = cp_mask2;
+    
+    
+    IPNetwork cp_nw1("10.0.0.0/8");
+    IPNetwork cp_nw2 = cp_nw1;
+    //cp_nw2.set("0.0.0.0/1");
+    cp_nw2 = cp_nw1;
+    IPNetwork cp_nw3 = cp_nw2;
+    
+    if(cp_nw2.isValid()){
+        printf("OK!\n");
+    }
+    else{
+        printf("NG!\n");
+    }
+    printf("%s\n", cp_nw2.toStr());
     return(0);
 }

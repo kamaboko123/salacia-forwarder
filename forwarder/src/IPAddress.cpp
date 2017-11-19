@@ -184,9 +184,62 @@ sfwdr::ssize_t IPNetmask::getLength() const{
     return(length);
 }
 
+IPNetwork::IPNetwork(){
+    _init();
+    _validate();
+}
+
 IPNetwork::IPNetwork(char *ipnet_str){
     _init();
     set(ipnet_str);
+}
+
+IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
+    _init();
+    IPAddress ipaddr(addr_str);
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->setLength(mask_length);
+    _validate();
+}
+
+IPNetwork::IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
+    _init();
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->setLength(mask_length);
+    _validate();
+}
+
+IPNetwork::IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask){
+    _init();
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->set(netmask.touInt());
+    _validate();
+}
+
+IPNetwork::~IPNetwork(){
+    delete netaddr;
+    delete netmask;
+    delete[] prefix;
+}
+
+
+IPNetwork::IPNetwork(const IPNetwork &ipnet){
+    _init();
+    set(ipnet);
+}
+
+IPNetwork &IPNetwork::operator=(const IPNetwork &ipnet){
+    if(this != &ipnet){
+        set(ipnet);
+    }
+    return(*this);
+}
+
+
+void IPNetwork::_init(){
+    netaddr = new IPAddress((uint32_t)IP_NETWORK_INVALID_NWADDR);
+    netmask = new IPNetmask((uint32_t)IP_NETWORK_INVALID_MASK);
+    prefix = new char[IP_PREFIX_STR_LEN]();
 }
 
 bool IPNetwork::set(char *ipnet_str){
@@ -210,42 +263,12 @@ bool IPNetwork::set(char *ipnet_str){
     return(isValid());
 }
 
-IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
-    _init();
-    IPAddress ipaddr(addr_str);
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->setLength(mask_length);
-    _validate();
-}
-
-IPNetwork::IPNetwork(IPAddress &ipaddr, sfwdr::ssize_t mask_length){
-    _init();
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->setLength(mask_length);
-    _validate();
-}
-
-IPNetwork::IPNetwork(IPAddress &ipaddr, IPNetmask &netmask){
-    _init();
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->set(netmask.touInt());
-    _validate();
-}
-
-IPNetwork::~IPNetwork(){
-    delete netaddr;
-    delete netmask;
-    delete[] prefix;
-}
-
-void IPNetwork::_init(){
-    netaddr = new IPAddress();
-    netmask = new IPNetmask();
-    prefix = new char[IP_PREFIX_STR_LEN]();
-}
-
 bool IPNetwork::_validate(){
-    if((valid = netmask->isValid())){
+    valid = netmask->isValid();
+    valid = !(netaddr->touInt() == 0 && netmask->touInt() != 0);
+    
+    comlib::memset((uint8_t *)prefix, 0, sizeof(char)*IP_PREFIX_STR_LEN);
+    if(valid){
         if((netaddr->touInt() & netmask->touInt()) == netaddr->touInt()){
             valid = true;
             
@@ -262,10 +285,17 @@ bool IPNetwork::_validate(){
     return(false);
 }
 
-bool IPNetwork::set(IPNetwork &ipnet){
+bool IPNetwork::set(const IPNetwork &ipnet){
     this->netaddr->set(ipnet.getNetaddr().touInt());
-    this->netmask->set(ipnet.getNetmask().getLength());
+    this->netmask->set(ipnet.getNetmask().touInt());
     return(_validate());
+}
+
+bool IPNetwork::set(const IPAddress &ipaddr, const IPNetmask &netmask){
+    this->netaddr->set(ipaddr.touInt());
+    this->netmask->set(netmask.touInt());
+    _validate();
+    return(isValid());
 }
 
 IPAddress &IPNetwork::getNetaddr() const{
