@@ -63,6 +63,7 @@ int main(void){
     printf("[strchr] %s, %c, %s\n", str, c, comlib::strchr(str, c));
     printf("[strchr_index] %s, %c, %d\n", str, c, comlib::strchr_index(str, c));
     
+    printf("[getBit] %d[%d]->%d\n", 5, 0, comlib::getBit(5, 0));
     /*
     iValue = comlib::rbyte32(iValue);
     printf("%X : %X : %X : %X\n" , pc[0] , pc[1] , pc[2] , pc[3]);

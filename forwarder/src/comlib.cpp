@@ -198,9 +198,12 @@ char *comlib::uitoa(int n, char *buf, sfwdr::ssize_t buflen){
     return(buf);
 }
 
-//累乗計算
 uint64_t comlib::upow(uint64_t x, uint64_t n){
     if(n == 0) return(1);
     if(n == 1) return(x);
     return(x * upow(x, n-1));
+}
+
+int comlib::getBit(uint64_t x, uint8_t n){
+    return((uint64_t)(x & upow(2, n)) >> n);
 }

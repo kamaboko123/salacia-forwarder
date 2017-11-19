@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <cinttypes>
 
 /**
  * Common Library
@@ -43,7 +44,11 @@ namespace comlib{
     uint8_t ndigit(uint32_t n);
     inline bool isdigit(char c){ return(c >= '0' && c <= '9'); };
     
+    //累乗計算
     uint64_t upow(uint64_t x, uint64_t n);
+    
+    //指定ビットを取得
+    int getBit(uint64_t x, uint8_t n);
 }
 
 #endif
