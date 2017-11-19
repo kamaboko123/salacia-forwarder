@@ -17,7 +17,7 @@ enum RouteType{
 class Route{
 private:
     IPNetwork *prefix;
-    HashMap<RouteType, Array<IPAddress *> *> *nexthops;
+    HashMap<RouteType, Array<IPAddress> *> *nexthops;
     
     void _init();
 public:
@@ -27,7 +27,7 @@ public:
     
     void addNexthop(RouteType type, IPAddress &nexthop);
     
-    Array<IPAddress *> *getNexthops(RouteType type);
+    Array<IPAddress> *getNexthops(RouteType type);
 };
 
 struct PBIT{
