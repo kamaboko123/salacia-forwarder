@@ -57,6 +57,10 @@ public:
     }
     
     ~Array<T>(){
+        clear();
+    }
+    
+    void clear(){
         uint32_t s = size;
         for(uint32_t i = 0; i < s; i++){
             del(0);
