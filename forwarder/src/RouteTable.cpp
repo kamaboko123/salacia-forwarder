@@ -48,6 +48,9 @@ Array<IPAddress> *Route::getNexthops(RouteType type){
     return(nexthops->get(type));
 }
 
+IPNetwork Route::getNetwork() const{
+    return(*prefix);
+}
 
 
 
@@ -120,3 +123,22 @@ Route *RouteTable::getRoute(IPNetwork &network){
     }
     return(p->route);
 }
+
+sfwdr::size_t RouteTable::getAllNetwork(Array<IPNetwork> &ret){
+    ret.clear();
+    _r_getAllNetwork(ret, &root);
+    return(ret.getSize());
+}
+
+void RouteTable::_r_getAllNetwork(Array<IPNetwork> &ret, struct PBIT *pbit){
+    if(pbit->route != nullptr){
+        ret.add(pbit->route->getNetwork());
+    }
+    for(int i = 0; i < 2; i++){
+        if(pbit->n_pbit[i] != nullptr){
+            _r_getAllNetwork(ret, pbit->n_pbit[i]);
+        }
+    }
+}
+
+

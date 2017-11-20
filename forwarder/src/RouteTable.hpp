@@ -29,6 +29,8 @@ public:
     void addNexthop(RouteType type, IPAddress &nexthop);
     
     Array<IPAddress> *getNexthops(RouteType type);
+    
+    IPNetwork getNetwork() const;
 };
 
 struct PBIT{
@@ -44,12 +46,16 @@ private:
     void _r_delete(struct PBIT *pbit);
     
     struct PBIT *_initPBNode(struct PBIT *pbit);
+    
+    void _r_getAllNetwork(Array<IPNetwork> &ret, struct PBIT *pbit);
 public:
     RouteTable();
     ~RouteTable();
     
     void addRoute(IPNetwork &network, RouteType type, IPAddress &nexthop);
     Route *getRoute(IPNetwork &network);
+    
+    sfwdr::size_t getAllNetwork(Array<IPNetwork> &ret);
 };
 
 #endif

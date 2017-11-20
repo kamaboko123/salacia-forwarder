@@ -1,6 +1,16 @@
 #include <cstdio>
 #include "../../src/RouteTable.hpp"
 
+void dump_rtb(RouteTable &rtbl){
+    Array<IPNetwork> nws;
+    printf("Number of Routes : %d\n", rtbl.getAllNetwork(nws));
+    
+    for(int i = 0; i < nws.getSize(); i++){
+        printf("[%d]%s\n", i, nws.get(i).toStr());
+    }
+    
+}
+
 int main(void){
     RouteTable rtbl;
     
@@ -12,11 +22,15 @@ int main(void){
     Array<IPAddress> *nhs1 = r1.getNexthops(RTYPE_STATIC);
     printf("%s\n", nhs1->get(0).toStr());
     
+    rtbl.addRoute(nw1, RTYPE_CONNECTED, nh1_1);
+    
     IPNetwork nw2((char *)"172.16.100.0/24");
     IPAddress nh2_1((char *)"192.168.1.1");
     rtbl.addRoute(nw2, RTYPE_STATIC, nh2_1);
     Route *r2 = rtbl.getRoute(nw2);
     
+    
+    /*
     if(r2 != nullptr){
         Array<IPAddress> *nh = r2->getNexthops(RTYPE_STATIC);
         if(nh != nullptr){
@@ -26,5 +40,9 @@ int main(void){
             }
         }
     }
+    */
+    
+    dump_rtb(rtbl);
+    
     return(0);
 }
