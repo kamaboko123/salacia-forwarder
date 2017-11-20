@@ -321,7 +321,7 @@ bool IPNetwork::validPrefixFormat(char *str){
     if(prefix_index == -1) return(false);
     
     //次の文字が終端なら不正
-    if((str = str + prefix_index + 1) == '\0') return(false);
+    if(*(str = str + prefix_index + 1) == '\0') return(false);
     //数字じゃなけくても不正
     if(!comlib::isdigit(*str)) return(false);
     
