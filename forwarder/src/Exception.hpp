@@ -1,3 +1,6 @@
+#ifndef INCLUDED_EXCEPTION
+#define INCLUDED_EXCEPTION
+
 #include "comlib.hpp"
 
 namespace sfwdr{
@@ -25,3 +28,5 @@ namespace sfwdr{
         };
     }
 }
+
+#endif
