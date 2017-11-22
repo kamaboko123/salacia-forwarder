@@ -6,7 +6,7 @@ TARGET = $(TARGET_DIR)/hashmap
 
 hashmap : $(SRC)
 	mkdir -p $(TARGET_DIR)
-	g++ -o $(TARGET) -W -std=c++11 $(SRC)
+	g++ -o $(TARGET) -std=c++11 $(SRC)
 
 debug : $(SRC)
 	mkdir -p $(TARGET_DIR)

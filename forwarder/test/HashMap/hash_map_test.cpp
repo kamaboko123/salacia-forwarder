@@ -97,6 +97,13 @@ int main(void){
     delete[] keys;
     printf("!!!!!!!!!\n");
     
+    if(map_int->isExist(10)){
+        printf("key : [%d] is exist!\n", 10);
+    }
+    else{
+        printf("key : [%d] is not exist!\n", 10);
+    }
+    
     /*
     map->del(m5);
     map->_dump();
@@ -129,6 +136,7 @@ int main(void){
     */
     
     delete map;
+    delete map_int;
     delete pi1;
     delete pi2;
     delete pi3;

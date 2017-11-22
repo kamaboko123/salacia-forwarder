@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = mac_tbl_test.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/comlib.cpp
+SRC = mac_tbl_test.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/mac_tbl
 

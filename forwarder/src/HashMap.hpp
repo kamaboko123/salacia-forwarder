@@ -2,6 +2,8 @@
 #define INCLUDED_HASH_MAP
 
 #include <iostream>
+#include "Array.hpp"
+#include "comlib.hpp"
 
 template <typename K, typename V>
 class HashMapEntry{
@@ -68,9 +70,16 @@ template <typename K, typename V>
 class HashMap{
 private:
     HashMapEntry<K, V> *tbl;
+    V *d_value;
     int size;
     
-    HashMapEntry<K, V> *getEntry(K key){
+    void _init(int size){
+        this->size = size;
+        this->tbl = new HashMapEntry<K, V>[this->size];
+        this->d_value = new V;
+    }
+    
+    HashMapEntry<K, V> *_getEntry(K key){
         int index = hash(key);
         if(tbl[index].isEmpty()) return(nullptr);
         
@@ -90,9 +99,8 @@ private:
     }
     
 public:
-    HashMap<K, V>(int size){
-        this->size = size;
-        this->tbl = new HashMapEntry<K, V>[this->size];
+    HashMap<K, V>(int size = 256){
+        _init(size);
     }
     
     ~HashMap(){
@@ -110,6 +118,7 @@ public:
         
         delete[] keys;
         delete[] this->tbl;
+        delete d_value;
     }
     
     void update(K key, V value){
@@ -146,9 +155,14 @@ public:
     }
     
     V get(K key){
-        HashMapEntry<K, V> *result = getEntry(key);
-        if(result == nullptr) return(nullptr);
+        HashMapEntry<K, V> *result = _getEntry(key);
+        if(result == nullptr) return(*d_value);
         return(result->get());
+    }
+    
+    bool isExist(K key){
+        if(_getEntry(key) != nullptr) return(true);
+        return(false);
     }
     
     int getSize(){
@@ -178,6 +192,7 @@ public:
         }
     }
     
+    [[deprecated("please use getKeys(Array<K> &) function")]]
     K *getKeys(){
         K *ret = new K[getSize()];
         int j = 0;
@@ -195,6 +210,7 @@ public:
         return(ret);
     }
     
+    [[deprecated("please use getKeys(Array<K> &) function")]]
     K *getKeys(K *ret){
         int j = 0;
         for(int i = 0; i < size; i++){
@@ -211,8 +227,23 @@ public:
         return(ret);
     }
     
+    sfwdr::ssize_t getKeys(Array<K> &ret){
+        ret.clear();
+        for(int i = 0; i < size; i++){
+            HashMapEntry<K, V> *p = &tbl[i];
+            if(p->isEmpty()) continue;
+            ret.add(tbl[i].getKey());
+            while(p->getNext() != nullptr){
+                ret.add(p->getNext()->getKey());
+                p = p->getNext();
+            }
+        }
+        
+        return(ret.getSize());
+    }
+    
     bool del(K key){
-        HashMapEntry<K, V> *target = getEntry(key);
+        HashMapEntry<K, V> *target = _getEntry(key);
         if(target == nullptr) return(false);
     
         if(target->getPrev() == nullptr){
