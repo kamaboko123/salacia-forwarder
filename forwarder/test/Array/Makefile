@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = array_test.cpp
+SRC = array_test.cpp ../../src/Exception.cpp ../../src/comlib.cpp
 C_OPT = -std=c++11 -Wall
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/array

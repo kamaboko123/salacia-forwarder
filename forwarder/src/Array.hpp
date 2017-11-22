@@ -1,7 +1,7 @@
 #ifndef INCLUDED_ARRAY
 #define INCLUDED_ARRAY
 
-#include <cstdint>
+#include "Exception.hpp"
 
 template <typename T>
 class ArrayItem{
@@ -120,7 +120,10 @@ public:
     
     T get(uint32_t index){
         ArrayItem<T> *ret = getArrayItem(index);
-        if(ret == nullptr) return(nullptr);
+        if(ret == nullptr){
+            throw sfwdr::Exception::OutOfRange();
+            //return(nullptr);
+        }
         
         return(ret->get());
     }

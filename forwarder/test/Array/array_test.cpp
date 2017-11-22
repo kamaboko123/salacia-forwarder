@@ -58,6 +58,13 @@ int main(void){
     
     dump(array);
     
+    try{
+        array->get(3);
+    }
+    catch(sfwdr::Exception::OutOfRange ex){
+        printf("%s\n", ex.getMessage());
+    }
+    
     delete pi0;
     delete pi1;
     delete pi2;
