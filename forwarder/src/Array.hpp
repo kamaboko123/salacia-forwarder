@@ -141,7 +141,7 @@ public:
         return(true);
     }
     
-    uint32_t getSize() const{
+    sfwdr::size_t getSize() const{
         return(size);
     }
     
