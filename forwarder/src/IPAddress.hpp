@@ -22,6 +22,9 @@ private:
     char *addr_str;
     
     void _init();
+
+protected:
+    bool set_flg;
     
 public:
     IPAddress();
@@ -34,12 +37,13 @@ public:
     IPAddress(const IPAddress &ipaddr);
     IPAddress &operator=(const IPAddress &ipaddr);
     
-    void set(uint32_t addr_uint);
-    void set(char *addr_str);
+    void set(uint32_t addr_uint, bool set_flg = true);
+    void set(char *addr_str, bool set_flg = true);
     void set(const IPAddress &ipaddr);
     
     uint32_t touInt() const;
     char *toStr() const;
+    bool isSet() const;
     
     static uint32_t iptoui(char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);

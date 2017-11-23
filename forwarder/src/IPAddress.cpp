@@ -4,11 +4,12 @@
 void IPAddress::_init(){
     addr = 0;
     addr_str = new char[IP_ADDR_STR_LEN]();
+    set_flg = false;
 }
 
 IPAddress::IPAddress(){
     _init();
-    set((uint32_t)0);
+    set((uint32_t)0, false);
 }
 
 IPAddress::IPAddress(uint32_t addr_uint){
@@ -37,18 +38,20 @@ IPAddress &IPAddress::operator=(const IPAddress &ipaddr){
     return(*this);
 }
 
-void IPAddress::set(uint32_t addr_uint){
+void IPAddress::set(uint32_t addr_uint, bool set_flg){
     addr = addr_uint;
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
+    this->set_flg = set_flg;
 }
 
-void IPAddress::set(char *addr_str){
+void IPAddress::set(char *addr_str, bool set_flg){
     addr = iptoui(addr_str);
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
+    this->set_flg = set_flg;
 }
 
 void IPAddress::set(const IPAddress &ipaddr){
-    set(ipaddr.touInt());
+    set(ipaddr.touInt(), ipaddr.isSet());
 }
 
 uint32_t IPAddress::touInt() const{
@@ -57,6 +60,10 @@ uint32_t IPAddress::touInt() const{
 
 char *IPAddress::toStr() const{
     return(addr_str);
+}
+
+bool IPAddress::isSet() const{
+    return(set_flg);
 }
 
 char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
@@ -112,8 +119,9 @@ uint32_t IPAddress::iptoui(char *addr_str){
     return(addr);
 }
 
-IPNetmask::IPNetmask() : IPAddress(){
+IPNetmask::IPNetmask() : IPAddress((uint32_t)IP_NETMASK_INVALID_VAL){
     _validate();
+    set_flg = false;
 }
 
 IPNetmask::IPNetmask(char *addr_str) : IPAddress(addr_str){
