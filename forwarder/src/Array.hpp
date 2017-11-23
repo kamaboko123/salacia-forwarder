@@ -40,7 +40,12 @@ private:
     uint32_t size;
     ArrayItem<T> *root;
     
-    ArrayItem<T> *getArrayItem(uint32_t index){
+    void _init(){
+        size = 0;
+        root = nullptr;
+    }
+    
+    ArrayItem<T> *getArrayItem(uint32_t index) const{
         if(index >= size) return(nullptr);
         
         ArrayItem<T> *p = root;
@@ -50,10 +55,32 @@ private:
         return(p);
     }
     
+    void _copy_from(const Array<T> &src){
+        clear();
+        int *array_size = new int(src.getSize());
+        for(int i = 0; i < *array_size; i++){
+            add(src.get(i));
+        }
+        
+        delete array_size;
+    }
+    
 public:
     Array<T>(){
-        size = 0;
-        root = nullptr;
+        _init();
+    }
+    
+    Array<T>(const Array<T> &array){
+        _init();
+        _copy_from(array);
+    }
+    
+    Array<T> &operator=(const Array<T> &array){
+        if(this != &array){
+            _copy_from(array);
+        }
+        
+        return(*this);
     }
     
     ~Array<T>(){
@@ -114,11 +141,11 @@ public:
         return(true);
     }
     
-    uint32_t getSize(){
+    uint32_t getSize() const{
         return(size);
     }
     
-    T get(uint32_t index){
+    T get(uint32_t index) const{
         ArrayItem<T> *ret = getArrayItem(index);
         if(ret == nullptr){
             throw sfwdr::Exception::OutOfRange();

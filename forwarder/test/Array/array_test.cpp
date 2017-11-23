@@ -28,6 +28,9 @@ void del(Array<int *> *array, int index){
     printf("del:index[%d]\n", index);
 }
 
+void copy_test(Array<int *> array){
+    printf("copy by function argment\n");
+}
 
 int main(void){
     Array<int *> *array = new Array<int *>();
@@ -57,6 +60,13 @@ int main(void){
     set(array, 1, pi1);
     
     dump(array);
+    
+    printf("copy\n");
+    Array<int *> array_copied;
+    array_copied = *array;
+    dump(&array_copied);
+    
+    copy_test(*array);
     
     try{
         array->get(3);
