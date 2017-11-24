@@ -76,7 +76,7 @@ private:
     void _init(int size){
         this->size = size;
         this->tbl = new HashMapEntry<K, V>[this->size];
-        this->d_value = new V;
+        this->d_value = new V();
     }
     
     HashMapEntry<K, V> *_getEntry(K key){
