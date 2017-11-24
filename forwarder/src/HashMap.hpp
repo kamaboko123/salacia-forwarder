@@ -104,19 +104,14 @@ public:
     }
     
     ~HashMap(){
-        //std::cout << "destructer HashMap" << std::endl;
-        
-        int size = getSize();
-        K *keys = new K[size];
-        getKeys(keys);
+        Array<K> *keys = new Array<K>();
+        int size = getKeys(*keys);
         
         for(int i = 0; i < size; i++){
-            //std::cout << "delete : ";
-            //std::cout << keys[i].toInt() << std::endl;
-            del(keys[i]);
+            del(keys->get(i));
         }
         
-        delete[] keys;
+        delete keys;
         delete[] this->tbl;
         delete d_value;
     }

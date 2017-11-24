@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = hash_map_test.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp
+SRC = hash_map_test.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/Exception.cpp
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/hashmap
 
