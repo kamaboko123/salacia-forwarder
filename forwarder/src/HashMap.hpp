@@ -79,7 +79,7 @@ private:
         this->d_value = new V();
     }
     
-    HashMapEntry<K, V> *_getEntry(K key){
+    HashMapEntry<K, V> *_getEntry(K key) const{
         int index = hash(key);
         if(tbl[index].isEmpty()) return(nullptr);
         
@@ -149,13 +149,13 @@ public:
         ne->set(key, value, nullptr, p);
     }
     
-    V get(K key){
+    V get(K key) const{
         HashMapEntry<K, V> *result = _getEntry(key);
         if(result == nullptr) return(*d_value);
         return(result->get());
     }
     
-    bool isExist(K key){
+    bool isExist(K key) const{
         if(_getEntry(key) != nullptr) return(true);
         return(false);
     }
@@ -222,7 +222,7 @@ public:
         return(ret);
     }
     
-    sfwdr::ssize_t getKeys(Array<K> &ret){
+    sfwdr::size_t getKeys(Array<K> &ret) const{
         ret.clear();
         for(int i = 0; i < size; i++){
             HashMapEntry<K, V> *p = &tbl[i];
@@ -273,7 +273,7 @@ public:
         return(true);
     }
     
-    int hash(K key){
+    int hash(K key) const{
         return(key.getHash() % this->size);
     }
     

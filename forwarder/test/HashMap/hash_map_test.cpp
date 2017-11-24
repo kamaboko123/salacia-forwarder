@@ -7,7 +7,7 @@
 using namespace std;
 
 template<>
-int HashMap<int, int *>::hash(int key){
+int HashMap<int, int *>::hash(int key) const{
     return(key % this->size);
 }
 

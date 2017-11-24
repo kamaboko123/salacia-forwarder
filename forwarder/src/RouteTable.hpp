@@ -6,30 +6,40 @@
 #include "IPAddress.hpp"
 #include "HashMap.hpp"
 #include "Array.hpp"
+#include "Exception.hpp"
 
-enum RouteType{
+enum RouteType : uint8_t{
     RTYPE_LOCAL = 0,
-    RTYPE_CONNECTED = 1,
-    RTYPE_STATIC = 2,
-    RTYPE_RIP = 3,
-    RTYPE_UNDEFINED = 255
+    RTYPE_CONNECTED,
+    RTYPE_STATIC,
+    RTYPE_RIP,
+    RTYPE_INVALID
 };
+
+using namespace sfwdr::Exception;
 
 class Route{
 private:
-    IPNetwork *prefix;
-    HashMap<RouteType, Array<IPAddress> *> *nexthops;
+    IPNetwork prefix;
+    HashMap<RouteType, Array<IPAddress> *> nexthops;
     
     void _init();
+    void _copy_from(const Route &route);
 public:
-    Route(IPNetwork prefix);
+    Route(const IPNetwork &prefix);
     Route(char *prefix_str);
+    Route(const Route &route);
     ~Route();
     
-    void addNexthop(RouteType type, IPAddress &nexthop);
+    Route &operator=(const Route &route);
     
-    Array<IPAddress> *getNexthops(RouteType type);
+    void addNexthop(RouteType type, IPAddress nexthop);
     
+    Array<IPAddress> getNexthops(RouteType type) const;
+    sfwdr::size_t getBestNexthops(Array<IPAddress> &ret) const;
+    Array<IPAddress> getBestNexthops() const;
+    RouteType getBestRouteType() const;
+    sfwdr::size_t getRouteTypes(Array<RouteType> &ret) const;
     IPNetwork getNetwork() const;
 };
 
@@ -40,22 +50,22 @@ struct PBIT{
 
 class  RouteTable{
 private:
-    struct PBIT root;
+    struct PBIT *root;
     
     void _init();
     void _r_delete(struct PBIT *pbit);
     
     struct PBIT *_initPBNode(struct PBIT *pbit);
     
-    void _r_getAllNetwork(Array<IPNetwork> &ret, struct PBIT *pbit);
+    //void _r_getAllNetwork(Array<IPNetwork> &ret, struct PBIT *pbit);
+    
 public:
     RouteTable();
     ~RouteTable();
     
-    void addRoute(IPNetwork &network, RouteType type, IPAddress &nexthop);
-    Route *getRoute(IPNetwork &network);
+    void addRoute(const IPNetwork &network, const RouteType type, const IPAddress &nexthop);
+    Route getRoute(const IPNetwork &network) const;
     
-    sfwdr::size_t getAllNetwork(Array<IPNetwork> &ret);
+    //sfwdr::size_t getAllNetwork(Array<IPNetwork> &ret);
 };
-
 #endif

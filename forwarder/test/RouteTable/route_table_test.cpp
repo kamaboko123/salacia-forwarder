@@ -1,48 +1,36 @@
 #include <cstdio>
 #include "../../src/RouteTable.hpp"
 
-void dump_rtb(RouteTable &rtbl){
-    Array<IPNetwork> nws;
-    printf("Number of Routes : %d\n", rtbl.getAllNetwork(nws));
-    
-    for(int i = 0; i < nws.getSize(); i++){
-        printf("[%d]%s\n", i, nws.get(i).toStr());
-    }
-    
-}
-
 int main(void){
-    RouteTable rtbl;
     
-    IPNetwork nw1((char *)"192.168.100.0/24");
-    Route r1((char *)"10.0.0.0/24");
-    IPAddress nh1_1((char *)"192.168.0.1");
-    
-    r1.addNexthop(RTYPE_STATIC, nh1_1);
-    Array<IPAddress> *nhs1 = r1.getNexthops(RTYPE_STATIC);
-    printf("%s\n", nhs1->get(0).toStr());
-    
-    rtbl.addRoute(nw1, RTYPE_CONNECTED, nh1_1);
-    
-    IPNetwork nw2((char *)"172.16.100.0/24");
-    IPAddress nh2_1((char *)"192.168.1.1");
-    rtbl.addRoute(nw2, RTYPE_STATIC, nh2_1);
-    Route *r2 = rtbl.getRoute(nw2);
-    
-    
-    /*
-    if(r2 != nullptr){
-        Array<IPAddress> *nh = r2->getNexthops(RTYPE_STATIC);
-        if(nh != nullptr){
-            printf("Number of Nexthops : %d\n", nh->getSize());
-            for(uint32_t i = 0; i < nh->getSize(); i++){
-                printf("[%d]%s\n", i + 1, nh->get(i).toStr());
-            }
-        }
+    //Route Test
+    IPAddress addr1 = IPAddress("192.168.1.1");
+    IPAddress addr2 = IPAddress("192.168.2.255");
+    try{
+        Route *r1 = new Route("10.0.0.0/16");
+        r1->addNexthop(RTYPE_STATIC, addr1);
+        r1->addNexthop(RTYPE_CONNECTED, addr2);
+        
+        Array<IPAddress> best1;
+        r1->getBestNexthops(best1);
+        printf("r1 best : %s\n", best1.get(0).toStr());
+        
+        Route r2 = *r1;
+        
+        delete r1;
     }
-    */
+    catch(sfwdr::Exception::Exception e){
+        printf("%s\n", e.getMessage());
+    }
     
-    dump_rtb(rtbl);
+    //RouteTable Test
+    IPNetwork nw2("10.10.10.0/24");
+    RouteTable *rtb = new RouteTable();
+    rtb->addRoute(nw2, RTYPE_STATIC, addr1);
+    printf("%s\n", rtb->getRoute(nw2).getBestNexthops().get(0).toStr());
+    
+    
+    delete rtb;
     
     return(0);
 }
