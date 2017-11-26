@@ -40,6 +40,7 @@ public:
     Array<IPAddress> getBestNexthops() const;
     RouteType getBestRouteType() const;
     sfwdr::size_t getRouteTypes(Array<RouteType> &ret) const;
+    Array<RouteType> getRouteTypes() const;
     IPNetwork getNetwork() const;
 };
 
@@ -66,6 +67,11 @@ public:
     void addRoute(const IPNetwork &network, const RouteType type, const IPAddress &nexthop);
     Route getRoute(const IPNetwork &network) const;
     
+    Route resolve(const IPAddress &addr) const;
+    Route resolve(const IPNetwork &network) const;
+    
+    //再帰解決(経路種別による優先度あり)
+    Route r_resolve(const IPAddress &addr) const;
     //sfwdr::size_t getAllNetwork(Array<IPNetwork> &ret);
 };
 #endif

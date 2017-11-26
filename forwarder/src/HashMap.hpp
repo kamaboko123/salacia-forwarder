@@ -104,6 +104,12 @@ public:
     }
     
     ~HashMap(){
+        clear();
+        delete[] this->tbl;
+        delete d_value;
+    }
+    
+    void clear(){
         Array<K> *keys = new Array<K>();
         int size = getKeys(*keys);
         
@@ -112,8 +118,6 @@ public:
         }
         
         delete keys;
-        delete[] this->tbl;
-        delete d_value;
     }
     
     void update(K key, V value){

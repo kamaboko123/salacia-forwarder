@@ -44,6 +44,13 @@ Route::~Route(){
 void Route::_copy_from(const Route &route){
     prefix = route.getNetwork();
     
+    Array<RouteType> keys;
+    nexthops.getKeys(keys);
+    for(sfwdr::size_t i = 0; i < keys.getSize(); i++){
+        delete nexthops.get(keys.get(i));
+    }
+    nexthops.clear();
+    
     Array<RouteType> types;
     route.getRouteTypes(types);
     for(sfwdr::size_t i = 0; i < types.getSize(); i++){
@@ -75,6 +82,12 @@ IPNetwork Route::getNetwork() const{
 
 sfwdr::size_t Route::getRouteTypes(Array<RouteType> &ret) const{
     return(nexthops.getKeys(ret));
+}
+
+Array<RouteType> Route::getRouteTypes() const{
+    Array<RouteType> ret;
+    getRouteTypes(ret);
+    return(ret);
 }
 
 RouteType Route::getBestRouteType() const{
@@ -142,7 +155,7 @@ void RouteTable::addRoute(const IPNetwork &network, const RouteType type, const 
     
     int bit;
     struct PBIT *p = root;
-    for(int i = 0; i < network.getNetmask().getLength(); i++){
+    for(int i = 31; i > (31 - network.getNetmask().getLength()); i--){
         bit = comlib::getBit(network.getNetaddr().touInt(), i);
         if(p->n_pbit[bit] == nullptr){
             p->n_pbit[bit] = _initPBNode(new struct PBIT());
@@ -161,10 +174,53 @@ Route RouteTable::getRoute(const IPNetwork &network) const{
     
     int bit;
     PBIT *p = root;
-    for(int i = 0; i < network.getNetmask().getLength(); i++){
+    for(int i = 31; i > (31 - network.getNetmask().getLength()); i--){
         bit = comlib::getBit(network.getNetaddr().touInt(), i);
         if(p->n_pbit[bit] == nullptr) return(nullptr);
         p = p->n_pbit[bit];
     }
     return(*(p->route));
+}
+
+Route RouteTable::resolve(const IPAddress &addr) const{
+    IPNetwork tmp(addr, 32);
+    return(resolve(tmp));
+}
+
+Route RouteTable::resolve(const IPNetwork &network) const{
+    int bit;
+    PBIT *p = root;
+    Route ret((char *)"0.0.0.0/0");
+    
+    for(int i = 31; i > (31 - network.getNetmask().getLength()); i--){
+        if(p->route != nullptr) ret = *(p->route);
+        bit = comlib::getBit(network.getNetaddr().touInt(), i);
+        if(p->n_pbit[bit] == nullptr) break;
+        p = p->n_pbit[bit];
+    }
+    
+    if(ret.getNetwork().getNetaddr().touInt() == 0){
+        if(root->route != nullptr){
+            ret = *(root->route);
+        }
+    }
+    
+    return(ret);
+}
+
+Route RouteTable::r_resolve(const IPAddress &addr) const{
+    Route r = resolve(addr);
+    RouteType br_type = r.getBestRouteType();
+    
+    while(br_type != RTYPE_CONNECTED){
+        if(r.getBestNexthops().getSize() == 0){
+            IPNetwork d_r = IPNetwork((char *)"0.0.0.0/0");
+            return(resolve(d_r));
+        }
+        
+        r = resolve(r.getBestNexthops().get(0));
+        br_type = r.getBestRouteType();
+    }
+    
+    return(r);
 }
