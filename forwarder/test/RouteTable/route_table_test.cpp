@@ -28,26 +28,31 @@ int main(void){
     IPNetwork nw3("192.168.2.0/24");
     IPNetwork nw_default("0.0.0.0/0");
     IPNetwork nw_connected1("192.168.1.0/24");
-    
     IPAddress addr_default("0.0.0.0");
-    RouteTable *rtb = new RouteTable();
-    rtb->addRoute(nw2, RTYPE_STATIC, addr2);
-    rtb->addRoute(nw3, RTYPE_STATIC, addr1);
-    rtb->addRoute(nw_default, RTYPE_STATIC, addr1);
-    rtb->addRoute(nw_connected1, RTYPE_CONNECTED, addr_default);
-    //printf("%s\n", rtb->getRoute(nw2).getBestNexthops().get(0).toStr());
     
-    
-    //IPNetwork nw3("10.10.10.0/24");
-    //rtb->addRoute(nw3, RTYPE_STATIC, addr2);
-    //IPAddress addr3("10.10.10.1");
-    IPAddress addr3("10.10.10.1");
-    //printf("%s\n", rtb->resolve(addr3).getNetwork().toStr());
-    printf("%s\n", rtb->r_resolve(addr3).getNetwork().toStr());
-    
-    //Route test((char *)"0.0.0.0/0");
-    
-    delete rtb;
+    try{
+        RouteTable *rtb = new RouteTable();
+        rtb->addRoute(nw2, RTYPE_STATIC, addr2);
+        rtb->addRoute(nw3, RTYPE_STATIC, addr1);
+        rtb->addRoute(nw_default, RTYPE_STATIC, addr1);
+        rtb->addRoute(nw_connected1, RTYPE_CONNECTED, addr_default);
+        //printf("%s\n", rtb->getRoute(nw2).getBestNexthops().get(0).toStr());
+        
+        
+        //IPNetwork nw3("10.10.10.0/24");
+        //rtb->addRoute(nw3, RTYPE_STATIC, addr2);
+        //IPAddress addr3("10.10.10.1");
+        IPAddress addr3("10.10.10.1");
+        //printf("%s\n", rtb->resolve(addr3).getNetwork().toStr());
+        printf("%s\n", rtb->r_resolve(addr3).getNetwork().toStr());
+        
+        //Route test((char *)"0.0.0.0/0");
+        
+        delete rtb;
+    }
+    catch(sfwdr::Exception::Exception e){
+        printf("%s\n", e.getMessage());
+    }
     
     return(0);
 }

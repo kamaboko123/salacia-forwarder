@@ -166,6 +166,11 @@ void RouteTable::addRoute(const IPNetwork &network, const RouteType type, const 
     if(p->route == nullptr){
         p->route = new Route(network);
     }
+    
+    //マルチパス対応諦めたのでそもそも複数入らないように暫定対処
+    if(p->route->getNexthops(type).getSize() != 0){
+        throw Exception((char *)"the route already has a nexthop.");
+    }
     p->route->addNexthop(type, nexthop);
 }
 
