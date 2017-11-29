@@ -34,10 +34,10 @@ struct ETHER{
 
 class Ethernet{
 private:
-    uint8_t data[ETH_BUF_SIZE];
+    uint8_t data[ETH_BUF_SIZE] = {0};
     struct ETHER *eth;
     struct ETHER_DOT1Q *eth_dot1q;
-    uint16_t length;
+    uint16_t length = 12;
     
     uint64_t mactol(uint8_t *mac_addr);
     
@@ -54,6 +54,11 @@ public:
     
     MacAddress getDst();
     MacAddress getSrc();
+    
+    void setDst(MacAddress addr);
+    void setDst(uint64_t addr);
+    void setSrc(MacAddress addr);
+    void setSrc(uint64_t addr);
     
     uint16_t getVlanId();
     uint16_t removeVlanTag();

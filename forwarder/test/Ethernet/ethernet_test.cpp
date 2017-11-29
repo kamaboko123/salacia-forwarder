@@ -62,6 +62,15 @@ int main(void){
     dlib::hexdump(eth->RawData(), eth->getLength());
     printf("[eth]type : %.4x\n", eth->getType());
     
+    printf("[setter test]");
+    Ethernet *eth2 = new Ethernet();
+    printf("\n");
+    dlib::hexdump(eth2->RawData(), eth2->getLength());
+    eth2->setDst(MacAddress("33:44:55:66:77:88"));
+    eth2->setSrc(10);
+    dlib::hexdump(eth2->RawData(), eth2->getLength());
+    
+    
     delete eth;
     
     return(0);

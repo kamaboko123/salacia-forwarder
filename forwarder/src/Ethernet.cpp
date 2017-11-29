@@ -1,6 +1,7 @@
 #include "Ethernet.hpp"
 
 Ethernet::Ethernet(){
+    this->eth = (struct ETHER *)this->data;
     return;
 }
 
@@ -49,6 +50,27 @@ MacAddress Ethernet::getDst(){
 
 MacAddress Ethernet::getSrc(){
     return(MacAddress(mactol(eth->src_mac)));
+}
+
+void Ethernet::setDst(MacAddress addr){
+    setDst(addr.toLong());
+}
+void Ethernet::setSrc(MacAddress addr){
+    setSrc(addr.toLong());
+}
+
+void Ethernet::setDst(uint64_t addr){
+    uint8_t *p = (uint8_t *)&addr;
+    for(int i = 0; i < 6; i++){
+        eth->dst_mac[5 - i] = p[i];
+    }
+}
+
+void Ethernet::setSrc(uint64_t addr){
+    uint8_t *p = (uint8_t *)&addr;
+    for(int i = 0; i < 6; i++){
+        eth->src_mac[5 - i] = p[i];
+    }
 }
 
 uint64_t Ethernet::mactol(uint8_t *mac_addr){
