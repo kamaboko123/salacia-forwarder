@@ -7,6 +7,9 @@
 #include "MacAddress.hpp"
 #include "comlib.hpp"
 #include "dlib.hpp"
+#include "ARP.hpp"
+
+using namespace sfwdr::Exception;
 
 #define ETH_BUF_SIZE 2048
 #define ETH_MIN_SIZE 56
@@ -29,6 +32,7 @@ struct ETHER{
     uint8_t dst_mac[6];
     uint8_t src_mac[6];
     uint16_t eth_type;
+    uint8_t _n_head;
 } __attribute__((__packed__));
 
 
@@ -38,8 +42,10 @@ private:
     struct ETHER *eth;
     struct ETHER_DOT1Q *eth_dot1q;
     uint16_t length = 12;
+    ARP _arp;
     
     uint64_t mactol(uint8_t *mac_addr);
+    void setType(EthType type);
     
 public:
     Ethernet();
@@ -50,7 +56,6 @@ public:
     void setLength(uint16_t len);
     
     EthType getType();
-    void setType(EthType type);
     
     MacAddress getDst();
     MacAddress getSrc();
@@ -60,10 +65,15 @@ public:
     void setSrc(MacAddress addr);
     void setSrc(uint64_t addr);
     
+    bool isVlan();
+    bool isARP();
+    
     uint16_t getVlanId();
     uint16_t removeVlanTag();
     uint16_t setVlanTag(uint16_t vlan_id);
     uint8_t *RawData();
+    
+    ARP &arp();
 };
 
 #endif

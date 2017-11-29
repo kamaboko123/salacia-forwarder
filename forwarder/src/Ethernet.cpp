@@ -13,6 +13,10 @@ void Ethernet::set(uint8_t *eth_data, uint16_t len){
     this->length = len;
     comlib::memcpy(this->data, eth_data, length);
     this->eth = (struct ETHER *)this->data;
+    
+    if(getType() == ETHTYPE_ARP){
+        _arp.set(&eth->_n_head);
+    }
 }
 
 EthType Ethernet::getType(){
@@ -119,4 +123,17 @@ uint16_t Ethernet::setVlanTag(uint16_t vlan_id){
 
 uint8_t *Ethernet::RawData(){
     return(data);
+}
+
+bool Ethernet::isVlan(){
+    return(getType() == ETHTYPE_DOT1Q);
+}
+
+bool Ethernet::isARP(){
+    return(getType() == ETHTYPE_ARP);
+}
+
+ARP &Ethernet::arp(){
+    if(!isARP()) throw Exception((char *)"This frame is not APR.");
+    return(_arp);
 }
