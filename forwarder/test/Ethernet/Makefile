@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = ethernet_test.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp
+SRC = ethernet_test.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp ../../src/Exception.cpp ../../src/ARP.cpp
 C_OPT = -std=c++11 -Wall
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/ethernet

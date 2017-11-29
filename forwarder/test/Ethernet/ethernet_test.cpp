@@ -62,7 +62,7 @@ int main(void){
     dlib::hexdump(eth->RawData(), eth->getLength());
     printf("[eth]type : %.4x\n", eth->getType());
     
-    printf("[setter test]");
+    printf("[setter test]\n");
     Ethernet *eth2 = new Ethernet();
     printf("\n");
     dlib::hexdump(eth2->RawData(), eth2->getLength());
@@ -70,8 +70,8 @@ int main(void){
     eth2->setSrc(10);
     dlib::hexdump(eth2->RawData(), eth2->getLength());
     
-    
     delete eth;
+    delete eth2;
     
     return(0);
 }
