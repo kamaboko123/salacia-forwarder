@@ -26,7 +26,7 @@ public:
 };
 
 template<>
-int HashMap<uint16_t, Vlan *>::hash(uint16_t key){
+int HashMap<uint16_t, Vlan *>::hash(uint16_t key) const{
     return(key % this->size);
 }
 
