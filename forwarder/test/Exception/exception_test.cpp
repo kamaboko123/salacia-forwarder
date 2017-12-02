@@ -15,5 +15,12 @@ int main(void){
         printf("[Exception]%s\n", e.getMessage());
     }
     
+    try{
+        throw Exception::InvalidEthType((char *)"ARP");
+    }
+    catch(Exception::InvalidEthType &e){
+        printf("%s\n", e.getMessage());
+    }
+    
     return(0);
 }

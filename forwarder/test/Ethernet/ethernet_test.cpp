@@ -46,6 +46,7 @@ int main(void){
     dlib::hexdump(eth->RawData(), eth->getLength());
     
     printf("[eth]type : %.4x\n", eth->getType());
+    printf("[eth]ul_type : %.4x\n", eth->getULType());
     
     printf("[src]%012" PRIx64 "\n", eth->getSrc().toLong());
     printf("[dst]%012" PRIx64 "\n", eth->getDst().toLong());
@@ -56,11 +57,13 @@ int main(void){
     eth->removeVlanTag();
     dlib::hexdump(eth->RawData(), eth->getLength());
     printf("[eth]type : %.4x\n", eth->getType());
+    printf("[eth]ul_type : %.4x\n", eth->getULType());
     
     std::cout << "set VLAN tag(10)" << std::endl;
     eth->setVlanTag(10);
     dlib::hexdump(eth->RawData(), eth->getLength());
     printf("[eth]type : %.4x\n", eth->getType());
+    printf("[eth]ul_type : %.4x\n", eth->getULType());
     
     printf("[setter test]\n");
     Ethernet *eth2 = new Ethernet();

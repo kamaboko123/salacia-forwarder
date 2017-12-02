@@ -14,14 +14,48 @@ void Ethernet::set(uint8_t *eth_data, uint16_t len){
     comlib::memcpy(this->data, eth_data, length);
     this->eth = (struct ETHER *)this->data;
     
-    if(getType() == ETHTYPE_ARP){
-        _arp.set(&eth->_n_head);
+    _update();
+}
+
+void Ethernet::_update(){
+    _type = (EthType)comlib::ntohs(eth->eth_type);
+    _ul_head = ((uint8_t *)&(eth->eth_type)) + sizeof(eth->eth_type);
+    _ul_type = _type;
+    
+    //_type = type;
+    switch(_type){
+        case ETHTYPE_ARP:
+            _arp.set(_ul_head);
+            break;
+        case ETHTYPE_IPV4:
+            break;
+        case ETHTYPE_DOT1Q:
+        {
+            struct DOT1Q *tag = (struct DOT1Q *)_ul_head;
+            _ul_type = (EthType)comlib::ntohs(tag->eth_type);
+            _ul_head += DOT1Q_TAG_SIZE;
+            break;
+        }
+        default :
+            _type = ETHTYPE_UNKNOWN;
+    }
+    
+    switch(_ul_type){
+        case ETHTYPE_ARP:
+            _arp.set(_ul_head);
+            break;
+        case ETHTYPE_IPV4:
+            break;
+        default :
+            _ul_type = ETHTYPE_UNKNOWN;
     }
 }
 
 EthType Ethernet::getType(){
+    /*
     uint16_t type = comlib::ntohs(eth->eth_type);
     
+    ul_head = (uint8_t *)&(eth->eth_type) + sizeof(eth->eth_type);
     EthType ret;
     switch(type){
         case ETHTYPE_ARP:
@@ -32,12 +66,19 @@ EthType Ethernet::getType(){
             break;
         case ETHTYPE_DOT1Q:
             ret = ETHTYPE_DOT1Q;
+            ul_head += DOT1Q_TAG_SIZE;
             break;
         default :
             ret = ETHTYPE_UNKNOWN;
     }
     
     return(ret);
+    */
+    return(_type);
+}
+
+EthType Ethernet::getULType(){
+    return(_ul_type);
 }
 
 uint16_t Ethernet::getLength(){
@@ -83,6 +124,7 @@ uint64_t Ethernet::mactol(uint8_t *mac_addr){
 
 uint16_t Ethernet::getVlanId(){
     uint16_t id = 0;
+    
     struct DOT1Q *tag = (struct DOT1Q *)&this->data[ETH_H_SIZE];
     if(getType() == ETHTYPE_DOT1Q){
         //ホストのバイトオーダにして12bit取り出し
@@ -100,6 +142,8 @@ uint16_t Ethernet::removeVlanTag(){
     comlib::memmove(&data[MAC_ADDR_SIZE * 2], &data[(MAC_ADDR_SIZE * 2) + DOT1Q_TAG_SIZE], length - DOT1Q_TAG_SIZE);
     
     length -= DOT1Q_TAG_SIZE;
+    
+    _update();
     return(length);
 }
 
@@ -118,6 +162,7 @@ uint16_t Ethernet::setVlanTag(uint16_t vlan_id){
     tag->tci = comlib::htons(vlan_id);
     length += DOT1Q_TAG_SIZE;
     
+    _update();
     return(length);
 }
 
@@ -126,14 +171,14 @@ uint8_t *Ethernet::RawData(){
 }
 
 bool Ethernet::isVlan(){
-    return(getType() == ETHTYPE_DOT1Q);
+    return(getULType() == ETHTYPE_DOT1Q);
 }
 
 bool Ethernet::isARP(){
-    return(getType() == ETHTYPE_ARP);
+    return(getULType() == ETHTYPE_ARP);
 }
 
 ARP &Ethernet::arp(){
-    if(!isARP()) throw Exception((char *)"This frame is not APR.");
+    if(!isARP()) throw sfwdr::Exception::InvalidEthType((char *)"ARP");
     return(_arp);
 }

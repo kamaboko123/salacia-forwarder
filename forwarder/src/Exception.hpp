@@ -19,12 +19,18 @@ namespace sfwdr{
             Exception(const Exception &except);
             Exception &operator=(const Exception &except);
             
+            void setMessage(char *str);
             char *getMessage() const;
         };
         
         class OutOfRange : public Exception{
         public:
             OutOfRange() : Exception((char *)"out-of-range"){};
+        };
+        
+        class InvalidEthType : public Exception{
+        public:
+            InvalidEthType(char *str);
         };
     }
 }

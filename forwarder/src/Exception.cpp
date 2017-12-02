@@ -32,8 +32,26 @@ namespace sfwdr{
             delete[] message;
         }
         
+        void Exception::setMessage(char *str){
+            delete[] message;
+            
+            sfwdr::ssize_t len = comlib::strlen(str) + 1;
+            this->message = new char[len]();
+            comlib::strncpy(this->message, str, len);
+        }
+        
         char *Exception::getMessage() const{
             return(message);
+        }
+        
+        InvalidEthType::InvalidEthType(char *str){
+            char msg_head[] = "InvalidEthType : ";
+            char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
+            comlib::strcat(tmp, msg_head);
+            comlib::strcat(tmp, str);
+            setMessage(tmp);
+            
+            delete[] tmp;
         }
     }
 }
