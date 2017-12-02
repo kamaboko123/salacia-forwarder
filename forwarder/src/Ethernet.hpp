@@ -73,7 +73,7 @@ public:
     void setSrc(MacAddress addr);
     void setSrc(uint64_t addr);
     
-    bool isVlan();
+    bool hasVlan();
     bool isARP();
     
     uint16_t getVlanId();

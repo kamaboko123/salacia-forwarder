@@ -170,7 +170,7 @@ uint8_t *Ethernet::RawData(){
     return(data);
 }
 
-bool Ethernet::isVlan(){
+bool Ethernet::hasVlan(){
     return(getULType() == ETHTYPE_DOT1Q);
 }
 
