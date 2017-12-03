@@ -5,6 +5,8 @@
 #include <cstdio>
 #include "comlib.hpp"
 
+#define IP_ADDR_SIZE 4
+
 //IPAddressとIPNetmaskを文字列にしたときに必要なバッファ
 #define IP_ADDR_STR_LEN 16
 #define IP_PREFIX_STR_LEN 20

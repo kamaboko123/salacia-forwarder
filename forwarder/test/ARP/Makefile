@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = arp_test.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp ../../src/Exception.cpp ../../src/ARP.cpp
+SRC = arp_test.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp ../../src/Exception.cpp ../../src/ARP.cpp ../../src/IPAddress.cpp
 C_OPT = -std=c++11 -Wall
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/arp

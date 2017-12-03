@@ -45,15 +45,15 @@ MacAddress::MacAddress(const uint64_t addr_int){
 
 
 [[deprecated("please use toLong() function")]]
-uint64_t MacAddress::toInt(){
+uint64_t MacAddress::toInt() const{
     return(toLong());
 }
 
-uint64_t MacAddress::toLong(){
+uint64_t MacAddress::toLong() const{
     return(this->addr);
 }
 
-uint64_t MacAddress::getHash(){
+uint64_t MacAddress::getHash() const{
     return(this->addr % this->hbase);
 }
 

@@ -11,7 +11,6 @@
 
 #define ETH_BUF_SIZE 2048
 #define ETH_MIN_SIZE 56
-#define MAC_ADDR_SIZE 6
 #define ETH_H_SIZE 14
 #define DOT1Q_TAG_SIZE 4
 
