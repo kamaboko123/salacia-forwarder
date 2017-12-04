@@ -21,11 +21,14 @@ void set(Array<int *> *array, int index, int *item){
 }
 
 void del(Array<int *> *array, int index){
-    if(array->del(index) == false){
-        printf("del:index[%d](failed)\n", index);
-        return;
+    try{
+        array->del(index);
+        printf("del:index[%d]\n", index);
     }
-    printf("del:index[%d]\n", index);
+    catch(sfwdr::Exception::OutOfRange &e){
+        printf("del:index[%d](failed, exeception)\n", index);
+    }
+    
 }
 
 void copy_test(Array<int *> array){

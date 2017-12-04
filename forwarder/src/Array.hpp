@@ -110,17 +110,18 @@ public:
         size++;
     }
     
-    bool set(uint32_t index, T item){
+    void set(uint32_t index, T item){
         ArrayItem<T> *target = getArrayItem(index);
         if(target == nullptr){
-            return(false);
+            throw sfwdr::Exception::OutOfRange();
         }
         target->set(item);
-        return(true);
     }
     
-    bool del(uint32_t index){
-        if(index >= size) return(false);
+    void del(uint32_t index){
+        if(index >= size){
+            throw sfwdr::Exception::OutOfRange();
+        }
         
         //root node
         if(index == 0){
@@ -129,7 +130,7 @@ public:
             root = n_root;
             size--;
             
-            return(true);
+            return;
         }
         
         ArrayItem<T> *prev = getArrayItem(index-1);
@@ -138,7 +139,6 @@ public:
         prev->setNext(target->getNext());
         delete target;
         size--;
-        return(true);
     }
     
     sfwdr::size_t getSize() const{
