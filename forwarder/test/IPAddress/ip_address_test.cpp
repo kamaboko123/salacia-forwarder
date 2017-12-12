@@ -3,7 +3,7 @@
 #include "../../src/comlib.hpp"
 
 int main(void){
-    IPAddress addr((char *)"192.168.1.1");
+    IPAddress addr((char *)"172.18.202.101");
     
     printf("%u\n", addr.touInt());
     printf("%s\n", addr.toStr());

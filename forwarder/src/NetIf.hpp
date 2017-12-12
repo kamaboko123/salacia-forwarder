@@ -14,6 +14,7 @@
 #include "comlib.hpp"
 #include "dlib.hpp"
 #include "Ethernet.hpp"
+#include "IPAddress.hpp"
 
 using namespace std;
 
@@ -28,7 +29,14 @@ private:
     char ifname[IFNAMSIZ];
     MacAddress mac_addr;
     IfType iftype;
+    
+    //Layer2
     uint16_t vlan;
+    
+    //Layer3
+    IPAddress ip_addr;
+    IPNetmask ip_mask;
+    
     
     int pd;
     int ifindex;
@@ -41,7 +49,13 @@ private:
     
 public:
     NetIf();
+    
+    //Layer2
     NetIf(char *ifname, IfType iftype, uint16_t vlan);
+    
+    //Layer3
+    NetIf(char *ifname, IPAddress addr, IPNetmask mask);
+    
     ~NetIf();
     
     int getFD();

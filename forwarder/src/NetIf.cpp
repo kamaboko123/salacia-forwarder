@@ -24,6 +24,17 @@ NetIf::NetIf(char *ifname, IfType iftype, uint16_t vlan){
     }*/
 }
 
+NetIf::NetIf(char *ifname, IPAddress addr, IPNetmask mask){
+    comlib::strncpy(this->ifname, ifname, sizeof(this->ifname));
+    this->iftype = IFTYPE_L3_V4;
+    this->vlan = 0;
+    
+    ip_addr = addr;
+    ip_mask = mask;
+    
+    initIf();
+}
+
 NetIf::~NetIf(){
     close(this->pd);
 }
@@ -184,7 +195,7 @@ uint16_t NetIf::recvRaw(uint8_t *buf, uint16_t buflen){
     if (pktlen == -1) {
         pktlen = 0;
         if (errno == EAGAIN) {
-            perror("recvmsg:");
+            //perror("recvmsg:");
         }
         return(pktlen);
     }

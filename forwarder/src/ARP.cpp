@@ -5,7 +5,7 @@ ARP::ARP(){
 }
 
 void ARP::_nullexc() const{
-    if(eth_arp == nullptr) throw Exception::Exception((char *)"ARP data is not set");
+    if(eth_arp == nullptr) throw sfwdr::Exception::Exception((char *)"ARP data is not set");
 }
 
 ARP::ARP(uint8_t *arp_head){
@@ -21,17 +21,17 @@ void ARP::set(uint8_t *arp_head){
 void ARP::_validate(){
     if(eth_arp == nullptr) return;
     if(comlib::ntohs(eth_arp->hw_type) != ARP_HW_TYPE_ETHER){
-        throw Exception::Exception((char *)"Invalid ARP Packet[hw_ype]");
+        throw sfwdr::Exception::Exception((char *)"Invalid ARP Packet[hw_ype]");
     }
     if(comlib::ntohs(eth_arp->proto_type) != ARP_PROTO_TYPE_IPV4){
-        throw  Exception::Exception((char *)"Invalid ARP Packet[proto_type]");
+        throw  sfwdr::Exception::Exception((char *)"Invalid ARP Packet[proto_type]");
     }
     
     if(eth_arp->hlen != MAC_ADDR_SIZE){
-        throw  Exception::Exception((char *)"Invalid ARP Packet[hlen]");
+        throw  sfwdr::Exception::Exception((char *)"Invalid ARP Packet[hlen]");
     }
     if(eth_arp->plen != IP_ADDR_SIZE){
-        throw  Exception::Exception((char *)"Invalid ARP Packet[plen]");
+        throw  sfwdr::Exception::Exception((char *)"Invalid ARP Packet[plen]");
     }
 }
 
