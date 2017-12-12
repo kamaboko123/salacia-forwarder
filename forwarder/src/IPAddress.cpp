@@ -76,14 +76,22 @@ char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
     
     //上位から1byteずつ抜き出して処理
     while(ext_base != 0){
+        //flg : hundred's place zero
+        bool hp_zero = true;
         
         //100の位(0の場合は入れない)
         buf = (((addr & ext_base) >> ls) / 100) + '0';
-        if(buf != '0') retbuf[i++] = buf;
+        if(buf != '0'){
+            hp_zero = false;
+            retbuf[i++] = buf;
+        }
         
-        //10の位(0の場合は入れない)
+        //10の位
         buf = (((addr & ext_base) >> ls) % 100 / 10) + '0';
-        if(buf != '0') retbuf[i++] = buf;
+        //10の位が0ではない
+        // or
+        //100の位が0じゃない
+        if(buf != '0' || !hp_zero) retbuf[i++] = buf;
         
         //1の位(0でも入れる)
         retbuf[i++] = (((addr & ext_base) >> ls) % 10)+ '0';
