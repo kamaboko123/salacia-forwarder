@@ -139,7 +139,7 @@ int NetIf::sendRaw(uint8_t *data, int length){
     return(write(this->pd, data, length));
 }
 
-int NetIf::send(Ethernet packet, uint16_t vlan){
+int NetIf::_send(Ethernet &packet, uint16_t vlan){
     int ret;
     switch(this->iftype){
         case IFTYPE_L2_ACCESS:
@@ -154,7 +154,18 @@ int NetIf::send(Ethernet packet, uint16_t vlan){
             ret = 0;
             break;
     }
+    
     return(ret);
+}
+
+int NetIf::send(Ethernet packet, uint16_t vlan){
+    return(_send(packet, vlan));
+}
+
+int NetIf::sendBroadcast(Ethernet packet, uint16_t vlan){
+    packet.setDst(ETH_BROADCAST);
+    
+    return(_send(packet, vlan));
 }
 
 uint16_t NetIf::recv(Ethernet *eth){

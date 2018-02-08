@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = switch.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/MacTable.cpp ../../src/dlib.cpp
+SRC = switch.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/MacTable.cpp ../../src/dlib.cpp ../../src/ARP.cpp ../../src/IPAddress.cpp ../../src/Exception.cpp
 C_OPT = -std=c++11 -Wall -pthread
 TARGET_DIR = ./bin
 TARGET = $(TARGET_DIR)/switch

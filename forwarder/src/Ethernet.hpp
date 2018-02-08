@@ -9,6 +9,8 @@
 #include "dlib.hpp"
 #include "ARP.hpp"
 
+#define ETH_BROADCAST 0xFFFFFFFF
+
 #define ETH_BUF_SIZE 2048
 #define ETH_MIN_SIZE 56
 #define ETH_H_SIZE 14

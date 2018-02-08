@@ -45,7 +45,8 @@ private:
     struct sockaddr_ll sll;
     
     void initIf();
-    int sendL2a(uint8_t *data, int length);
+    //int sendL2a(uint8_t *data, int length);
+    int _send(Ethernet &packet, uint16_t vlan = 0);
     
 public:
     NetIf();
@@ -68,6 +69,7 @@ public:
     int send(Ethernet packet, uint16_t vlan = 0);
     //int send(uint8_t *data, int length, uint16_t vlan = 1);
     int sendRaw(uint8_t *data, int length);
+    int sendBroadcast(Ethernet packet, uint16_t vlan = 0);
     
     uint16_t recvRaw(uint8_t *buf, uint16_t buflen);
     uint16_t recv(Ethernet *eth);
