@@ -2,6 +2,7 @@
 #include "../../src/Ethernet.hpp"
 #include "../../src/comlib.hpp"
 #include "../../src/dlib.hpp"
+#include "../../src/NetIf.hpp"
 
 int main(void){
     uint8_t arp_base[] = PKT_ARP;
@@ -43,6 +44,24 @@ int main(void){
     catch(sfwdr::Exception::Exception &e){
         printf("[Exception]%s\n", e.getMessage());
     }
+    
+    //send
+    IPAddress dst_ip("172.17.0.3");
+    IPAddress src_ip("172.17.0.200");
+    IPNetmask src_ip_mask("255.255.255.0");
+    MacAddress src_mac("00:3d:2c:11:11:11");
+    
+    NetIf nif("veth767a7ac", src_ip, src_ip_mask);
+    
+    Ethernet eth2(arp_base, PKT_ARP_SIZE);
+    eth2.arp().setOPCode(ARP_REQUEST);
+    
+    eth2.arp().setDstIP(dst_ip);
+    eth2.arp().setSrcIP(src_ip);
+    eth2.arp().setSrcMac(src_mac);
+    //eth2.setSrc(src_mac);
+    
+    printf("send : %d byte\n", nif.sendBroadcast(eth2));
     
     return(0);
 }
