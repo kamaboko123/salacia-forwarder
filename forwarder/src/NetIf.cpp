@@ -150,6 +150,10 @@ int NetIf::_send(Ethernet &packet, uint16_t vlan){
             packet.setVlanTag(vlan);
             ret = sendRaw(packet.RawData(), packet.getLength());
             break;
+        case IFTYPE_L3_V4:
+            packet.setSrc(getMac());
+            ret = sendRaw(packet.RawData(), packet.getLength());
+            break;
         default:
             ret = 0;
             break;
@@ -162,9 +166,8 @@ int NetIf::send(Ethernet packet, uint16_t vlan){
     return(_send(packet, vlan));
 }
 
-int NetIf::sendBroadcast(Ethernet packet, uint16_t vlan){
+int NetIf::sendBroadcast(Ethernet packet, uint16_t valn){
     packet.setDst(ETH_BROADCAST);
-    
     return(_send(packet, vlan));
 }
 
