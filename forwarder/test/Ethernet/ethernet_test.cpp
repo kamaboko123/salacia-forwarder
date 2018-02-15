@@ -1,8 +1,8 @@
 #include<iostream>
 #include<cinttypes>
-#include "../../src/Ethernet.hpp"
-#include "../../src/comlib.hpp"
-#include "../../src/dlib.hpp"
+#include "Ethernet.hpp"
+#include "comlib.hpp"
+#include "dlib.hpp"
 
 int main(void){
     uint8_t packet1[] = {

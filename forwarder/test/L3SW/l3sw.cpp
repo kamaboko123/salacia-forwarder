@@ -1,9 +1,9 @@
 #include<cinttypes>
 #include <poll.h>
-#include "../../src/Ethernet.hpp"
-#include "../../src/comlib.hpp"
-#include "../../src/dlib.hpp"
-#include "../../src/NetIf.hpp"
+#include "Ethernet.hpp"
+#include "comlib.hpp"
+#include "dlib.hpp"
+#include "NetIf.hpp"
 
 int main(void){
     //struct pollfd *pfds = new struct pollfd[1];

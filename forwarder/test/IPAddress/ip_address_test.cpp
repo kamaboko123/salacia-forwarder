@@ -1,6 +1,6 @@
 #include <cstdio>
-#include "../../src/IPAddress.hpp"
-#include "../../src/comlib.hpp"
+#include "IPAddress.hpp"
+#include "comlib.hpp"
 
 int main(void){
     IPAddress addr((char *)"172.18.202.101");

@@ -7,13 +7,13 @@
 #include <thread>
 #include <mutex>
 
-#include "../../src/NetIf.hpp"
-#include "../../src/MacAddress.hpp"
-#include "../../src/Ethernet.hpp"
-#include "../../src/HashMap.hpp"
-#include "../../src/comlib.hpp"
-#include "../../src/dlib.hpp"
-#include "../../src/MacTable.hpp"
+#include "NetIf.hpp"
+#include "MacAddress.hpp"
+#include "Ethernet.hpp"
+#include "HashMap.hpp"
+#include "comlib.hpp"
+#include "dlib.hpp"
+#include "MacTable.hpp"
 
 #define IFMAX 4
 #define MAC_REFRESH_INTERVAL 10

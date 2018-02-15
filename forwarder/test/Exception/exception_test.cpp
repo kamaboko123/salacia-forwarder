@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "../../src/Exception.hpp"
+#include "Exception.hpp"
 
 using namespace sfwdr;
 

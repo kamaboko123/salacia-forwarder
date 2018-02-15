@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "../../src/MacTable.hpp"
+#include "MacTable.hpp"
 
 int main(void){
     MacTable tbl(256);

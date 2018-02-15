@@ -7,12 +7,12 @@
 
 #include <cstring>
 
-#include "../../src/NetIf.hpp"
-#include "../../src/MacAddress.hpp"
-#include "../../src/Ethernet.hpp"
-#include "../../src/HashMap.hpp"
-#include "../../src/comlib.hpp"
-#include "../../src/dlib.hpp"
+#include "NetIf.hpp"
+#include "MacAddress.hpp"
+#include "Ethernet.hpp"
+#include "HashMap.hpp"
+#include "comlib.hpp"
+#include "dlib.hpp"
 
 #define OS_NTOHS ntohs
 #define OS_HTONS htons

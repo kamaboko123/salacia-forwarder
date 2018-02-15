@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cinttypes>
-#include "../../src/comlib.hpp"
+#include "comlib.hpp"
 
 #define N 2
 #define S1 "1"

@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "../../src/Array.hpp"
+#include "Array.hpp"
 
 void dump(Array<int *> *array){
     printf("\n---[dump]---\n");

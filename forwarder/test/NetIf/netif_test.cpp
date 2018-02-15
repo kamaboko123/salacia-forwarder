@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../../src/NetIf.hpp"
+#include "NetIf.hpp"
 
 using namespace std;
 

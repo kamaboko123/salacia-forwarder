@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdint>
 #include <string>
-#include "../../src/MacAddress.hpp"
+#include "MacAddress.hpp"
 
 using namespace std;
 

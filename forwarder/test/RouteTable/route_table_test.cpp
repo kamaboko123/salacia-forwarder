@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "../../src/RouteTable.hpp"
+#include "RouteTable.hpp"
 
 int main(void){
     

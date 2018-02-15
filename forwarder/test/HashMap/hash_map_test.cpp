@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "../../src/HashMap.hpp"
-#include "../../src/MacAddress.hpp"
-#include "../../src/NetIf.hpp"
+#include "HashMap.hpp"
+#include "MacAddress.hpp"
+#include "NetIf.hpp"
 
 using namespace std;
 
