@@ -35,5 +35,5 @@ void FIXTURE_NAME::test_strlen(){
 void FIXTURE_NAME::test_isdigit(){
     CPPUNIT_ASSERT_EQUAL(true, isdigit('1'));
     CPPUNIT_ASSERT_EQUAL(true, isdigit('9'));
-    CPPUNIT_ASSERT_EQUAL(false, isdigit('1'));
+    CPPUNIT_ASSERT_EQUAL(false, isdigit('a'));
 }
