@@ -4,7 +4,8 @@
 CC = g++
 CFLAGS = -std=c++11 -Wall
 INCLUDE = -I../include
-LIB = `cppunit-config --libs`
+#LIB = `cppunit-config --libs`
+LIB = -lcppunit
 
 #テストしたいライブラリ
 LIBSRCDIR = ../src
