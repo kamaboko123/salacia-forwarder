@@ -12,6 +12,7 @@ using namespace comlib;
 class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(FIXTURE_NAME);
     CPPUNIT_TEST(test_strlen);
+    CPPUNIT_TEST(test_isdigit);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -19,6 +20,7 @@ public:
     void tearDown();
 protected:
     void test_strlen();
+    void test_isdigit();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -30,3 +32,8 @@ void FIXTURE_NAME::test_strlen(){
     CPPUNIT_ASSERT_EQUAL(6, strlen((char *)"string"));
 }
 
+void FIXTURE_NAME::test_isdigit(){
+    CPPUNIT_ASSERT_EQUAL(true, isdigit('1'));
+    CPPUNIT_ASSERT_EQUAL(true, isdigit('9'));
+    CPPUNIT_ASSERT_EQUAL(false, isdigit('1'));
+}
