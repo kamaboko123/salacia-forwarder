@@ -4,7 +4,6 @@
 CC = g++
 CFLAGS = -std=c++11 -Wall
 INCLUDE = -I../include
-#LIB = `cppunit-config --libs`
 LIB = -lcppunit
 
 #テストしたいライブラリ
@@ -15,26 +14,25 @@ LIBSRC = $(wildcard $(LIBSRCDIR)/*.cpp)
 TESTSRCDIR = ./src
 TESTSRC = $(wildcard $(TESTSRCDIR)/*.cpp)
 
-#cppunitのmain関数(共通)
-CPPUNITMAIN = $(TESTSRCDIR)/main/test_main.cpp
-
 #出力先
 OBJDIR = ./obj
 LIBOBJDIR = $(OBJDIR)/lib
 TESTOBJDIR = $(OBJDIR)/test
 
 LIBOBJECTS = $(addprefix $(LIBOBJDIR)/, $(notdir $(LIBSRC:.cpp=.o)))
-TESTOBJECTS = $(addprefix $(LIBOBJDIR)/, $(notdir $(LIBSRC:.cpp=.o)))
+TESTOBJECTS = $(addprefix $(TESTOBJDIR)/, $(notdir $(TESTSRC:.cpp=.o)))
 
 TARGETDIR = ./bin
-TARGETS =  $(addprefix $(TARGETDIR)/, $(notdir $(TESTSRC:.cpp=)))
+TARGET = $(TARGETDIR)/ci_test
 
-all : $(TARGETS)
+.SECONDARY : $(LIBOBJECTS) $(TESTOBJECTS)
+
+all : $(TARGET)
 
 #実行ファイル生成
-$(TARGETDIR)/% : $(TESTSRCDIR)/%.cpp $(LIBOBJECTS) $(TESTOBJECTS) $(CPPUNITMAIN)
+$(TARGETDIR)/% : $(LIBOBJECTS) $(TESTOBJECTS)
 	mkdir -p $(TARGETDIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $@ $< $(LIBOBJECTS) $(CPPUNITMAIN) $(LIB)
+	$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^ $(LIB)
 
 #テスト対象のライブラリのobjファイル
 $(LIBOBJDIR)/%.o: $(LIBSRCDIR)/%.cpp
@@ -46,5 +44,5 @@ $(TESTOBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
 	mkdir -p $(TESTOBJDIR)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
-clean: 
+clean:
 	rm -rf $(OBJDIR) $(TARGETDIR)
