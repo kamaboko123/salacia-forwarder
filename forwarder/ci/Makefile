@@ -2,7 +2,7 @@
 
 #コンパイラ
 CC = g++
-CFLAGS = -std=c++11 -Wall
+CFLAGS = -std=c++11 -Wall -g
 INCLUDE = -I../include
 LIB = -lcppunit
 
