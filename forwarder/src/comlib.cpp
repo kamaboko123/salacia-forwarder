@@ -33,7 +33,7 @@ char *comlib::strcat(char *s1, char *s2){
 }
 
 char *comlib::strncat(char *s1, char *s2, int n){
-    char *p = (s1 + strlen(s1) -1);
+    char *p = (s1 + strlen(s1));
     int i;
     for(i = 0; i < n; i++){
         p[i] = s2[i];
