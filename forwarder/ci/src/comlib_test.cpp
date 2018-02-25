@@ -18,6 +18,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_strchr);
     CPPUNIT_TEST(test_strchr_index);
     CPPUNIT_TEST(test_bytestol);
+    CPPUNIT_TEST(test_memcpy);
     CPPUNIT_TEST(test_strlen);
     CPPUNIT_TEST(test_isdigit);
     CPPUNIT_TEST(test_atoi);
@@ -33,6 +34,7 @@ protected:
     void test_strchr();
     void test_strchr_index();
     void test_bytestol();
+    void test_memcpy();
     void test_strlen();
     void test_isdigit();
     void test_atoi();
@@ -95,6 +97,12 @@ void FIXTURE_NAME::test_bytestol(){
     uint8_t bytes[] = {0x11, 0x22, 0x33, 0xAA, 0xBB, 0xCC};
     CPPUNIT_ASSERT_EQUAL((uint64_t)0x112233, clib::bytestol(bytes, 3));
     CPPUNIT_ASSERT_EQUAL((uint64_t)0x112233AABBCC, clib::bytestol(bytes, 6));
+}
+
+void FIXTURE_NAME::test_memcpy(){
+    uint8_t bytes[8] = {'a', 'b', 'c', 'd', 0, 0, 0, 0};
+    CPPUNIT_ASSERT_EQUAL(true, bytes == clib::memcpy(bytes, (const uint8_t *)"123", 2));
+    CPPUNIT_ASSERT_EQUAL(0, memcmp(bytes, "12cd\0\0\0\0", 8));
 }
 
 void FIXTURE_NAME::test_strlen(){
