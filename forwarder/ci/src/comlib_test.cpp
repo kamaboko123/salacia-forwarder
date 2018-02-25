@@ -17,6 +17,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_strncat);
     CPPUNIT_TEST(test_strchr);
     CPPUNIT_TEST(test_strchr_index);
+    CPPUNIT_TEST(test_bytestol);
     CPPUNIT_TEST(test_strlen);
     CPPUNIT_TEST(test_isdigit);
     CPPUNIT_TEST(test_atoi);
@@ -31,6 +32,7 @@ protected:
     void test_strncat();
     void test_strchr();
     void test_strchr_index();
+    void test_bytestol();
     void test_strlen();
     void test_isdigit();
     void test_atoi();
@@ -87,6 +89,12 @@ void FIXTURE_NAME::test_strchr_index(){
     char str[16] = "abcdef";
     CPPUNIT_ASSERT_EQUAL(2, clib::strchr_index(str, 'c'));
     CPPUNIT_ASSERT_EQUAL(-1, clib::strchr_index(str, 'z'));
+}
+
+void FIXTURE_NAME::test_bytestol(){
+    uint8_t bytes[] = {0x11, 0x22, 0x33, 0xAA, 0xBB, 0xCC};
+    CPPUNIT_ASSERT_EQUAL((uint64_t)0x112233, clib::bytestol(bytes, 3));
+    CPPUNIT_ASSERT_EQUAL((uint64_t)0x112233AABBCC, clib::bytestol(bytes, 6));
 }
 
 void FIXTURE_NAME::test_strlen(){
