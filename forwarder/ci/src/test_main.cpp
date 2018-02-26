@@ -29,5 +29,7 @@ int main(int argc, char* argv[]){
     CppUnit::Outputter *xmloutputter = new CppUnit::XmlOutputter(&result, out);
     xmloutputter->write();
     
+    delete xmloutputter;
+    
     return result.wasSuccessful() ? 0 : 1;
 }
