@@ -25,6 +25,10 @@ TESTOBJECTS = $(addprefix $(TESTOBJDIR)/, $(notdir $(TESTSRC:.cpp=.o)))
 TARGETDIR = ./bin
 TARGET = $(TARGETDIR)/ci_test
 
+#test result
+TEST_RESULT_DIR = ./result
+TEST_RESULT_FILE = $(TEST_RESULT_DIR)/test_result.xml
+
 .SECONDARY : $(LIBOBJECTS) $(TESTOBJECTS)
 
 all : $(TARGET)
@@ -32,7 +36,8 @@ all : $(TARGET)
 #実行ファイル生成
 $(TARGETDIR)/% : $(LIBOBJECTS) $(TESTOBJECTS)
 	mkdir -p $(TARGETDIR)
-	$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^ $(LIB)
+	mkdir -p $(TEST_RESULT_DIR)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 #テスト対象のライブラリのobjファイル
 $(LIBOBJDIR)/%.o: $(LIBSRCDIR)/%.cpp
@@ -42,7 +47,7 @@ $(LIBOBJDIR)/%.o: $(LIBSRCDIR)/%.cpp
 #テストコードのobjファイル
 $(TESTOBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
 	mkdir -p $(TESTOBJDIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+	$(CC) $(CFLAGS) $(INCLUDE) -D RESULT_FILE=\"$(abspath $(TEST_RESULT_FILE))\" -o $@ -c $<
 
 clean:
-	rm -rf $(OBJDIR) $(TARGETDIR)
+	rm -rf $(OBJDIR) $(TARGETDIR) $(TEST_RESULT_DIR)

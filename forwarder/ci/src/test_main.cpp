@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
     CPPUNIT_NS::CompilerOutputter outputter(&result, CPPUNIT_NS::stdCOut());
     outputter.write();
     
-    char filename[] = "test_result.xml";
+    char filename[] = RESULT_FILE;
     std::ofstream out(filename);
     CppUnit::Outputter *xmloutputter = new CppUnit::XmlOutputter(&result, out);
     xmloutputter->write();
