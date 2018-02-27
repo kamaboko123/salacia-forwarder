@@ -54,6 +54,7 @@ namespace comlib{
     uint64_t upow(uint64_t x, uint64_t n);
     
     //指定ビットを取得
+    //下位からn bit目、0始まり
     int getBit(uint64_t x, uint8_t n);
 }
 
