@@ -148,7 +148,7 @@ void FIXTURE_NAME::test_rbyte_n(){
 
 void FIXTURE_NAME::test_convert_nw_byte_order(){
     //endian dependent
-    //test for little endian test
+    //test for little endian
     
     CPPUNIT_ASSERT(0xFFAA == clib::ntohs(0xAAFF));
     CPPUNIT_ASSERT(0xFFAA == clib::htons(0xAAFF));
