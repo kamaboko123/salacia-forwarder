@@ -37,6 +37,7 @@ void FIXTURE_NAME::test_core(){
     CPPUNIT_ASSERT_EQUAL(0, (int)ar.getSize());
     CPPUNIT_ASSERT_THROW(ar.get(0), sfwdr::Exception::OutOfRange);
     
+    //[test]add
     ar.add(i0);
     ar.add(i1);
     ar.add(i2);
@@ -50,6 +51,7 @@ void FIXTURE_NAME::test_core(){
     CPPUNIT_ASSERT(i3 == ar.get(3));
     CPPUNIT_ASSERT(i4 == ar.get(4));
     
+    //[test]delete first item
     ar.del(0);
     
     CPPUNIT_ASSERT_EQUAL(4, (int)ar.getSize());
@@ -58,6 +60,7 @@ void FIXTURE_NAME::test_core(){
     CPPUNIT_ASSERT(i3 == ar.get(2));
     CPPUNIT_ASSERT(i4 == ar.get(3));
     
+    //[test]delete middle item
     ar.del(1);
     
     CPPUNIT_ASSERT_EQUAL(3, (int)ar.getSize());
@@ -65,16 +68,20 @@ void FIXTURE_NAME::test_core(){
     CPPUNIT_ASSERT(i3 == ar.get(1));
     CPPUNIT_ASSERT(i4 == ar.get(2));
     
+    //[test]delete last item
     ar.del(2);
     
     CPPUNIT_ASSERT_EQUAL(2, (int)ar.getSize());
     CPPUNIT_ASSERT(i1 == ar.get(0));
     CPPUNIT_ASSERT(i3 == ar.get(1));
     
+    //[test]del all item
     ar.del(0);
     ar.del(0);
     
     CPPUNIT_ASSERT_EQUAL(0, (int)ar.getSize());
+    
+    //[test]set
     
     ar.add(i0);
     ar.add(i1);
@@ -86,12 +93,15 @@ void FIXTURE_NAME::test_core(){
     ar.set(1, i3);
     ar.set(2, i3);
     
-    
     CPPUNIT_ASSERT_EQUAL(5, (int)ar.getSize());
     CPPUNIT_ASSERT(i3 == ar.get(0));
     CPPUNIT_ASSERT(i3 == ar.get(1));
     CPPUNIT_ASSERT(i3 == ar.get(2));
     
+    //[test] get and mem access
+    CPPUNIT_ASSERT_EQUAL(*ar.get(2), *i3);
+    
+    //[test] clear
     ar.clear();
     
     CPPUNIT_ASSERT_EQUAL(0, (int)ar.getSize());
