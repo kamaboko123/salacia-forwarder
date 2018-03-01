@@ -1,4 +1,4 @@
-# The Salacia forwarder(tentative)
+# The Salacia forwarder
 This is packet forwarder with Linux raw socket.  
 Currently, support only Layer 2, but this will be multi layer switch in future.  
 
@@ -14,8 +14,6 @@ Currently, support only Layer 2, but this will be multi layer switch in future.
 ## How to use
 Download
 ```
-$ git clone https://bitbucket.org/salacia/rawsocket_switch.git
-or
 $ git clone https://github.com/kamaboko123/salacia-forwarder.git
 ```
 
