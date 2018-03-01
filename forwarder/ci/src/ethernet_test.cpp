@@ -93,6 +93,10 @@ void FIXTURE_NAME::test_addr(){
     CPPUNIT_ASSERT(MacAddress((char *)"DD:DD:DD:DD:DD:DD") == eth_v->getDst());
     
     //setで正しくフレームが編集されたかをテストする必要あり
+    
+    
+    delete eth;
+    delete eth_v;
 }
 
 void FIXTURE_NAME::test_type(){
@@ -112,6 +116,10 @@ void FIXTURE_NAME::test_type(){
     CPPUNIT_ASSERT(ETHTYPE_ARP == eth_arp_v->getULType());
     
     CPPUNIT_ASSERT(ETHTYPE_IPV4 == eth_ip->getType());
+    
+    delete eth_arp;
+    delete eth_arp_v;
+    delete eth_ip;
 }
 
 void FIXTURE_NAME::test_l3_proto(){
@@ -134,6 +142,10 @@ void FIXTURE_NAME::test_l3_proto(){
     CPPUNIT_ASSERT_THROW(eth_ip->arp(), sfwdr::Exception::InvalidEthType);
     
     //IPv4も要テスト追加
+    
+    delete eth_arp;
+    delete eth_arp_v;
+    delete eth_ip;
 }
 
 void FIXTURE_NAME::test_vlan(){
@@ -165,5 +177,7 @@ void FIXTURE_NAME::test_vlan(){
     CPPUNIT_ASSERT_EQUAL(64, (int)eth->getLength());
     CPPUNIT_ASSERT_EQUAL(false, eth->hasVlan());
     CPPUNIT_ASSERT_EQUAL(0, memcmp(arp_packet, eth->RawData(), 64));
+    
+    delete eth;
 }
 
