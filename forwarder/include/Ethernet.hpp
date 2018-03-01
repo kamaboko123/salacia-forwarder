@@ -61,7 +61,7 @@ public:
     void set(uint8_t *data, uint16_t length);
     
     uint16_t getLength();
-    void setLength(uint16_t len);
+    //void setLength(uint16_t len);
     
     EthType getType();
     EthType getULType();
