@@ -44,7 +44,6 @@ MacAddress::MacAddress(const uint64_t addr_int){
 }
 
 
-[[deprecated("please use toLong() function")]]
 uint64_t MacAddress::toInt() const{
     return(toLong());
 }
