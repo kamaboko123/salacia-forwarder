@@ -49,7 +49,7 @@ void FIXTURE_NAME::test_ipaddress_core(){
     
     addr1->set((char *)"10.0.0.1", false);
     CPPUNIT_ASSERT_EQUAL(false, addr1->isSet());
-    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", addr1->toStr()));
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("10.0.0.1", addr1->toStr()));
     
     addr2->set(0xc0a80101);
     CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.1", addr2->toStr()));
