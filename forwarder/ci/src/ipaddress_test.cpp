@@ -12,6 +12,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(FIXTURE_NAME);
     CPPUNIT_TEST(test_ipaddress_core);
     CPPUNIT_TEST(test_ipaddress_static);
+    CPPUNIT_TEST(test_ipnetmask_core);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -23,6 +24,7 @@ public:
 protected:
     void test_ipaddress_core();
     void test_ipaddress_static();
+    void test_ipnetmask_core();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -86,3 +88,81 @@ void FIXTURE_NAME::test_ipaddress_static(){
     CPPUNIT_ASSERT_EQUAL(0xAC106501, IPAddress::iptoui((char *)"172.16.101.1"));
 }
 
+void FIXTURE_NAME::test_ipnetmask_core(){
+    IPNetmask *mask1 = new IPNetmask();
+    IPNetmask *mask2 = new IPNetmask((char *)"255.255.255.0");
+    IPNetmask *mask3 = new IPNetmask((char *)"255.255.255.255");
+    IPNetmask *mask4 = new IPNetmask(0xFFFF0000);
+    
+    //[test] not set
+    CPPUNIT_ASSERT_EQUAL(false, mask1->isSet());
+    CPPUNIT_ASSERT_EQUAL(false, mask1->isValid());
+    CPPUNIT_ASSERT_EQUAL(-1, mask1->getLength());
+    
+    //[test] /24
+    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask2->isValid());
+    CPPUNIT_ASSERT_EQUAL(24, mask2->getLength());
+    
+    //[test] /32
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
+    CPPUNIT_ASSERT_EQUAL(32, mask3->getLength());
+    
+    //[test] /16 with constructor(uint32_t)
+    CPPUNIT_ASSERT_EQUAL(true, mask4->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask4->isValid());
+    CPPUNIT_ASSERT_EQUAL(16, mask4->getLength());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("255.255.0.0", mask4->toStr()));
+    
+    //[test] /0
+    CPPUNIT_ASSERT_EQUAL(0, mask1->set((uint32_t)0));
+    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask1->isValid());
+    CPPUNIT_ASSERT_EQUAL(0, mask1->getLength());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask1->toStr()));
+    
+    CPPUNIT_ASSERT_EQUAL(0, mask2->set((char *)"0.0.0.0"));
+    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask2->isValid());
+    CPPUNIT_ASSERT_EQUAL(0, mask2->getLength());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask2->touInt());
+    
+    CPPUNIT_ASSERT_EQUAL(0, mask3->setLength(0));
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
+    CPPUNIT_ASSERT_EQUAL(0, mask3->getLength());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask3->touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask3->toStr()));
+    
+    //[test] /23
+    CPPUNIT_ASSERT_EQUAL(23, mask1->setLength(23));
+    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask1->isValid());
+    CPPUNIT_ASSERT_EQUAL(23, mask1->getLength());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0xfffffe00, mask1->touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("255.255.254.0", mask1->toStr()));
+    
+    //[test] invalid
+    CPPUNIT_ASSERT_EQUAL(-1, mask1->setLength(33));
+    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
+    CPPUNIT_ASSERT_EQUAL(false, mask1->isValid());
+    CPPUNIT_ASSERT_EQUAL(-1, mask1->getLength());
+    
+    CPPUNIT_ASSERT_EQUAL(-1, mask2->set((char *)"111.111.111.111"));
+    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
+    CPPUNIT_ASSERT_EQUAL(false, mask2->isValid());
+    CPPUNIT_ASSERT_EQUAL(-1, mask2->getLength());
+    
+    //[test]/8 with set(uint32_t)
+    CPPUNIT_ASSERT_EQUAL(8, mask3->set(0xff000000));
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
+    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
+    CPPUNIT_ASSERT_EQUAL(8, mask3->getLength());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("255.0.0.0", mask3->toStr()));
+    
+    delete mask1;
+    delete mask2;
+    delete mask3;
+    delete mask4;
+}
