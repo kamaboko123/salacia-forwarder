@@ -209,14 +209,14 @@ IPNetwork::IPNetwork(char *ipnet_str){
     _init();
     set(ipnet_str);
 }
-
+/*
 IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
     _init();
     IPAddress ipaddr(addr_str);
     this->netaddr->set(ipaddr.touInt());
     this->netmask->setLength(mask_length);
     _validate();
-}
+}*/
 
 IPNetwork::IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
     _init();
@@ -224,13 +224,13 @@ IPNetwork::IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
     this->netmask->setLength(mask_length);
     _validate();
 }
-
+/*
 IPNetwork::IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask){
     _init();
     this->netaddr->set(ipaddr.touInt());
     this->netmask->set(netmask.touInt());
     _validate();
-}
+}*/
 
 IPNetwork::~IPNetwork(){
     delete netaddr;
@@ -307,12 +307,13 @@ bool IPNetwork::set(const IPNetwork &ipnet){
     return(_validate());
 }
 
+/*
 bool IPNetwork::set(const IPAddress &ipaddr, const IPNetmask &netmask){
     this->netaddr->set(ipaddr.touInt());
     this->netmask->set(netmask.touInt());
     _validate();
     return(isValid());
-}
+}*/
 
 IPAddress &IPNetwork::getNetaddr() const{
     return(*netaddr);

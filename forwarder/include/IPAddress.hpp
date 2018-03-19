@@ -86,11 +86,11 @@ public:
     //prefix形式の文字列 (例:192.168.0.0/24)
     IPNetwork(char *ipnet_str);
     //ネットワークアドレスは文字列、マスクはマスク長
-    IPNetwork(char *addr_str, sfwdr::ssize_t mask_length);
+    //IPNetwork(char *addr_str, sfwdr::ssize_t mask_length);
     //ネットワークアドレスはオブジェクト、マスクはマスク長
     IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
     //ネットワークアドレスとマスクのオブジェクト
-    IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask);
+    //IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask);
     
     ~IPNetwork();
     
@@ -102,7 +102,7 @@ public:
     
     bool set(const IPNetwork &ipnet);
     bool set(char *ipnet_str);
-    bool set(const IPAddress &ipaddr, const IPNetmask &netmask);
+    //bool set(const IPAddress &ipaddr, const IPNetmask &netmask);
     
     char *toStr() const;
     
