@@ -13,10 +13,13 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_ipaddress_core);
     CPPUNIT_TEST(test_ipaddress_static);
     CPPUNIT_TEST(test_ipnetmask_core);
+    CPPUNIT_TEST(test_ipnetwork_core);
+    CPPUNIT_TEST(test_ipnetwork_static);
     CPPUNIT_TEST_SUITE_END();
 
 private:
     void copy_constructor_test(IPAddress target, uint32_t expect_int_addr);
+    void copy_constructor_test(IPNetwork target, IPNetwork &expect_net);
     
 public:
     void setUp();
@@ -25,6 +28,8 @@ protected:
     void test_ipaddress_core();
     void test_ipaddress_static();
     void test_ipnetmask_core();
+    void test_ipnetwork_core();
+    void test_ipnetwork_static();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -35,6 +40,12 @@ void FIXTURE_NAME::tearDown() {}
 
 void FIXTURE_NAME::copy_constructor_test(IPAddress target, uint32_t expect_int_addr){
     CPPUNIT_ASSERT_EQUAL(expect_int_addr, target.touInt());
+}
+
+void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect_net){
+    CPPUNIT_ASSERT_EQUAL(expect_net.isValid(), target.isValid());
+    CPPUNIT_ASSERT_EQUAL(expect_net.getNetaddr().touInt(), target.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(expect_net.getNetmask().touInt(), target.getNetmask().touInt());
 }
 
 void FIXTURE_NAME::test_ipaddress_core(){
@@ -165,4 +176,69 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     delete mask2;
     delete mask3;
     delete mask4;
+}
+
+void FIXTURE_NAME::test_ipnetwork_core(){
+    IPNetwork *net;
+    
+    //[test] not set
+    net = new IPNetwork();
+    CPPUNIT_ASSERT_EQUAL(false, net->isValid());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)1, net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0, net->getNetmask().touInt());
+    delete net;
+    
+    //[test] 192.168.0.0/24
+    net = new IPNetwork((char *)"192.168.0.0/24");
+    CPPUNIT_ASSERT_EQUAL(true, net->isValid());
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"192.168.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"255.255.255.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.0.0/24", net->toStr()));
+    delete net;
+    
+    IPAddress net_addr((char *)"192.168.1.0");
+    net = new IPNetwork(net_addr, 24);
+    CPPUNIT_ASSERT_EQUAL(true, net->isValid());
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"192.168.1.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"255.255.255.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.0/24", net->toStr()));
+    delete net;
+    
+    //[test] 192.168.1.0/23
+    net = new IPNetwork((char *)"192.168.1.0/23");
+    CPPUNIT_ASSERT_EQUAL(false, net->isValid());
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"192.168.1.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"255.255.254.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("", net->toStr()));
+    delete net;
+    
+    //[test] 0.0.0.0/0
+    net = new IPNetwork((char *)"0.0.0.0/0");
+    CPPUNIT_ASSERT_EQUAL(true, net->isValid());
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
+    delete net;
+    
+    //[test] copy constructor
+    net = new IPNetwork((char *)"192.168.1.0/23");
+    copy_constructor_test(*net, *net);
+    IPNetwork net_copied = *net;
+    CPPUNIT_ASSERT_EQUAL(net->isValid(), net_copied.isValid());
+    CPPUNIT_ASSERT_EQUAL(net->getNetaddr().touInt(), net_copied.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(net->getNetmask().touInt(), net_copied.getNetmask().touInt());
+    delete net;
+}
+
+void FIXTURE_NAME::test_ipnetwork_static(){
+    //validPrefixFormat (just format check, not prefix validate)
+    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"192.168.0.0/23"));
+    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"192.168.0.0/24"));
+    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"0.0.0.0/0"));
+    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"1.1.1.1/32"));
+    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"111.111.111.1111/32"));
+    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"1.1.1.1/33"));
+    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"1.1.1.1/-1"));
+    
+    
 }
