@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = ip_address_test.cpp ../../src/IPAddress.cpp ../../src/comlib.cpp
+SRC = ip_address_test.cpp ../../src/IPAddress.cpp ../../src/comlib.cpp ../../src/Exception.cpp
 C_OPT = -std=c++11 -Wall
 INCLUDE = -I ../../include
 TARGET_DIR = ./bin

@@ -38,7 +38,8 @@ int main(void){
     
     IPAddress network1_addr((char*)"192.168.0.0");
     IPNetmask network1_mask((char*)"255.255.252.0");
-
+    
+    /*
     //IPNetwork network1((char *)"10.1.2.0/24");
     IPNetwork network1(network1_addr, network1_mask);
     if(network1.isValid()){
@@ -48,7 +49,7 @@ int main(void){
         printf("NG!\n");
     }
     printf("%s\n", network1.toStr());
-    
+    */
     
     
     printf("\n\n\n[copy test]\n");
@@ -107,6 +108,23 @@ int main(void){
         printf("not Set:");
     }
     printf("%s\n", default_mask.toStr());
+    
+    
+    IPAddress *valid_addr;
+    try{
+        valid_addr = new IPAddress((char *)"255.25s.255.255");
+        delete valid_addr;
+    }
+    catch(sfwdr::Exception::InvalidIPAddress &e){
+        printf("%s\n", e.getMessage());
+    }
+    //printf("%p", valid_addr);
+    //delete valid_addr;
+    //printf("%s\n", valid_addr->toStr());
+    valid_addr = new IPAddress((char *)"255.255.255.255");
+    printf("%s\n", valid_addr->toStr());
+    
+    //IPAddress((char *)"999.999.999.999");
     
     return(0);
 }

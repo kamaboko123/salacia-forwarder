@@ -32,6 +32,11 @@ namespace sfwdr{
         public:
             InvalidEthType(char *str);
         };
+        
+        class InvalidIPAddress : public Exception{
+        public:
+            InvalidIPAddress(char *str);
+        };
     }
 }
 

@@ -7,6 +7,10 @@ void IPAddress::_init(){
     set_flg = false;
 }
 
+void IPAddress::_free(){
+    delete[] this->addr_str;
+}
+
 IPAddress::IPAddress(){
     _init();
     set((uint32_t)0, false);
@@ -19,11 +23,17 @@ IPAddress::IPAddress(uint32_t addr_uint){
 
 IPAddress::IPAddress(char *addr_str){
     _init();
-    set(addr_str);
+    try{
+        set(addr_str);
+    }
+    catch(sfwdr::Exception::InvalidIPAddress &e){
+        _free();
+        throw;
+    }
 }
 
 IPAddress::~IPAddress(){
-    delete[] addr_str;
+    _free();
 }
 
 IPAddress::IPAddress(const IPAddress &ipaddr){
@@ -45,8 +55,17 @@ void IPAddress::set(uint32_t addr_uint, bool set_flg){
 }
 
 void IPAddress::set(char *addr_str, bool set_flg){
-    addr = iptoui(addr_str);
-    uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
+    try{
+        addr = iptoui(addr_str);
+        uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
+    }
+    catch(sfwdr::Exception::InvalidIPAddress &e){
+        addr = 0;
+        uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
+        
+        throw e;
+    }
+    
     this->set_flg = set_flg;
 }
 
@@ -110,19 +129,38 @@ char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
 }
 
 uint32_t IPAddress::iptoui(char *addr_str){
+    uint8_t octet = 0;
     uint32_t addr = 0;
+    uint64_t tmp;
+    char *addr_str_org = addr_str;
     
     while(*addr_str != '\0'){
+        tmp = comlib::atoi(addr_str);
+        if(comlib::ndigit(tmp) > 3){
+            throw sfwdr::Exception::InvalidIPAddress(addr_str_org);
+        }
+        if(tmp > 255 || tmp < 0){
+            throw sfwdr::Exception::InvalidIPAddress(addr_str_org);
+        }
+        
         //1byte桁上げ + 桁の値加算
-        addr = (addr << 8) + comlib::atoi(addr_str);
+        addr = (addr << 8) + tmp;
+        
+        octet++;
         
         //次のオクテットまでポインタを進める
         do{
             addr_str++;
             if(*addr_str == '\0') break;
+            if(*addr_str != '.' && (*addr_str < '0' || *addr_str > '9')){
+                //数値とドット以外はエラー
+                throw sfwdr::Exception::InvalidIPAddress(addr_str_org);
+            }
         }while(*(addr_str - 1) != '.');
     }
-    //printf("%u\n", addr);
+    if(octet != 4){
+        throw sfwdr::Exception::InvalidIPAddress(addr_str_org);
+    }
     
     return(addr);
 }

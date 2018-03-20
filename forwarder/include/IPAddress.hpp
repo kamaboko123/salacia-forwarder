@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstdio>
 #include "comlib.hpp"
+#include "Exception.hpp"
 
 #define IP_ADDR_SIZE 4
 
@@ -24,6 +25,7 @@ private:
     char *addr_str;
     
     void _init();
+    void _free();
 
 protected:
     bool set_flg;
@@ -49,6 +51,7 @@ public:
     
     static uint32_t iptoui(char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);
+    static bool validIPAddressFormat(char *addr_str);
 };
 
 class IPNetmask : public IPAddress{

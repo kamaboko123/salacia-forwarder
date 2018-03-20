@@ -11,6 +11,7 @@
 class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(FIXTURE_NAME);
     CPPUNIT_TEST(test_ipaddress_core);
+    CPPUNIT_TEST(test_ipaddress_validation);
     CPPUNIT_TEST(test_ipaddress_static);
     CPPUNIT_TEST(test_ipnetmask_core);
     CPPUNIT_TEST(test_ipnetwork_core);
@@ -26,6 +27,7 @@ public:
     void tearDown();
 protected:
     void test_ipaddress_core();
+    void test_ipaddress_validation();
     void test_ipaddress_static();
     void test_ipnetmask_core();
     void test_ipnetwork_core();
@@ -84,7 +86,22 @@ void FIXTURE_NAME::test_ipaddress_core(){
     
     delete addr1;
     delete addr2;
+}
+
+void FIXTURE_NAME::test_ipaddress_validation(){
+    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.1000"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("999.999.999.999"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("a"), sfwdr::Exception::InvalidIPAddress);
     
+    //leak check
+    IPAddress *addr;
+    try{
+        addr = new IPAddress("999.999.999.999");
+        delete(addr);
+    }
+    catch(sfwdr::Exception::InvalidIPAddress &e){}
 }
 
 void FIXTURE_NAME::test_ipaddress_static(){
