@@ -165,35 +165,50 @@ uint32_t IPAddress::iptoui(char *addr_str){
     return(addr);
 }
 
-IPNetmask::IPNetmask() : IPAddress((uint32_t)IP_NETMASK_INVALID_VAL){
-    _validate();
-    set_flg = false;
+IPNetmask::IPNetmask() : IPAddress(){
+    length = 0;
 }
 
-IPNetmask::IPNetmask(char *addr_str) : IPAddress(addr_str){
-    _validate();
+IPNetmask::IPNetmask(char *addr_str) : IPAddress(){
+    set(addr_str);
 }
 
-IPNetmask::IPNetmask(uint32_t addr_uint) : IPAddress(addr_uint){
-    _validate();
+IPNetmask::IPNetmask(uint32_t addr_uint) : IPAddress(){
+    set(addr_uint);
 }
 
 sfwdr::ssize_t IPNetmask::set(uint32_t addr_uint){
-    IPAddress::set(addr_uint);
-    _validate();
+    try{
+        length = validIPNetmask(addr_uint);
+        IPAddress::set(addr_uint);
+    }
+    catch(sfwdr::Exception::Exception &e){
+        char buf_ex[32];
+        comlib::uitoa(addr_uint, buf_ex, 32);
+        throw sfwdr::Exception::InvalidIPNetmask(buf_ex);
+    }
     return(getLength());
 }
 
 sfwdr::ssize_t IPNetmask::set(char *addr_str){
-    IPAddress::set(addr_str);
-    _validate();
+    try{
+        uint32_t addr_uint = iptoui(addr_str);
+        set(addr_uint);
+    }
+    catch(sfwdr::Exception::Exception &e){
+        throw sfwdr::Exception::InvalidIPNetmask(addr_str);
+    }
     return(getLength());
 }
 
 sfwdr::ssize_t IPNetmask::setLength(sfwdr::ssize_t mask_length){
     if(mask_length == 0) return(set((uint32_t)0));
     if(mask_length < 0 || mask_length > 32){
-        set(IP_NETMASK_INVALID_VAL);
+        char ex_buf[64] = "length ";
+        char ex[32];
+        
+        comlib::strncat(ex_buf, comlib::uitoa(mask_length, ex, 32), 64);
+        throw sfwdr::Exception::InvalidIPNetmask(ex_buf);
     }
     
     uint32_t mask = 0;
@@ -207,31 +222,28 @@ sfwdr::ssize_t IPNetmask::setLength(sfwdr::ssize_t mask_length){
     return(getLength());
 }
 
-bool IPNetmask::_validate(){
-    valid = true;
-    length = 0;
-    
-    uint32_t mask = IPAddress::touInt();
+sfwdr::size_t IPNetmask::validIPNetmask(uint32_t mask){
+    uint8_t length = 0;
     uint32_t cmask = 0x80000000;
     uint8_t buf;
     bool find_0 = false;
     
-    for(int i = 32; i > 0 && valid; i--){
+    for(int i = 32; i > 0; i--){
         buf = (mask & cmask) >> (i-1);
         
-        if(find_0 && buf == 1) valid = false;
+        if(find_0 && buf == 1){
+            char buf_ex[32];
+            comlib::uitoa(mask, buf_ex, 32);
+            
+            throw sfwdr::Exception::InvalidIPNetmask(buf_ex);
+        }
         if(buf == 0) find_0 = true;
         if(!find_0) length++;
         
         cmask = cmask >> 1;
     }
-    if(!valid) length = -1;
     
-    return(valid);
-}
-
-bool IPNetmask::isValid() const{
-    return(valid);
+    return(length);
 }
 
 sfwdr::ssize_t IPNetmask::getLength() const{
@@ -247,6 +259,7 @@ IPNetwork::IPNetwork(char *ipnet_str){
     _init();
     set(ipnet_str);
 }
+
 /*
 IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
     _init();
@@ -318,7 +331,7 @@ bool IPNetwork::set(char *ipnet_str){
 }
 
 bool IPNetwork::_validate(){
-    valid = netmask->isValid();
+    //valid = netmask->isValid();
     valid = !(netaddr->touInt() == 0 && netmask->touInt() != 0);
     
     comlib::memset((uint8_t *)prefix, 0, sizeof(char)*IP_PREFIX_STR_LEN);

@@ -63,6 +63,17 @@ namespace sfwdr{
             
             delete[] tmp;
         }
+        
+        InvalidIPNetmask::InvalidIPNetmask(char *str){
+            char msg_head[] = "InvalidIPNetmask : ";
+            char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
+            comlib::strcat(tmp, msg_head);
+            comlib::strcat(tmp, str);
+            setMessage(tmp);
+            
+            delete[] tmp;
+        }
+
     }
 }
 

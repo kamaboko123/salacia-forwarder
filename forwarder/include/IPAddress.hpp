@@ -13,7 +13,7 @@
 #define IP_PREFIX_STR_LEN 20
 
 //IPNetmaskをinvalidにする時の定数
-#define IP_NETMASK_INVALID_VAL 3
+//#define IP_NETMASK_INVALID_VAL 3
 
 //IPNetowrkをinvalidにする時の定数
 #define IP_NETWORK_INVALID_NWADDR 1
@@ -51,15 +51,12 @@ public:
     
     static uint32_t iptoui(char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);
-    static bool validIPAddressFormat(char *addr_str);
 };
 
 class IPNetmask : public IPAddress{
 private:
-    bool valid;
     sfwdr::ssize_t length;
     
-    bool _validate();
 public:
     IPNetmask();
     IPNetmask(char *addr_str);
@@ -69,9 +66,9 @@ public:
     sfwdr::ssize_t set(char *addr_str);
     sfwdr::ssize_t setLength(sfwdr::ssize_t mask_length);
     
-    bool isValid() const;
     sfwdr::ssize_t getLength() const;
     
+    static sfwdr::size_t validIPNetmask(uint32_t mask);
 };
 
 class IPNetwork{

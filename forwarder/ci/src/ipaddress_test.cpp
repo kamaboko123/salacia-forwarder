@@ -14,6 +14,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_ipaddress_validation);
     CPPUNIT_TEST(test_ipaddress_static);
     CPPUNIT_TEST(test_ipnetmask_core);
+    CPPUNIT_TEST(test_ipnetmask_validation);
     CPPUNIT_TEST(test_ipnetwork_core);
     CPPUNIT_TEST(test_ipnetwork_static);
     CPPUNIT_TEST_SUITE_END();
@@ -30,6 +31,7 @@ protected:
     void test_ipaddress_validation();
     void test_ipaddress_static();
     void test_ipnetmask_core();
+    void test_ipnetmask_validation();
     void test_ipnetwork_core();
     void test_ipnetwork_static();
 };
@@ -89,16 +91,16 @@ void FIXTURE_NAME::test_ipaddress_core(){
 }
 
 void FIXTURE_NAME::test_ipaddress_validation(){
-    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.1000"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress("999.999.999.999"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress("-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress("a"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress((char *)"10.0.0.1000"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress((char *)"999.999.999.999"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress((char *)"-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress((char *)"10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress((char *)"a"), sfwdr::Exception::InvalidIPAddress);
     
     //leak check
     IPAddress *addr;
     try{
-        addr = new IPAddress("999.999.999.999");
+        addr = new IPAddress((char *)"999.999.999.999");
         delete(addr);
     }
     catch(sfwdr::Exception::InvalidIPAddress &e){}
@@ -122,70 +124,41 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     IPNetmask *mask3 = new IPNetmask((char *)"255.255.255.255");
     IPNetmask *mask4 = new IPNetmask(0xFFFF0000);
     
-    //[test] not set
-    CPPUNIT_ASSERT_EQUAL(false, mask1->isSet());
-    CPPUNIT_ASSERT_EQUAL(false, mask1->isValid());
-    CPPUNIT_ASSERT_EQUAL(-1, mask1->getLength());
+    //[test] default
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask1->toStr()));
+    CPPUNIT_ASSERT_EQUAL(0, mask1->getLength());
     
     //[test] /24
-    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask2->isValid());
     CPPUNIT_ASSERT_EQUAL(24, mask2->getLength());
     
     //[test] /32
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
     CPPUNIT_ASSERT_EQUAL(32, mask3->getLength());
     
     //[test] /16 with constructor(uint32_t)
-    CPPUNIT_ASSERT_EQUAL(true, mask4->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask4->isValid());
     CPPUNIT_ASSERT_EQUAL(16, mask4->getLength());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("255.255.0.0", mask4->toStr()));
     
     //[test] /0
     CPPUNIT_ASSERT_EQUAL(0, mask1->set((uint32_t)0));
-    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask1->isValid());
     CPPUNIT_ASSERT_EQUAL(0, mask1->getLength());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask1->toStr()));
     
     CPPUNIT_ASSERT_EQUAL(0, mask2->set((char *)"0.0.0.0"));
-    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask2->isValid());
     CPPUNIT_ASSERT_EQUAL(0, mask2->getLength());
     CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask2->touInt());
     
     CPPUNIT_ASSERT_EQUAL(0, mask3->setLength(0));
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
-    CPPUNIT_ASSERT_EQUAL(0, mask3->getLength());
     CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask3->touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask3->toStr()));
     
     //[test] /23
     CPPUNIT_ASSERT_EQUAL(23, mask1->setLength(23));
-    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask1->isValid());
     CPPUNIT_ASSERT_EQUAL(23, mask1->getLength());
     CPPUNIT_ASSERT_EQUAL((uint32_t)0xfffffe00, mask1->touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("255.255.254.0", mask1->toStr()));
     
-    //[test] invalid
-    CPPUNIT_ASSERT_EQUAL(-1, mask1->setLength(33));
-    CPPUNIT_ASSERT_EQUAL(true, mask1->isSet());
-    CPPUNIT_ASSERT_EQUAL(false, mask1->isValid());
-    CPPUNIT_ASSERT_EQUAL(-1, mask1->getLength());
-    
-    CPPUNIT_ASSERT_EQUAL(-1, mask2->set((char *)"111.111.111.111"));
-    CPPUNIT_ASSERT_EQUAL(true, mask2->isSet());
-    CPPUNIT_ASSERT_EQUAL(false, mask2->isValid());
-    CPPUNIT_ASSERT_EQUAL(-1, mask2->getLength());
-    
     //[test]/8 with set(uint32_t)
     CPPUNIT_ASSERT_EQUAL(8, mask3->set(0xff000000));
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, mask3->isValid());
     CPPUNIT_ASSERT_EQUAL(8, mask3->getLength());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("255.0.0.0", mask3->toStr()));
     
@@ -193,6 +166,30 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     delete mask2;
     delete mask3;
     delete mask4;
+}
+
+void FIXTURE_NAME::test_ipnetmask_validation(){
+    CPPUNIT_ASSERT_THROW(IPNetmask((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(IPNetmask((char *)"255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(IPNetmask(0xFFFF01FF), sfwdr::Exception::InvalidIPNetmask);
+    
+    //leak check
+    IPNetmask *mask1;
+    try{
+        mask1 = new IPNetmask((char *)"255.255.1.0");
+        delete(mask1);
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){}
+    
+    IPNetmask mask2;
+    CPPUNIT_ASSERT_THROW(mask2.set((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.set((char *)"255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.set(0xFFFF01FF), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.setLength(33), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.setLength(-1), sfwdr::Exception::InvalidIPNetmask);
+    
+    CPPUNIT_ASSERT_EQUAL(0, mask2.getLength());
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask2.touInt());
 }
 
 void FIXTURE_NAME::test_ipnetwork_core(){

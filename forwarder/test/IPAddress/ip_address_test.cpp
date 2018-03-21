@@ -15,24 +15,13 @@ int main(void){
     IPNetmask mask((char *)"255.255.255.0");
     printf("%s\n", mask.toStr());
     printf("%d\n", mask.getLength());
+   /*
     if(mask.isValid()){
         printf("OK!\n");
     }
     else{
         printf("NG!\n");
-    }
-    
-    printf("----\n");
-    
-    IPNetmask mask2(16);
-    printf("%s\n", mask2.toStr());
-    printf("%d\n", mask2.getLength());
-    if(mask2.isValid()){
-        printf("OK!\n");
-    }
-    else{
-        printf("NG!\n");
-    }
+    }*/
     
     printf("----\n");
     
@@ -123,8 +112,71 @@ int main(void){
     //printf("%s\n", valid_addr->toStr());
     valid_addr = new IPAddress((char *)"255.255.255.255");
     printf("%s\n", valid_addr->toStr());
-    
+    delete valid_addr;
     //IPAddress((char *)"999.999.999.999");
+    
+    IPNetmask *m;
+    try{
+        m = new IPNetmask("999.999.999.999");
+        delete m;
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    
+    try{
+        m = new IPNetmask(0xffffff00);
+        printf("!!%s\n", m->toStr());
+        delete m;
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    
+    try{
+        m = new IPNetmask(0xfffff100);
+        printf("!!!%s\n", m->toStr());
+        delete m;
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    
+    m = new IPNetmask();
+    try{
+        printf("!!!%s\n", m->toStr());
+        m->setLength(23);
+        printf("!!!%s\n", m->toStr());
+        m->setLength(33);
+        printf("!!!%s\n", m->toStr());
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    printf("!!!%s\n", m->toStr());
+    delete m;
+    
+    m = new IPNetmask();
+    try{
+        printf("!!!%s\n", m->toStr());
+        m->set("255.2.2.2");
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    printf("!!!%s\n", m->toStr());
+    delete m;
+    
+    m = new IPNetmask();
+    try{
+        printf("!!!%s\n", m->toStr());
+        m->set(0xFFFF1000);
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){
+        printf("%s\n", e.getMessage());
+    }
+    printf("!!!%s\n", m->toStr());
+    delete m;
     
     return(0);
 }
