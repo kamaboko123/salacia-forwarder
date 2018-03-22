@@ -109,6 +109,7 @@ public:
     bool isValid() const;
     
     static bool validPrefixFormat(char *str);
+    static bool validIPNetwork(char *nw_str);
 };
 
 #endif

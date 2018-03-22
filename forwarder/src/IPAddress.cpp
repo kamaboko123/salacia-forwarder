@@ -401,3 +401,49 @@ bool IPNetwork::validPrefixFormat(char *str){
     
     return(true);
 }
+
+bool IPNetwork::validIPNetwork(char *nw_str){
+    char *nwaddr_str = nullptr;
+    IPAddress *nwaddr = new IPAddress();
+    IPNetmask *nwmask = new IPNetmask();
+    
+    try{
+        //ネットワークアドレス
+        sfwdr::ssize_t nwaddr_end_index;
+        if((nwaddr_end_index = comlib::strchr_index(nw_str, '/')) == -1){
+            //マスク無しはエラー
+            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+        }
+        nwaddr_str = new char[nwaddr_end_index + 1]();
+        comlib::strncat(nwaddr_str, nw_str, nwaddr_end_index);
+        nwaddr->set(nwaddr_str);
+        
+        //サブネットマスク
+        //残りの文字を数値変換->桁数カウント、残りの文字数と一致するか
+        
+        int prefix_len_str_len = comlib::strlen(&nw_str[nwaddr_end_index + 1]);
+        int plen = comlib::atoi(&nw_str[nwaddr_end_index + 1]);
+        if(prefix_len_str_len != comlib::ndigit(plen)){
+            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+        }
+        
+        nwmask->setLength(plen);
+        
+        //ネットワークアドレスとサブネットマスクの論理積が、ネットワークアドレスと同じであれば正当
+        if((nwaddr->touInt() & nwmask->touInt()) != nwaddr->touInt()){
+            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+        }
+        
+        delete[] nwaddr_str;
+        delete nwaddr;
+        delete nwmask;
+    }
+    catch(sfwdr::Exception::Exception){
+        delete nwaddr;
+        delete nwmask;
+        if(nwaddr_str != nullptr) delete[] nwaddr_str;
+        throw sfwdr::Exception::InvalidIPNetwork(nw_str);
+    }
+    
+    return(true);
+}

@@ -73,7 +73,17 @@ namespace sfwdr{
             
             delete[] tmp;
         }
-
+        
+        InvalidIPNetwork::InvalidIPNetwork(char *str){
+            char msg_head[] = "InvalidIPNetwork : ";
+            char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
+            comlib::strcat(tmp, msg_head);
+            comlib::strcat(tmp, str);
+            setMessage(tmp);
+            
+            delete[] tmp;
+        }
+        
     }
 }
 

@@ -42,6 +42,11 @@ namespace sfwdr{
         public:
             InvalidIPNetmask(char *str);
         };
+        
+        class InvalidIPNetwork : public Exception{
+        public:
+            InvalidIPNetwork(char *str);
+        };
     }
 }
 

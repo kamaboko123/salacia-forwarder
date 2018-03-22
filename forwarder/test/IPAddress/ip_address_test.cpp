@@ -61,6 +61,7 @@ int main(void){
     cp_nw2 = cp_nw1;
     IPNetwork cp_nw3 = cp_nw2;
     
+    /*
     if(cp_nw2.isValid()){
         printf("OK!\n");
     }
@@ -68,6 +69,7 @@ int main(void){
         printf("NG!\n");
     }
     printf("%s\n", cp_nw2.toStr());
+    */
     
     printf("[IPAddress set_flg test]\n");
     IPAddress default_addr;
@@ -177,6 +179,21 @@ int main(void){
     }
     printf("!!!%s\n", m->toStr());
     delete m;
+    
+    IPNetwork::validIPNetwork((char *)"10.0.0.0/8");
+    try{
+        IPNetwork::validIPNetwork((char *)"10.0.0.2222/9");
+    }
+    catch(sfwdr::Exception::Exception &e){
+        printf("%s\n", e.getMessage());
+    }
+    
+    try{
+        IPNetwork::validIPNetwork((char *)"10.0.0.222");
+    }
+    catch(sfwdr::Exception::Exception &e){
+        printf("%s\n", e.getMessage());
+    }
     
     return(0);
 }
