@@ -11,13 +11,13 @@ void Route::_init(){
 Route::Route(const IPNetwork &prefix){
     _init();
     this->prefix.set(prefix);
-    if(!prefix.isValid()) throw Exception((char *)"Route :invalid Network Address");
+    //if(!prefix.isValid()) throw Exception((char *)"Route :invalid Network Address");
 }
 
 Route::Route(char *prefix_str){
     _init();
     this->prefix.set(prefix_str);
-    if(!prefix.isValid()) throw Exception((char *)"Route :invalid Network Address");
+    //if(!prefix.isValid()) throw Exception((char *)"Route :invalid Network Address");
 }
 
 Route::Route(const Route &route){
@@ -151,7 +151,7 @@ struct PBIT *RouteTable::_initPBNode(struct PBIT *pbit){
 }
 
 void RouteTable::addRoute(const IPNetwork &network, const RouteType type, const IPAddress &nexthop){
-    if(!network.isValid()) return;
+    //if(!network.isValid()) return;
     
     int bit;
     struct PBIT *p = root;
@@ -175,7 +175,7 @@ void RouteTable::addRoute(const IPNetwork &network, const RouteType type, const 
 }
 
 Route RouteTable::getRoute(const IPNetwork &network) const{
-    if(!network.isValid()) return(nullptr);
+    //if(!network.isValid()) return(nullptr);
     
     int bit;
     PBIT *p = root;

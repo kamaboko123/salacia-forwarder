@@ -12,13 +12,6 @@
 #define IP_ADDR_STR_LEN 16
 #define IP_PREFIX_STR_LEN 20
 
-//IPNetmaskをinvalidにする時の定数
-//#define IP_NETMASK_INVALID_VAL 3
-
-//IPNetowrkをinvalidにする時の定数
-#define IP_NETWORK_INVALID_NWADDR 1
-#define IP_NETWORK_INVALID_MASK 0
-
 class IPAddress{
 private:
     uint32_t addr;
@@ -71,45 +64,48 @@ public:
     static sfwdr::size_t validIPNetmask(uint32_t mask);
 };
 
+typedef struct{
+    IPAddress netaddr;
+    IPNetmask netmask;
+} IPNW;
+
 class IPNetwork{
 private:
     bool valid;
     IPAddress *netaddr;
     IPNetmask *netmask;
+    IPNW *ipnw;
+    
     char *prefix;
     
     void _init();
-    bool _validate();
+    void _free();
+    void _build_str();
+    //bool _validate();
     
 public:
     IPNetwork();
     //prefix形式の文字列 (例:192.168.0.0/24)
     IPNetwork(char *ipnet_str);
-    //ネットワークアドレスは文字列、マスクはマスク長
-    //IPNetwork(char *addr_str, sfwdr::ssize_t mask_length);
     //ネットワークアドレスはオブジェクト、マスクはマスク長
     IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
-    //ネットワークアドレスとマスクのオブジェクト
-    //IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask);
     
     ~IPNetwork();
     
     IPNetwork(const IPNetwork &ipnet);
     IPNetwork &operator=(const IPNetwork &ipnet);
     
-    IPAddress &getNetaddr() const;
-    IPNetmask &getNetmask() const;
+    IPAddress getNetaddr() const;
+    IPNetmask getNetmask() const;
     
-    bool set(const IPNetwork &ipnet);
-    bool set(char *ipnet_str);
-    //bool set(const IPAddress &ipaddr, const IPNetmask &netmask);
+    void set(const IPNetwork &ipnet);
+    void set(char *nw_str);
+    void set(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
     
     char *toStr() const;
     
-    bool isValid() const;
-    
-    static bool validPrefixFormat(char *str);
-    static bool validIPNetwork(char *nw_str);
+    static IPNW validIPNetwork(char *nw_str);
+    static IPNW validIPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
 };
 
 #endif

@@ -195,5 +195,14 @@ int main(void){
         printf("%s\n", e.getMessage());
     }
     
+    IPNetwork *net1;
+    try{
+        net1 = new IPNetwork((char *)"10.0.0.222");
+        delete net1;
+    }
+    catch(sfwdr::Exception::Exception &e){
+        printf("%s\n", e.getMessage());
+    }
+
     return(0);
 }

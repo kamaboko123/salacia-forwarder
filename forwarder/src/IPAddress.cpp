@@ -252,41 +252,32 @@ sfwdr::ssize_t IPNetmask::getLength() const{
 
 IPNetwork::IPNetwork(){
     _init();
-    _validate();
 }
 
 IPNetwork::IPNetwork(char *ipnet_str){
     _init();
-    set(ipnet_str);
+    try{
+        set(ipnet_str);
+    }
+    catch(sfwdr::Exception::InvalidIPNetwork){
+        _free();
+        throw;
+    }
 }
-
-/*
-IPNetwork::IPNetwork(char *addr_str, sfwdr::ssize_t mask_length){
-    _init();
-    IPAddress ipaddr(addr_str);
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->setLength(mask_length);
-    _validate();
-}*/
 
 IPNetwork::IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
     _init();
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->setLength(mask_length);
-    _validate();
+    try{
+        set(ipaddr, mask_length);
+    }
+    catch(sfwdr::Exception::InvalidIPNetwork){
+        _free();
+        throw;
+    }
 }
-/*
-IPNetwork::IPNetwork(const IPAddress &ipaddr, const IPNetmask &netmask){
-    _init();
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->set(netmask.touInt());
-    _validate();
-}*/
 
 IPNetwork::~IPNetwork(){
-    delete netaddr;
-    delete netmask;
-    delete[] prefix;
+    _free();
 }
 
 
@@ -304,108 +295,55 @@ IPNetwork &IPNetwork::operator=(const IPNetwork &ipnet){
 
 
 void IPNetwork::_init(){
-    netaddr = new IPAddress((uint32_t)IP_NETWORK_INVALID_NWADDR);
-    netmask = new IPNetmask((uint32_t)IP_NETWORK_INVALID_MASK);
+    ipnw = new IPNW;
     prefix = new char[IP_PREFIX_STR_LEN]();
 }
 
-bool IPNetwork::set(char *ipnet_str){
-    if(!validPrefixFormat(ipnet_str)){
-        //invalidな値を入れる
-        this->netaddr->set(IP_NETWORK_INVALID_NWADDR);
-        this->netmask->setLength(IP_NETWORK_INVALID_MASK);
+void IPNetwork::_free(){
+    delete ipnw;
+    delete[] prefix;
+}
+
+void IPNetwork::set(char *nw_str){
+    try{
+        *ipnw = validIPNetwork(nw_str);
+        _build_str();
     }
-    else{
-        int pindex = comlib::strchr_index(ipnet_str, '/');
-        char *netaddr_str = new char[pindex + 1]();
-        comlib::strncpy(netaddr_str, ipnet_str, pindex);
-        int plen = comlib::atoi(ipnet_str + pindex + 1);
-        
-        this->netaddr->set(netaddr_str);
-        this->netmask->setLength(plen);
-        
-        delete[] netaddr_str;
+    catch(sfwdr::Exception::InvalidIPNetwork){
+        throw;
     }
-    _validate();
-    return(isValid());
 }
 
-bool IPNetwork::_validate(){
-    //valid = netmask->isValid();
-    valid = !(netaddr->touInt() == 0 && netmask->touInt() != 0);
-    
-    comlib::memset((uint8_t *)prefix, 0, sizeof(char)*IP_PREFIX_STR_LEN);
-    if(valid){
-        if((netaddr->touInt() & netmask->touInt()) == netaddr->touInt()){
-            valid = true;
-            
-            char plen_buf[3] = {0};
-            comlib::uitoa(netmask->getLength(), plen_buf, sizeof(plen_buf));
-            comlib::strcat(prefix, netaddr->toStr());
-            comlib::strcat(prefix, (char *)"/");
-            comlib::strcat(prefix, plen_buf);
-            
-            return(true);
-        }
+void IPNetwork::set(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
+    try{
+        *ipnw = validIPNetwork(ipaddr, mask_length);
+        _build_str();
     }
-    valid = false;
-    return(false);
+    catch(sfwdr::Exception::InvalidIPNetwork){
+        throw;
+    }
 }
 
-bool IPNetwork::set(const IPNetwork &ipnet){
-    this->netaddr->set(ipnet.getNetaddr().touInt());
-    this->netmask->set(ipnet.getNetmask().touInt());
-    return(_validate());
+void IPNetwork::set(const IPNetwork &ipnet){
+    (*ipnw).netaddr.set(ipnet.getNetaddr().touInt());
+    (*ipnw).netmask.set(ipnet.getNetmask().touInt());
 }
 
-/*
-bool IPNetwork::set(const IPAddress &ipaddr, const IPNetmask &netmask){
-    this->netaddr->set(ipaddr.touInt());
-    this->netmask->set(netmask.touInt());
-    _validate();
-    return(isValid());
-}*/
-
-IPAddress &IPNetwork::getNetaddr() const{
-    return(*netaddr);
+IPAddress IPNetwork::getNetaddr() const{
+    return((*ipnw).netaddr);
 }
 
-IPNetmask &IPNetwork::getNetmask() const{
-    return(*netmask);
-}
-
-bool IPNetwork::isValid() const{
-    return(valid);
+IPNetmask IPNetwork::getNetmask() const{
+    return((*ipnw).netmask);
 }
 
 char *IPNetwork::toStr() const{
     return(prefix);
 }
 
-//与えられた文字列がIPのPrefixフォーマットか検査
-bool IPNetwork::validPrefixFormat(char *str){
-    // strから/を探す、見つからなかったら不正
-    int prefix_index = comlib::strchr_index(str, '/');
-    if(prefix_index == -1) return(false);
-    
-    //次の文字が終端なら不正
-    if(*(str = str + prefix_index + 1) == '\0') return(false);
-    //数字じゃなけくても不正
-    if(!comlib::isdigit(*str)) return(false);
-    
-    //数値変換して範囲チェック
-    //数値の桁数、残りの文字数が一致しているか（無駄な文字が入ってないか）
-    int plen = comlib::atoi(str);
-    if(plen < 0 && plen > 32) return(false);
-    if(comlib::ndigit(plen) != comlib::strlen(str)) return(false);
-    
-    return(true);
-}
-
-bool IPNetwork::validIPNetwork(char *nw_str){
+IPNW IPNetwork::validIPNetwork(char *nw_str){
     char *nwaddr_str = nullptr;
-    IPAddress *nwaddr = new IPAddress();
-    IPNetmask *nwmask = new IPNetmask();
+    IPNW nw;
     
     try{
         //ネットワークアドレス
@@ -416,7 +354,7 @@ bool IPNetwork::validIPNetwork(char *nw_str){
         }
         nwaddr_str = new char[nwaddr_end_index + 1]();
         comlib::strncat(nwaddr_str, nw_str, nwaddr_end_index);
-        nwaddr->set(nwaddr_str);
+        nw.netaddr.set(nwaddr_str);
         
         //サブネットマスク
         //残りの文字を数値変換->桁数カウント、残りの文字数と一致するか
@@ -427,23 +365,51 @@ bool IPNetwork::validIPNetwork(char *nw_str){
             throw sfwdr::Exception::InvalidIPNetwork((char *)"");
         }
         
-        nwmask->setLength(plen);
+        nw.netmask.setLength(plen);
         
         //ネットワークアドレスとサブネットマスクの論理積が、ネットワークアドレスと同じであれば正当
-        if((nwaddr->touInt() & nwmask->touInt()) != nwaddr->touInt()){
+        if((nw.netaddr.touInt() & nw.netmask.touInt()) != nw.netaddr.touInt()){
             throw sfwdr::Exception::InvalidIPNetwork((char *)"");
         }
         
         delete[] nwaddr_str;
-        delete nwaddr;
-        delete nwmask;
     }
     catch(sfwdr::Exception::Exception){
-        delete nwaddr;
-        delete nwmask;
-        if(nwaddr_str != nullptr) delete[] nwaddr_str;
+        delete[] nwaddr_str;
         throw sfwdr::Exception::InvalidIPNetwork(nw_str);
     }
     
-    return(true);
+    return(nw);
+}
+
+
+IPNW IPNetwork::validIPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
+    IPNW nw;
+    try{
+        nw.netaddr = ipaddr;
+        nw.netmask.setLength(mask_length);
+        
+        if((nw.netaddr.touInt() & nw.netmask.touInt()) != nw.netaddr.touInt()){
+            throw sfwdr::Exception::InvalidIPNetwork("");
+        }
+    }
+    catch(sfwdr::Exception::Exception){
+        //あとでなおす
+        throw sfwdr::Exception::InvalidIPNetwork(ipaddr.toStr());
+    }
+    
+    return(nw);
+}
+
+void IPNetwork::_build_str(){
+    int len;
+    comlib::memset((uint8_t *)prefix, '\0', IP_PREFIX_STR_LEN);
+    comlib::strncat(prefix, (*ipnw).netaddr.toStr(), IP_PREFIX_STR_LEN);
+    len = comlib::strlen(prefix);
+    comlib::strncat(prefix, "/", IP_PREFIX_STR_LEN - len);
+    len++;
+    
+    char buf[4];
+    comlib::uitoa((*ipnw).netmask.getLength(), buf, 4);
+    comlib::strncat(prefix, buf, IP_PREFIX_STR_LEN - len);
 }
