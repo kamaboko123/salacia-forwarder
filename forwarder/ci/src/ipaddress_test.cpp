@@ -54,10 +54,7 @@ void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect_net
 void FIXTURE_NAME::test_ipaddress_core(){
     IPAddress *addr1 = new IPAddress();
     IPAddress *addr2 = new IPAddress((char *)"172.16.101.1");
-    
-    //[test]isSet
-    CPPUNIT_ASSERT_EQUAL(false, addr1->isSet());
-    CPPUNIT_ASSERT_EQUAL(true, addr2->isSet());
+    IPAddress *addr3 = new IPAddress(0xc0a80101);
     
     //[test]touInt
     CPPUNIT_ASSERT_EQUAL(0, (int)addr1->touInt());
@@ -65,28 +62,17 @@ void FIXTURE_NAME::test_ipaddress_core(){
     
     //[test]toStr
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", addr1->toStr()));
-    CPPUNIT_ASSERT_EQUAL(0, strcmp("172.16.101.1", addr2->toStr()));
-    
-    //[test]set
-    addr1->set((char *)"10.0.0.1");
-    CPPUNIT_ASSERT_EQUAL(true, addr1->isSet());
-    CPPUNIT_ASSERT_EQUAL(0, strcmp("10.0.0.1", addr1->toStr()));
-    
-    addr1->set((char *)"10.0.0.1", false);
-    CPPUNIT_ASSERT_EQUAL(false, addr1->isSet());
-    CPPUNIT_ASSERT_EQUAL(0, strcmp("10.0.0.1", addr1->toStr()));
-    
-    addr2->set(0xc0a80101);
-    CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.1", addr2->toStr()));
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.1", addr3->toStr()));
     
     //copy constructor and operators
-    copy_constructor_test(*addr2, 0xc0a80101);
+    copy_constructor_test(*addr3, 0xc0a80101);
     
-    IPAddress addr_copied = *addr2;
+    IPAddress addr_copied = *addr3;
     CPPUNIT_ASSERT_EQUAL((uint32_t)0xc0a80101, addr_copied.touInt());
     
     delete addr1;
     delete addr2;
+    delete addr3;
     
     //leak check
     try{
