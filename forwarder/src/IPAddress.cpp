@@ -4,7 +4,6 @@
 void IPAddress::_init(){
     addr = 0;
     addr_str = new char[IP_ADDR_STR_LEN]();
-    set_flg = false;
 }
 
 void IPAddress::_free(){
@@ -13,7 +12,7 @@ void IPAddress::_free(){
 
 IPAddress::IPAddress(){
     _init();
-    set((uint32_t)0, false);
+    set((uint32_t)0);
 }
 
 IPAddress::IPAddress(uint32_t addr_uint){
@@ -48,13 +47,12 @@ IPAddress &IPAddress::operator=(const IPAddress &ipaddr){
     return(*this);
 }
 
-void IPAddress::set(uint32_t addr_uint, bool set_flg){
+void IPAddress::set(uint32_t addr_uint){
     addr = addr_uint;
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
-    this->set_flg = set_flg;
 }
 
-void IPAddress::set(char *addr_str, bool set_flg){
+void IPAddress::set(char *addr_str){
     try{
         addr = iptoui(addr_str);
         uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
@@ -65,12 +63,10 @@ void IPAddress::set(char *addr_str, bool set_flg){
         
         throw e;
     }
-    
-    this->set_flg = set_flg;
 }
 
 void IPAddress::set(const IPAddress &ipaddr){
-    set(ipaddr.touInt(), ipaddr.isSet());
+    set(ipaddr.touInt());
 }
 
 uint32_t IPAddress::touInt() const{
@@ -79,10 +75,6 @@ uint32_t IPAddress::touInt() const{
 
 char *IPAddress::toStr() const{
     return(addr_str);
-}
-
-bool IPAddress::isSet() const{
-    return(set_flg);
 }
 
 char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
