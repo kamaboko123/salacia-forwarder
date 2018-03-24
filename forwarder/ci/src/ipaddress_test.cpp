@@ -16,7 +16,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_ipnetmask_core);
     CPPUNIT_TEST(test_ipnetmask_validation);
     CPPUNIT_TEST(test_ipnetwork_core);
-    CPPUNIT_TEST(test_ipnetwork_static);
+    CPPUNIT_TEST(test_ipnetwork_validation);
     CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -33,7 +33,7 @@ protected:
     void test_ipnetmask_core();
     void test_ipnetmask_validation();
     void test_ipnetwork_core();
-    void test_ipnetwork_static();
+    void test_ipnetwork_validation();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -87,6 +87,12 @@ void FIXTURE_NAME::test_ipaddress_core(){
     
     delete addr1;
     delete addr2;
+    
+    //leak check
+    try{
+        addr1 = new IPAddress((char *)"999.999.999.999");
+    }
+    catch(sfwdr::Exception::InvalidIPAddress &e){}
 }
 
 void FIXTURE_NAME::test_ipaddress_validation(){
@@ -95,14 +101,6 @@ void FIXTURE_NAME::test_ipaddress_validation(){
     CPPUNIT_ASSERT_THROW(IPAddress((char *)"-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
     CPPUNIT_ASSERT_THROW(IPAddress((char *)"10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
     CPPUNIT_ASSERT_THROW(IPAddress((char *)"a"), sfwdr::Exception::InvalidIPAddress);
-    
-    //leak check
-    IPAddress *addr;
-    try{
-        addr = new IPAddress((char *)"999.999.999.999");
-        delete(addr);
-    }
-    catch(sfwdr::Exception::InvalidIPAddress &e){}
 }
 
 void FIXTURE_NAME::test_ipaddress_static(){
@@ -165,20 +163,19 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     delete mask2;
     delete mask3;
     delete mask4;
+    
+    //leak check
+    try{
+        mask1 = new IPNetmask((char *)"255.255.1.0");
+    }
+    catch(sfwdr::Exception::InvalidIPNetmask &e){}
+    
 }
 
 void FIXTURE_NAME::test_ipnetmask_validation(){
     CPPUNIT_ASSERT_THROW(IPNetmask((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(IPNetmask((char *)"255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(IPNetmask(0xFFFF01FF), sfwdr::Exception::InvalidIPNetmask);
-    
-    //leak check
-    IPNetmask *mask1;
-    try{
-        mask1 = new IPNetmask((char *)"255.255.1.0");
-        delete(mask1);
-    }
-    catch(sfwdr::Exception::InvalidIPNetmask &e){}
     
     IPNetmask mask2;
     CPPUNIT_ASSERT_THROW(mask2.set((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
@@ -198,6 +195,7 @@ void FIXTURE_NAME::test_ipnetwork_core(){
     net = new IPNetwork();
     CPPUNIT_ASSERT_EQUAL((uint32_t)0, net->getNetaddr().touInt());
     CPPUNIT_ASSERT_EQUAL((uint32_t)0, net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
     delete net;
     
     //[test] 192.168.0.0/24
@@ -221,6 +219,13 @@ void FIXTURE_NAME::test_ipnetwork_core(){
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
     delete net;
     
+    net_addr.set((char *)"0.0.0.0");
+    net = new IPNetwork(net_addr, 0);
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
+    delete net;
+    
     //[test] copy constructor
     net = new IPNetwork((char *)"192.168.0.0/23");
     copy_constructor_test(*net, *net);
@@ -228,18 +233,29 @@ void FIXTURE_NAME::test_ipnetwork_core(){
     CPPUNIT_ASSERT_EQUAL(net->getNetaddr().touInt(), net_copied.getNetaddr().touInt());
     CPPUNIT_ASSERT_EQUAL(net->getNetmask().touInt(), net_copied.getNetmask().touInt());
     delete net;
+    
+    //[test] leak check
+    try{
+        net = new IPNetwork((char *)"255.255.1.0/23");
+    }
+    catch(sfwdr::Exception::InvalidIPNetwork &e){}
+    
 }
 
-void FIXTURE_NAME::test_ipnetwork_static(){
-    //validPrefixFormat (just format check, not prefix validate)
-    /*
-    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"192.168.0.0/23"));
-    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"192.168.0.0/24"));
-    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"0.0.0.0/0"));
-    CPPUNIT_ASSERT_EQUAL(true, IPNetwork::validPrefixFormat((char *)"1.1.1.1/32"));
-    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"111.111.111.1111/32"));
-    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"1.1.1.1/33"));
-    CPPUNIT_ASSERT_EQUAL(false, IPNetwork::validPrefixFormat((char *)"1.1.1.1/-1"));
-    */
+void FIXTURE_NAME::test_ipnetwork_validation(){
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"s"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0/24s"), sfwdr::Exception::InvalidIPNetwork);
     
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.1.0", 23), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0", 33), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0", -1), sfwdr::Exception::InvalidIPNetwork);
+    
+    IPNetwork nw;
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), nw.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), nw.getNetmask().touInt());
+    CPPUNIT_ASSERT_THROW(nw.set((char *)"192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), nw.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), nw.getNetmask().touInt());
 }
