@@ -203,6 +203,9 @@ int main(void){
     catch(sfwdr::Exception::Exception &e){
         printf("%s\n", e.getMessage());
     }
-
+    
+    net1 = new IPNetwork();
+    delete net1;
+    
     return(0);
 }

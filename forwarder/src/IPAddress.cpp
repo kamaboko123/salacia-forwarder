@@ -252,6 +252,7 @@ sfwdr::ssize_t IPNetmask::getLength() const{
 
 IPNetwork::IPNetwork(){
     _init();
+    _build_str();
 }
 
 IPNetwork::IPNetwork(char *ipnet_str){
