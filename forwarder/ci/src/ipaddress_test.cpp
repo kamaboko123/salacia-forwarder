@@ -49,6 +49,7 @@ void FIXTURE_NAME::copy_constructor_test(IPAddress target, uint32_t expect_int_a
 void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect_net){
     CPPUNIT_ASSERT_EQUAL(expect_net.getNetaddr().touInt(), target.getNetaddr().touInt());
     CPPUNIT_ASSERT_EQUAL(expect_net.getNetmask().touInt(), target.getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect_net.toStr(), target.toStr()));
 }
 
 void FIXTURE_NAME::test_ipaddress_core(){
