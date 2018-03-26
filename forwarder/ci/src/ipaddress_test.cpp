@@ -20,8 +20,9 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    void copy_constructor_test(IPAddress target, IPAddress &expect_addr);
-    void copy_constructor_test(IPNetwork target, IPNetwork &expect_net);
+    void copy_constructor_test(IPAddress target, IPAddress &expect);
+    void copy_constructor_test(IPNetmask target, IPNetmask &expect);
+    void copy_constructor_test(IPNetwork target, IPNetwork &expect);
     
 public:
     void setUp();
@@ -42,15 +43,20 @@ void FIXTURE_NAME::setUp() {}
 
 void FIXTURE_NAME::tearDown() {}
 
-void FIXTURE_NAME::copy_constructor_test(IPAddress target,  IPAddress &expect_addr){
-    CPPUNIT_ASSERT_EQUAL(expect_addr.touInt(), target.touInt());
-    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect_addr.toStr(), target.toStr()));
+void FIXTURE_NAME::copy_constructor_test(IPAddress target,  IPAddress &expect){
+    CPPUNIT_ASSERT_EQUAL(expect.touInt(), target.touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect.toStr(), target.toStr()));
 }
 
-void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect_net){
-    CPPUNIT_ASSERT_EQUAL(expect_net.getNetaddr().touInt(), target.getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(expect_net.getNetmask().touInt(), target.getNetmask().touInt());
-    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect_net.toStr(), target.toStr()));
+void FIXTURE_NAME::copy_constructor_test(IPNetmask target,  IPNetmask &expect){
+    CPPUNIT_ASSERT_EQUAL(expect.touInt(), target.touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect.toStr(), target.toStr()));
+}
+
+void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect){
+    CPPUNIT_ASSERT_EQUAL(expect.getNetaddr().touInt(), target.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(expect.getNetmask().touInt(), target.getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect.toStr(), target.toStr()));
 }
 
 void FIXTURE_NAME::test_ipaddress_core(){
@@ -152,6 +158,16 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     delete mask2;
     delete mask3;
     delete mask4;
+    
+    //copy constructor and operators
+    mask1 = new IPNetmask("255.255.255.252");
+    copy_constructor_test(*mask1, *mask1);
+    
+    IPAddress mask_copied = *mask1;
+    CPPUNIT_ASSERT_EQUAL(mask1->touInt(), mask_copied.touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(mask1->toStr(), mask_copied.toStr()));
+    
+    delete mask1;
     
     //leak check
     try{
