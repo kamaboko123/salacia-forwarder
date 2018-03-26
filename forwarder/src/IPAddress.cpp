@@ -320,6 +320,7 @@ void IPNetwork::set(const IPAddress &ipaddr, sfwdr::ssize_t mask_length){
 void IPNetwork::set(const IPNetwork &ipnet){
     (*ipnw).netaddr.set(ipnet.getNetaddr().touInt());
     (*ipnw).netmask.set(ipnet.getNetmask().touInt());
+    _build_str();
 }
 
 IPAddress IPNetwork::getNetaddr() const{
