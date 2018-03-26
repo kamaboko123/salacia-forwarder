@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cppunit/extensions/HelperMacros.h>
 #include "RouteTable.hpp"
 
@@ -26,6 +27,24 @@ void FIXTURE_NAME::setUp() {}
 void FIXTURE_NAME::tearDown() {}
 
 void FIXTURE_NAME::test_route_core(){
+    Route r1("10.0.0.0/8");
+    
+    Array<IPAddress> bests;
+    Array<RouteType> best_types;
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1.getNexthops(RTYPE_LOCAL).getSize());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1.getBestNexthops(bests));
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, bests.getSize());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1.getBestNexthops().getSize());
+    CPPUNIT_ASSERT_EQUAL(RTYPE_INVALID, r1.getBestRouteType());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1.getRouteTypes(best_types));
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, best_types.getSize());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1.getRouteTypes().getSize());
+    
+    CPPUNIT_ASSERT_EQUAL(0, strcmp("10.0.0.0/8", r1.getNetwork().toStr()));
     
 }
 
