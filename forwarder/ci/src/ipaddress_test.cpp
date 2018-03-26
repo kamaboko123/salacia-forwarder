@@ -20,7 +20,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE_END();
 
 private:
-    void copy_constructor_test(IPAddress target, uint32_t expect_int_addr);
+    void copy_constructor_test(IPAddress target, IPAddress &expect_addr);
     void copy_constructor_test(IPNetwork target, IPNetwork &expect_net);
     
 public:
@@ -42,8 +42,9 @@ void FIXTURE_NAME::setUp() {}
 
 void FIXTURE_NAME::tearDown() {}
 
-void FIXTURE_NAME::copy_constructor_test(IPAddress target, uint32_t expect_int_addr){
-    CPPUNIT_ASSERT_EQUAL(expect_int_addr, target.touInt());
+void FIXTURE_NAME::copy_constructor_test(IPAddress target,  IPAddress &expect_addr){
+    CPPUNIT_ASSERT_EQUAL(expect_addr.touInt(), target.touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(expect_addr.toStr(), target.toStr()));
 }
 
 void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect_net){
@@ -66,10 +67,11 @@ void FIXTURE_NAME::test_ipaddress_core(){
     CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.1", addr3->toStr()));
     
     //copy constructor and operators
-    copy_constructor_test(*addr3, 0xc0a80101);
+    copy_constructor_test(*addr3, *addr3);
     
     IPAddress addr_copied = *addr3;
-    CPPUNIT_ASSERT_EQUAL((uint32_t)0xc0a80101, addr_copied.touInt());
+    CPPUNIT_ASSERT_EQUAL(addr3->touInt(), addr_copied.touInt());
+    CPPUNIT_ASSERT_EQUAL(0, strcmp(addr3->toStr(), addr_copied.toStr()));
     
     delete addr1;
     delete addr2;
