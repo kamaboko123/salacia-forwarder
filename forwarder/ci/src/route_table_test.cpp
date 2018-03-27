@@ -11,6 +11,7 @@
 class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(FIXTURE_NAME);
     CPPUNIT_TEST(test_route_constructor);
+    CPPUNIT_TEST(test_route_invalid);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -18,6 +19,7 @@ public:
     void tearDown();
 protected:
     void test_route_constructor();
+    void test_route_invalid();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -69,3 +71,8 @@ void FIXTURE_NAME::test_route_constructor(){
     
 }
 
+void FIXTURE_NAME::test_route_invalid(){
+    Route *r;
+    
+    CPPUNIT_ASSERT_THROW(r = new Route("a"), sfwdr::Exception::InvalidIPNetwork);
+}
