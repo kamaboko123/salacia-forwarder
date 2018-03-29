@@ -99,6 +99,8 @@ void FIXTURE_NAME::test_route_core(){
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1->getNexthops(RTYPE_RIP).getSize());
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1->getNexthops(RTYPE_INVALID).getSize());
     
+    CPPUNIT_ASSERT_EQUAL(IPAddress("1.1.1.1").touInt(), r1->getNexthops(RTYPE_LOCAL).get(0).touInt());
+    
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getBestNexthops(bests));
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, bests.getSize());
     CPPUNIT_ASSERT_EQUAL(IPAddress("1.1.1.1").touInt(), bests.get(0).touInt());
@@ -112,6 +114,35 @@ void FIXTURE_NAME::test_route_core(){
     
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getRouteTypes().getSize());
     
+    
+    
+    r1->addNexthop(RTYPE_CONNECTED, IPAddress("2.2.2.2"));
+    r1->addNexthop(RTYPE_STATIC, IPAddress("3.3.3.3"));
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getNexthops(RTYPE_LOCAL).getSize());
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getNexthops(RTYPE_CONNECTED).getSize());
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getNexthops(RTYPE_STATIC).getSize());
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1->getNexthops(RTYPE_RIP).getSize());
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)0, r1->getNexthops(RTYPE_INVALID).getSize());
+    
+    CPPUNIT_ASSERT_EQUAL(IPAddress("1.1.1.1").touInt(), r1->getNexthops(RTYPE_LOCAL).get(0).touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("2.2.2.2").touInt(), r1->getNexthops(RTYPE_CONNECTED).get(0).touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("3.3.3.3").touInt(), r1->getNexthops(RTYPE_STATIC).get(0).touInt());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getBestNexthops(bests));
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, bests.getSize());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("1.1.1.1").touInt(), bests.get(0).touInt());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)1, r1->getBestNexthops().getSize());
+    CPPUNIT_ASSERT_EQUAL(RTYPE_LOCAL, r1->getBestRouteType());
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)3, r1->getRouteTypes(route_types));
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)3, route_types.getSize());
+    CPPUNIT_ASSERT_EQUAL(RTYPE_LOCAL, route_types.get(0));
+    CPPUNIT_ASSERT_EQUAL(RTYPE_CONNECTED, route_types.get(1));
+    CPPUNIT_ASSERT_EQUAL(RTYPE_STATIC, route_types.get(2));
+    
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)3, r1->getRouteTypes().getSize());
     
     
     delete r1;
