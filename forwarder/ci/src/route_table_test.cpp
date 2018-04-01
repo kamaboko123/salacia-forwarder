@@ -24,6 +24,7 @@ protected:
     void test_route_constructor();
     void test_route_core();
     void test_route_invalid();
+    void test_route_table_core();
 };
 
 void FIXTURE_NAME::copy_constructor_test(Route target, Route *expect){
@@ -145,6 +146,11 @@ void FIXTURE_NAME::test_route_core(){
     CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)3, r1->getRouteTypes().getSize());
     
     
+    r1->addNexthop(RTYPE_STATIC, IPAddress("4.4.4.4"));
+    CPPUNIT_ASSERT_EQUAL((sfwdr::size_t)2, r1->getNexthops(RTYPE_STATIC).getSize());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("3.3.3.3").touInt(), r1->getNexthops(RTYPE_STATIC).get(0).touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("4.4.4.4").touInt(), r1->getNexthops(RTYPE_STATIC).get(1).touInt());
+    
     delete r1;
 }
 
@@ -152,5 +158,9 @@ void FIXTURE_NAME::test_route_invalid(){
     Route *r1;
     
     CPPUNIT_ASSERT_THROW(r1 = new Route("a"), sfwdr::Exception::InvalidIPNetwork);
-    
+}
+
+
+void test_route_table_core(){
+    //WIP
 }
