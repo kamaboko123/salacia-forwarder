@@ -44,10 +44,6 @@ MacAddress::MacAddress(const uint64_t addr_int){
 }
 
 
-uint64_t MacAddress::toInt() const{
-    return(toLong());
-}
-
 uint64_t MacAddress::toLong() const{
     return(this->addr);
 }

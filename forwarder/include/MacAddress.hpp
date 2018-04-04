@@ -15,8 +15,6 @@ public:
     MacAddress(char *addr_str);
     MacAddress(const uint64_t addr_int);
     
-    [[deprecated("please use toLong() function")]]
-    uint64_t toInt() const;
     uint64_t toLong() const;
     uint64_t getHash() const;
     bool operator==(MacAddress v);

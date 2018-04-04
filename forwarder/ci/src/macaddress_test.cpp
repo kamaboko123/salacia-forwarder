@@ -35,7 +35,6 @@ void FIXTURE_NAME::test_core(){
     CPPUNIT_ASSERT(0x0000000000 == addr1->toLong());
     CPPUNIT_ASSERT(0x1111abcd0f == addr2->toLong());
     CPPUNIT_ASSERT(0x2222abcd0f == addr3->toLong());
-    CPPUNIT_ASSERT(addr3->toInt() == addr3->toLong());
     
     *addr1 = 0x0000abcd0f;
     CPPUNIT_ASSERT(0x0000abcd0f == addr1->toLong());
