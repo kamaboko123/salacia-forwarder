@@ -323,15 +323,15 @@ void IPNetwork::set(const IPNetwork &ipnet){
     _build_str();
 }
 
-IPAddress IPNetwork::getNetaddr() const{
+const IPAddress &IPNetwork::getNetaddr() const{
     return((*ipnw).netaddr);
 }
 
-IPNetmask IPNetwork::getNetmask() const{
+const IPNetmask &IPNetwork::getNetmask() const{
     return((*ipnw).netmask);
 }
 
-char *IPNetwork::toStr() const{
+const char *IPNetwork::toStr() const{
     return(prefix);
 }
 

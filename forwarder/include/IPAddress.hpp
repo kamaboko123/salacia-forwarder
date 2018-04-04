@@ -87,14 +87,14 @@ public:
     IPNetwork(const IPNetwork &ipnet);
     IPNetwork &operator=(const IPNetwork &ipnet);
     
-    IPAddress getNetaddr() const;
-    IPNetmask getNetmask() const;
+    const IPAddress &getNetaddr() const;
+    const IPNetmask &getNetmask() const;
     
     void set(const IPNetwork &ipnet);
     void set(char *nw_str);
     void set(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
     
-    char *toStr() const;
+    const char *toStr() const;
     
     static IPNW validIPNetwork(char *nw_str);
     static IPNW validIPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
