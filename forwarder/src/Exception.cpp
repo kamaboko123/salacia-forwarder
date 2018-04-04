@@ -54,7 +54,7 @@ namespace sfwdr{
             delete[] tmp;
         }
         
-        InvalidIPAddress::InvalidIPAddress(char *str){
+        InvalidIPAddress::InvalidIPAddress(const char *str){
             char msg_head[] = "InvalidIPAddress : ";
             char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
             comlib::strcat(tmp, msg_head);

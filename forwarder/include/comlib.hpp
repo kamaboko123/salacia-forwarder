@@ -24,7 +24,7 @@ namespace comlib{
     char *strncpy(char *s1, char *s2, int n);
     char *strncpy(uint8_t *s1, uint8_t *s2, int n);
     
-    char *strcat(char *s1, char *s2);
+    char *strcat(char *s1, const char *s2);
     char *strncat(char *s1, char *s2, int n);
     
     char *strchr(char *s, char c);
@@ -34,7 +34,7 @@ namespace comlib{
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
     uint8_t *memmove(uint8_t *buf1, const uint8_t *bud2, uint64_t n);
     uint64_t memset(uint8_t *buf, uint8_t byte, uint64_t n);
-    int strlen(char *str);
+    int strlen(const char *str);
     
     uint32_t rbyte32(uint32_t in);
     uint16_t rbyte16(uint16_t in);
@@ -44,7 +44,7 @@ namespace comlib{
     uint32_t htonl(uint32_t in);
     uint16_t htons(uint16_t in);
     
-    int atoi(char *s);
+    int atoi(const char *s);
     char *uitoa(int n, char *buf, sfwdr::ssize_t buflen);
     
     uint8_t ndigit(uint32_t n);

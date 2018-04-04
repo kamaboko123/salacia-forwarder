@@ -20,7 +20,7 @@ IPAddress::IPAddress(uint32_t addr_uint){
     set(addr_uint);
 }
 
-IPAddress::IPAddress(char *addr_str){
+IPAddress::IPAddress(const char *addr_str){
     _init();
     try{
         set(addr_str);
@@ -52,7 +52,7 @@ void IPAddress::set(uint32_t addr_uint){
     uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
 }
 
-void IPAddress::set(char *addr_str){
+void IPAddress::set(const char *addr_str){
     try{
         addr = iptoui(addr_str);
         uitoip(addr, this->addr_str, IP_ADDR_STR_LEN);
@@ -120,11 +120,11 @@ char *IPAddress::uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len){
     return(retbuf);
 }
 
-uint32_t IPAddress::iptoui(char *addr_str){
+uint32_t IPAddress::iptoui(char const *addr_str){
     uint8_t octet = 0;
     uint32_t addr = 0;
     uint64_t tmp;
-    char *addr_str_org = addr_str;
+    const char *addr_str_org = addr_str;
     
     while(*addr_str != '\0'){
         tmp = comlib::atoi(addr_str);

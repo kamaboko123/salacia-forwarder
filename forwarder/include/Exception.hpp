@@ -35,7 +35,7 @@ namespace sfwdr{
         
         class InvalidIPAddress : public Exception{
         public:
-            InvalidIPAddress(char *str);
+            InvalidIPAddress(const char *str);
         };
         
         class InvalidIPNetmask : public Exception{

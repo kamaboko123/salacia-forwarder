@@ -24,7 +24,7 @@ char *comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
     return(comlib::strncpy((char *)s1, (char *)s2, n));
 }
 
-char *comlib::strcat(char *s1, char *s2){
+char *comlib::strcat(char *s1, const char *s2){
     char *p = (s1 + strlen(s1));
     for(int i = 0; s2[i] != '\0'; i++){
         p[i] = s2[i];
@@ -92,7 +92,7 @@ uint64_t comlib::bytestol(uint8_t *head, int n){
 /**
  * return length of str
  */
-int comlib::strlen(char *str){
+int comlib::strlen(const char *str){
     int i;
     for(i = 0; str[i] != '\0'; i++);
     return(i);
@@ -151,7 +151,7 @@ uint16_t comlib::htons(uint16_t in){
 }
 
 //not implement orverflow checking
-int comlib::atoi(char *s){
+int comlib::atoi(const char *s){
     int result = 0;
     bool sign = false;
     

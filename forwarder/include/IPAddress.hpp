@@ -23,7 +23,7 @@ private:
 public:
     IPAddress();
     IPAddress(uint32_t addr_uint);
-    IPAddress(char *addr_str);
+    IPAddress(const char *addr_str);
     
     ~IPAddress();
     
@@ -32,13 +32,13 @@ public:
     IPAddress &operator=(const IPAddress &ipaddr);
     
     void set(uint32_t addr_uint);
-    void set(char *addr_str);
+    void set(const char *addr_str);
     void set(const IPAddress &ipaddr);
     
     uint32_t touInt() const;
     char *toStr() const;
     
-    static uint32_t iptoui(char *addr_str);
+    static uint32_t iptoui(const char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);
 };
 
