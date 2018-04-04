@@ -61,7 +61,7 @@ void FIXTURE_NAME::copy_constructor_test(IPNetwork target, IPNetwork &expect){
 
 void FIXTURE_NAME::test_ipaddress_core(){
     IPAddress *addr1 = new IPAddress();
-    IPAddress *addr2 = new IPAddress((char *)"172.16.101.1");
+    IPAddress *addr2 = new IPAddress("172.16.101.1");
     IPAddress *addr3 = new IPAddress(0xc0a80101);
     
     //[test]touInt
@@ -85,17 +85,17 @@ void FIXTURE_NAME::test_ipaddress_core(){
     
     //leak check
     try{
-        addr1 = new IPAddress((char *)"999.999.999.999");
+        addr1 = new IPAddress("999.999.999.999");
     }
     catch(sfwdr::Exception::InvalidIPAddress &e){}
 }
 
 void FIXTURE_NAME::test_ipaddress_validation(){
-    CPPUNIT_ASSERT_THROW(IPAddress((char *)"10.0.0.1000"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress((char *)"999.999.999.999"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress((char *)"-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress((char *)"10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
-    CPPUNIT_ASSERT_THROW(IPAddress((char *)"a"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.1000"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("999.999.999.999"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("-10.0.0.0"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("10.0.0.0/"), sfwdr::Exception::InvalidIPAddress);
+    CPPUNIT_ASSERT_THROW(IPAddress("a"), sfwdr::Exception::InvalidIPAddress);
 }
 
 void FIXTURE_NAME::test_ipaddress_static(){
@@ -107,7 +107,7 @@ void FIXTURE_NAME::test_ipaddress_static(){
     CPPUNIT_ASSERT_EQUAL(0, strcmp("172.16.101.1", buf));
     
     //IPAddress:iptoui()
-    CPPUNIT_ASSERT_EQUAL(0xAC106501, IPAddress::iptoui((char *)"172.16.101.1"));
+    CPPUNIT_ASSERT_EQUAL(0xAC106501, IPAddress::iptoui("172.16.101.1"));
 }
 
 void FIXTURE_NAME::test_ipnetmask_core(){
