@@ -161,7 +161,7 @@ IPNetmask::IPNetmask() : IPAddress(){
     length = 0;
 }
 
-IPNetmask::IPNetmask(char *addr_str) : IPAddress(){
+IPNetmask::IPNetmask(const char *addr_str) : IPAddress(){
     set(addr_str);
 }
 
@@ -182,7 +182,7 @@ sfwdr::ssize_t IPNetmask::set(uint32_t addr_uint){
     return(getLength());
 }
 
-sfwdr::ssize_t IPNetmask::set(char *addr_str){
+sfwdr::ssize_t IPNetmask::set(const char *addr_str){
     try{
         uint32_t addr_uint = iptoui(addr_str);
         set(addr_uint);
@@ -247,7 +247,7 @@ IPNetwork::IPNetwork(){
     _build_str();
 }
 
-IPNetwork::IPNetwork(char *ipnet_str){
+IPNetwork::IPNetwork(const char *ipnet_str){
     _init();
     try{
         set(ipnet_str);
@@ -297,7 +297,7 @@ void IPNetwork::_free(){
     delete[] prefix;
 }
 
-void IPNetwork::set(char *nw_str){
+void IPNetwork::set(const char *nw_str){
     try{
         *ipnw = validIPNetwork(nw_str);
         _build_str();
@@ -335,7 +335,7 @@ const char *IPNetwork::toStr() const{
     return(prefix);
 }
 
-IPNW IPNetwork::validIPNetwork(char *nw_str){
+IPNW IPNetwork::validIPNetwork(const char *nw_str){
     char *nwaddr_str = nullptr;
     IPNW nw;
     

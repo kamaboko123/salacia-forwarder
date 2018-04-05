@@ -40,12 +40,12 @@ namespace sfwdr{
         
         class InvalidIPNetmask : public Exception{
         public:
-            InvalidIPNetmask(char *str);
+            InvalidIPNetmask(const char *str);
         };
         
         class InvalidIPNetwork : public Exception{
         public:
-            InvalidIPNetwork(char *str);
+            InvalidIPNetwork(const char *str);
         };
     }
 }

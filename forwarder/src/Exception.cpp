@@ -64,7 +64,7 @@ namespace sfwdr{
             delete[] tmp;
         }
         
-        InvalidIPNetmask::InvalidIPNetmask(char *str){
+        InvalidIPNetmask::InvalidIPNetmask(const char *str){
             char msg_head[] = "InvalidIPNetmask : ";
             char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
             comlib::strcat(tmp, msg_head);
@@ -74,7 +74,7 @@ namespace sfwdr{
             delete[] tmp;
         }
         
-        InvalidIPNetwork::InvalidIPNetwork(char *str){
+        InvalidIPNetwork::InvalidIPNetwork(const char *str){
             char msg_head[] = "InvalidIPNetwork : ";
             char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
             comlib::strcat(tmp, msg_head);

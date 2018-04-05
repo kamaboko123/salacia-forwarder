@@ -48,11 +48,11 @@ private:
     
 public:
     IPNetmask();
-    IPNetmask(char *addr_str);
+    IPNetmask(const char *addr_str);
     IPNetmask(uint32_t addr_uint);
     
     sfwdr::ssize_t set(uint32_t addr_uint);
-    sfwdr::ssize_t set(char *addr_str);
+    sfwdr::ssize_t set(const char *addr_str);
     sfwdr::ssize_t setLength(sfwdr::ssize_t mask_length);
     
     sfwdr::ssize_t getLength() const;
@@ -78,7 +78,7 @@ private:
 public:
     IPNetwork();
     //prefix形式の文字列 (例:192.168.0.0/24)
-    IPNetwork(char *ipnet_str);
+    IPNetwork(const char *ipnet_str);
     //ネットワークアドレスはオブジェクト、マスクはマスク長
     IPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
     
@@ -91,12 +91,12 @@ public:
     const IPNetmask &getNetmask() const;
     
     void set(const IPNetwork &ipnet);
-    void set(char *nw_str);
+    void set(const char *nw_str);
     void set(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
     
     const char *toStr() const;
     
-    static IPNW validIPNetwork(char *nw_str);
+    static IPNW validIPNetwork(const char *nw_str);
     static IPNW validIPNetwork(const IPAddress &ipaddr, sfwdr::ssize_t mask_length);
 };
 

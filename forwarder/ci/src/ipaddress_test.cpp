@@ -204,35 +204,35 @@ void FIXTURE_NAME::test_ipnetwork_core(){
     delete net;
     
     //[test] 192.168.0.0/24
-    net = new IPNetwork((char *)"192.168.0.0/24");
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"192.168.0.0").touInt(), net->getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"255.255.255.0").touInt(), net->getNetmask().touInt());
+    net = new IPNetwork("192.168.0.0/24");
+    CPPUNIT_ASSERT_EQUAL(IPAddress("192.168.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("255.255.255.0").touInt(), net->getNetmask().touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.0.0/24", net->toStr()));
     delete net;
     
-    IPAddress net_addr((char *)"192.168.1.0");
+    IPAddress net_addr("192.168.1.0");
     net = new IPNetwork(net_addr, 24);
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"192.168.1.0").touInt(), net->getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"255.255.255.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("192.168.1.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("255.255.255.0").touInt(), net->getNetmask().touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("192.168.1.0/24", net->toStr()));
     delete net;
     
     //[test] 0.0.0.0/0
-    net = new IPNetwork((char *)"0.0.0.0/0");
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), net->getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), net->getNetmask().touInt());
+    net = new IPNetwork("0.0.0.0/0");
+    CPPUNIT_ASSERT_EQUAL(IPAddress("0.0.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("0.0.0.0").touInt(), net->getNetmask().touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
     delete net;
     
-    net_addr.set((char *)"0.0.0.0");
+    net_addr.set("0.0.0.0");
     net = new IPNetwork(net_addr, 0);
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), net->getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), net->getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("0.0.0.0").touInt(), net->getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("0.0.0.0").touInt(), net->getNetmask().touInt());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0/0", net->toStr()));
     delete net;
     
     //[test] copy constructor
-    net = new IPNetwork((char *)"192.168.0.0/23");
+    net = new IPNetwork("192.168.0.0/23");
     copy_constructor_test(*net, *net);
     IPNetwork net_copied = *net;
     CPPUNIT_ASSERT_EQUAL(net->getNetaddr().touInt(), net_copied.getNetaddr().touInt());
@@ -241,26 +241,26 @@ void FIXTURE_NAME::test_ipnetwork_core(){
     
     //[test] leak check
     try{
-        net = new IPNetwork((char *)"255.255.1.0/23");
+        net = new IPNetwork("255.255.1.0/23");
     }
     catch(sfwdr::Exception::InvalidIPNetwork &e){}
     
 }
 
 void FIXTURE_NAME::test_ipnetwork_validation(){
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0"), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"s"), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0/24s"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.0.0"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("s"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.0.0/24s"), sfwdr::Exception::InvalidIPNetwork);
     
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.1.0", 23), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0", 33), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_THROW(IPNetwork((char *)"192.168.0.0", -1), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.1.0", 23), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.0.0", 33), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_THROW(IPNetwork("192.168.0.0", -1), sfwdr::Exception::InvalidIPNetwork);
     
     IPNetwork nw;
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), nw.getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), nw.getNetmask().touInt());
-    CPPUNIT_ASSERT_THROW(nw.set((char *)"192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
-    CPPUNIT_ASSERT_EQUAL(IPAddress((char *)"0.0.0.0").touInt(), nw.getNetaddr().touInt());
-    CPPUNIT_ASSERT_EQUAL(IPNetmask((char *)"0.0.0.0").touInt(), nw.getNetmask().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPAddress("0.0.0.0").touInt(), nw.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("0.0.0.0").touInt(), nw.getNetmask().touInt());
+    CPPUNIT_ASSERT_THROW(nw.set("192.168.1.0/23"), sfwdr::Exception::InvalidIPNetwork);
+    CPPUNIT_ASSERT_EQUAL(IPAddress("0.0.0.0").touInt(), nw.getNetaddr().touInt());
+    CPPUNIT_ASSERT_EQUAL(IPNetmask("0.0.0.0").touInt(), nw.getNetmask().touInt());
 }
