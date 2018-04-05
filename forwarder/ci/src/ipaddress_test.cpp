@@ -112,8 +112,8 @@ void FIXTURE_NAME::test_ipaddress_static(){
 
 void FIXTURE_NAME::test_ipnetmask_core(){
     IPNetmask *mask1 = new IPNetmask();
-    IPNetmask *mask2 = new IPNetmask((char *)"255.255.255.0");
-    IPNetmask *mask3 = new IPNetmask((char *)"255.255.255.255");
+    IPNetmask *mask2 = new IPNetmask("255.255.255.0");
+    IPNetmask *mask3 = new IPNetmask("255.255.255.255");
     IPNetmask *mask4 = new IPNetmask(0xFFFF0000);
     
     //[test] default
@@ -135,7 +135,7 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     CPPUNIT_ASSERT_EQUAL(0, mask1->getLength());
     CPPUNIT_ASSERT_EQUAL(0, strcmp("0.0.0.0", mask1->toStr()));
     
-    CPPUNIT_ASSERT_EQUAL(0, mask2->set((char *)"0.0.0.0"));
+    CPPUNIT_ASSERT_EQUAL(0, mask2->set("0.0.0.0"));
     CPPUNIT_ASSERT_EQUAL(0, mask2->getLength());
     CPPUNIT_ASSERT_EQUAL((uint32_t)0, mask2->touInt());
     
@@ -171,20 +171,20 @@ void FIXTURE_NAME::test_ipnetmask_core(){
     
     //leak check
     try{
-        mask1 = new IPNetmask((char *)"255.255.1.0");
+        mask1 = new IPNetmask("255.255.1.0");
     }
     catch(sfwdr::Exception::InvalidIPNetmask &e){}
     
 }
 
 void FIXTURE_NAME::test_ipnetmask_validation(){
-    CPPUNIT_ASSERT_THROW(IPNetmask((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
-    CPPUNIT_ASSERT_THROW(IPNetmask((char *)"255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(IPNetmask("a"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(IPNetmask("255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(IPNetmask(0xFFFF01FF), sfwdr::Exception::InvalidIPNetmask);
     
     IPNetmask mask2;
-    CPPUNIT_ASSERT_THROW(mask2.set((char *)"a"), sfwdr::Exception::InvalidIPNetmask);
-    CPPUNIT_ASSERT_THROW(mask2.set((char *)"255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.set("a"), sfwdr::Exception::InvalidIPNetmask);
+    CPPUNIT_ASSERT_THROW(mask2.set("255.255.1.0"), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(mask2.set(0xFFFF01FF), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(mask2.setLength(33), sfwdr::Exception::InvalidIPNetmask);
     CPPUNIT_ASSERT_THROW(mask2.setLength(-1), sfwdr::Exception::InvalidIPNetmask);
