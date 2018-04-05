@@ -21,16 +21,16 @@ namespace sfwdr{
 }
 
 namespace comlib{
-    char *strncpy(char *s1, char *s2, int n);
-    char *strncpy(uint8_t *s1, uint8_t *s2, int n);
+    char *strncpy(char *s1, const char *s2, int n);
+    char *strncpy(uint8_t *s1, const uint8_t *s2, int n);
     
     char *strcat(char *s1, const char *s2);
-    char *strncat(char *s1, char *s2, int n);
+    char *strncat(char *s1, const char *s2, int n);
     
-    char *strchr(char *s, char c);
-    sfwdr::ssize_t strchr_index(char *s, char c);
+    char *strchr(const char *s, char c);
+    sfwdr::ssize_t strchr_index(const char *s, char c);
     
-    uint64_t bytestol(uint8_t *head, int n);
+    uint64_t bytestol(const uint8_t *head, int n);
     uint8_t *memcpy(uint8_t *buf1, const uint8_t *buf2, int n);
     uint8_t *memmove(uint8_t *buf1, const uint8_t *bud2, uint64_t n);
     uint64_t memset(uint8_t *buf, uint8_t byte, uint64_t n);

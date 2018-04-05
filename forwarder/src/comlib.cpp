@@ -3,7 +3,7 @@
 /**
  * copy s2 to s1
  */
-char *comlib::strncpy(char *s1, char *s2, int n){
+char *comlib::strncpy(char *s1, const char *s2, int n){
     bool end = false;
     int i;
     for(i = 0; i < n; i++){
@@ -20,7 +20,7 @@ char *comlib::strncpy(char *s1, char *s2, int n){
     return(s1);
 }
 
-char *comlib::strncpy(uint8_t *s1, uint8_t *s2, int n){
+char *comlib::strncpy(uint8_t *s1, const uint8_t *s2, int n){
     return(comlib::strncpy((char *)s1, (char *)s2, n));
 }
 
@@ -32,7 +32,7 @@ char *comlib::strcat(char *s1, const char *s2){
     return(s1);
 }
 
-char *comlib::strncat(char *s1, char *s2, int n){
+char *comlib::strncat(char *s1, const char *s2, int n){
     char *p = (s1 + strlen(s1));
     int i;
     for(i = 0; i < n; i++){
@@ -43,14 +43,14 @@ char *comlib::strncat(char *s1, char *s2, int n){
     return(s1);
 }
 
-char *comlib::strchr(char *s, char c){
+char *comlib::strchr(const char *s, char c){
     for(int i = 0; s[i] != '\0'; i++){
-        if(s[i] == c) return(s + i);
+        if(s[i] == c) return((char *)s + i);
     }
     return(nullptr);
 }
 
-sfwdr::ssize_t comlib::strchr_index(char *s, char c){
+sfwdr::ssize_t comlib::strchr_index(const char *s, char c){
     for(int i = 0; s[i] != '\0'; i++){
         if(s[i] == c) return(i);
     }
@@ -81,7 +81,7 @@ uint8_t *comlib::memmove(uint8_t *buf1, const uint8_t *buf2, uint64_t n){
 /**
  * convert byte array to long(uint64_t)
  */
-uint64_t comlib::bytestol(uint8_t *head, int n){
+uint64_t comlib::bytestol(const uint8_t *head, int n){
     uint64_t ret = 0;
     for(int i = 0; i < n; i++){
         ret += ((uint64_t)head[i] << (8 * (n - i - 1)));

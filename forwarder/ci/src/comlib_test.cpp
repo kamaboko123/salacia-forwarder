@@ -67,12 +67,12 @@ void FIXTURE_NAME::test_strncpy(){
     //配列の動的確保時に()つけると0で初期化されるんですが、これってC++規格？
     //↑規格らしいです
     str =  new char[16]();
-    CPPUNIT_ASSERT(str == clib::strncpy(str, (char *)"abc", 3));
+    CPPUNIT_ASSERT(str == clib::strncpy(str, "abc", 3));
     CPPUNIT_ASSERT_EQUAL(0, strcmp(str, "abc"));
     delete[] str;
     
     str = new char[16]();
-    CPPUNIT_ASSERT(str == clib::strncpy(str, (char *)"abc", 2));
+    CPPUNIT_ASSERT(str == clib::strncpy(str, "abc", 2));
     CPPUNIT_ASSERT_EQUAL(0, strcmp(str, "ab"));
     delete[] str;
 }
@@ -138,7 +138,7 @@ void FIXTURE_NAME::test_memset(){
 }
 
 void FIXTURE_NAME::test_strlen(){
-    CPPUNIT_ASSERT_EQUAL(6, clib::strlen((char *)"string"));
+    CPPUNIT_ASSERT_EQUAL(6, clib::strlen("string"));
 }
 
 void FIXTURE_NAME::test_rbyte_n(){
@@ -158,9 +158,9 @@ void FIXTURE_NAME::test_convert_nw_byte_order(){
 }
 
 void FIXTURE_NAME::test_atoi(){
-    CPPUNIT_ASSERT_EQUAL(1234567890, clib::atoi((char *)"1234567890"));
-    CPPUNIT_ASSERT_EQUAL(12345, clib::atoi((char *)"12345a67890"));
-    CPPUNIT_ASSERT_EQUAL(0, clib::atoi((char *)"a1234567890"));
+    CPPUNIT_ASSERT_EQUAL(1234567890, clib::atoi("1234567890"));
+    CPPUNIT_ASSERT_EQUAL(12345, clib::atoi("12345a67890"));
+    CPPUNIT_ASSERT_EQUAL(0, clib::atoi("a1234567890"));
 }
 
 void FIXTURE_NAME::test_uitoa(){
