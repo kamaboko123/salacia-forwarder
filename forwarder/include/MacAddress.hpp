@@ -12,7 +12,7 @@ private:
     static const uint64_t hbase = 256;
 public:
     MacAddress();
-    MacAddress(char *addr_str);
+    MacAddress(const char *addr_str);
     MacAddress(const uint64_t addr_int);
     
     uint64_t toLong() const;

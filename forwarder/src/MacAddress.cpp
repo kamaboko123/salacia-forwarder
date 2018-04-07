@@ -10,9 +10,9 @@ MacAddress::MacAddress(){
  * 区切り文字なし対応 -> 11223344ffee
  * バリデーション未実装
  */
-MacAddress::MacAddress(char *addr_str){
+MacAddress::MacAddress(const char *addr_str){
     this->addr = 0;
-    char *p = addr_str;
+    const char *p = addr_str;
     int hex = 0;
     
     for (p = addr_str; *(p+1) != '\0'; p++){
