@@ -52,32 +52,30 @@ private:
     uint8_t *_ul_head;
     
     void _update();
-    uint64_t mactol(uint8_t *mac_addr);
     void setType(EthType type);
     
 public:
     Ethernet();
-    Ethernet(uint8_t *data, uint16_t length);
-    void set(uint8_t *data, uint16_t length);
+    Ethernet(const uint8_t *data, uint16_t length);
+    void set(const uint8_t *data, uint16_t length);
     
-    uint16_t getLength();
-    //void setLength(uint16_t len);
+    uint16_t getLength() const;
     
-    EthType getType();
-    EthType getULType();
+    EthType getType() const;
+    EthType getULType() const;
     
-    MacAddress getDst();
-    MacAddress getSrc();
+    MacAddress getDst() const;
+    MacAddress getSrc() const;
     
-    void setDst(MacAddress addr);
+    void setDst(const MacAddress &addr);
     void setDst(uint64_t addr);
-    void setSrc(MacAddress addr);
+    void setSrc(const MacAddress &addr);
     void setSrc(uint64_t addr);
     
-    bool hasVlan();
-    bool isARP();
+    bool hasVlan() const;
+    bool isARP() const;
     
-    uint16_t getVlanId();
+    uint16_t getVlanId() const;
     uint16_t removeVlanTag();
     uint16_t setVlanTag(uint16_t vlan_id);
     uint8_t *RawData();

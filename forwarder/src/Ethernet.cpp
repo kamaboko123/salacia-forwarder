@@ -5,11 +5,11 @@ Ethernet::Ethernet(){
     return;
 }
 
-Ethernet::Ethernet(uint8_t *eth_data, uint16_t len){
+Ethernet::Ethernet(const uint8_t *eth_data, uint16_t len){
     set(eth_data, len);
 }
 
-void Ethernet::set(uint8_t *eth_data, uint16_t len){
+void Ethernet::set(const uint8_t *eth_data, uint16_t len){
     this->length = len;
     comlib::memcpy(this->data, eth_data, length);
     this->eth = (struct ETHER *)this->data;
@@ -51,37 +51,15 @@ void Ethernet::_update(){
     }
 }
 
-EthType Ethernet::getType(){
-    /*
-    uint16_t type = comlib::ntohs(eth->eth_type);
-    
-    ul_head = (uint8_t *)&(eth->eth_type) + sizeof(eth->eth_type);
-    EthType ret;
-    switch(type){
-        case ETHTYPE_ARP:
-            ret =  ETHTYPE_ARP;
-            break;
-        case ETHTYPE_IPV4:
-            ret = ETHTYPE_IPV4;
-            break;
-        case ETHTYPE_DOT1Q:
-            ret = ETHTYPE_DOT1Q;
-            ul_head += DOT1Q_TAG_SIZE;
-            break;
-        default :
-            ret = ETHTYPE_UNKNOWN;
-    }
-    
-    return(ret);
-    */
+EthType Ethernet::getType() const{
     return(_type);
 }
 
-EthType Ethernet::getULType(){
+EthType Ethernet::getULType() const{
     return(_ul_type);
 }
 
-uint16_t Ethernet::getLength(){
+uint16_t Ethernet::getLength() const{
     return(length);
 }
 
@@ -89,18 +67,18 @@ void Ethernet::setType(EthType type){
     eth->eth_type = comlib::htons(type);
 }
 
-MacAddress Ethernet::getDst(){
-    return(MacAddress(mactol(eth->dst_mac)));
+MacAddress Ethernet::getDst() const{
+    return(MacAddress(comlib::bytestol(eth->dst_mac, 6)));
 }
 
-MacAddress Ethernet::getSrc(){
-    return(MacAddress(mactol(eth->src_mac)));
+MacAddress Ethernet::getSrc() const{
+    return(MacAddress(comlib::bytestol(eth->src_mac, 6)));
 }
 
-void Ethernet::setDst(MacAddress addr){
+void Ethernet::setDst(const MacAddress &addr){
     setDst(addr.toLong());
 }
-void Ethernet::setSrc(MacAddress addr){
+void Ethernet::setSrc(const MacAddress &addr){
     setSrc(addr.toLong());
 }
 
@@ -118,11 +96,7 @@ void Ethernet::setSrc(uint64_t addr){
     }
 }
 
-uint64_t Ethernet::mactol(uint8_t *mac_addr){
-    return(comlib::bytestol(mac_addr, MAC_ADDR_SIZE));
-}
-
-uint16_t Ethernet::getVlanId(){
+uint16_t Ethernet::getVlanId() const{
     uint16_t id = 0;
     
     struct DOT1Q *tag = (struct DOT1Q *)&this->data[ETH_H_SIZE];
@@ -170,11 +144,11 @@ uint8_t *Ethernet::RawData(){
     return(data);
 }
 
-bool Ethernet::hasVlan(){
+bool Ethernet::hasVlan() const{
     return(getULType() == ETHTYPE_DOT1Q);
 }
 
-bool Ethernet::isARP(){
+bool Ethernet::isARP() const{
     return(getULType() == ETHTYPE_ARP);
 }
 
