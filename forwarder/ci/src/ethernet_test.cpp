@@ -66,17 +66,17 @@ void FIXTURE_NAME::test_addr(){
     eth_v->set(arp_packet_vlan, sizeof(arp_packet_vlan));
     
     //[test]get
-    CPPUNIT_ASSERT(MacAddress((char *)"11:11:11:11:11:11") == eth->getSrc());
-    CPPUNIT_ASSERT(MacAddress((char *)"FF:FF:FF:FF:FF:FF") == eth->getDst());
-    CPPUNIT_ASSERT(MacAddress((char *)"11:11:11:11:11:11") == eth_v->getSrc());
-    CPPUNIT_ASSERT(MacAddress((char *)"FF:FF:FF:FF:FF:FF") == eth_v->getDst());
+    CPPUNIT_ASSERT(MacAddress("11:11:11:11:11:11") == eth->getSrc());
+    CPPUNIT_ASSERT(MacAddress("FF:FF:FF:FF:FF:FF") == eth->getDst());
+    CPPUNIT_ASSERT(MacAddress("11:11:11:11:11:11") == eth_v->getSrc());
+    CPPUNIT_ASSERT(MacAddress("FF:FF:FF:FF:FF:FF") == eth_v->getDst());
     
     //[test]set src(MacAddress)
-    eth->setSrc(MacAddress((char *)"22:22:22:22:22:22"));
-    eth_v->setSrc(MacAddress((char *)"22:22:22:22:22:22"));
+    eth->setSrc(MacAddress("22:22:22:22:22:22"));
+    eth_v->setSrc(MacAddress("22:22:22:22:22:22"));
     
-    CPPUNIT_ASSERT(MacAddress((char *)"22:22:22:22:22:22") == eth->getSrc());
-    CPPUNIT_ASSERT(MacAddress((char *)"22:22:22:22:22:22") == eth_v->getSrc());
+    CPPUNIT_ASSERT(MacAddress("22:22:22:22:22:22") == eth->getSrc());
+    CPPUNIT_ASSERT(MacAddress("22:22:22:22:22:22") == eth_v->getSrc());
     
     uint8_t tmp_eth[64];
     uint8_t tmp_eth_v[64];
@@ -90,11 +90,11 @@ void FIXTURE_NAME::test_addr(){
     
     
     //[test]set dst(MacAddress)
-    eth->setDst(MacAddress((char *)"EE:EE:EE:EE:EE:EE"));
-    eth_v->setDst(MacAddress((char *)"EE:EE:EE:EE:EE:EE"));
+    eth->setDst(MacAddress("EE:EE:EE:EE:EE:EE"));
+    eth_v->setDst(MacAddress("EE:EE:EE:EE:EE:EE"));
     
-    CPPUNIT_ASSERT(MacAddress((char *)"EE:EE:EE:EE:EE:EE") == eth->getDst());
-    CPPUNIT_ASSERT(MacAddress((char *)"EE:EE:EE:EE:EE:EE") == eth_v->getDst());
+    CPPUNIT_ASSERT(MacAddress("EE:EE:EE:EE:EE:EE") == eth->getDst());
+    CPPUNIT_ASSERT(MacAddress("EE:EE:EE:EE:EE:EE") == eth_v->getDst());
     
     uint8_t tmp_dst1[6] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
     memcpy(tmp_eth, tmp_dst1, 6);
@@ -108,8 +108,8 @@ void FIXTURE_NAME::test_addr(){
     eth->setSrc(0x333333333333);
     eth_v->setSrc(0x333333333333);
     
-    CPPUNIT_ASSERT(MacAddress((char *)"33:33:33:33:33:33") == eth->getSrc());
-    CPPUNIT_ASSERT(MacAddress((char *)"33:33:33:33:33:33") == eth_v->getSrc());
+    CPPUNIT_ASSERT(MacAddress("33:33:33:33:33:33") == eth->getSrc());
+    CPPUNIT_ASSERT(MacAddress("33:33:33:33:33:33") == eth_v->getSrc());
     
     uint8_t tmp_src2[6] = {0x33, 0x33, 0x33, 0x33, 0x33, 0x33};
     memcpy(tmp_eth + 6 , tmp_src2, 6);
@@ -121,8 +121,8 @@ void FIXTURE_NAME::test_addr(){
     //[test]set dst(uint64_t)
     eth->setDst(0xDDDDDDDDDDDD);
     eth_v->setDst(0xDDDDDDDDDDDD);
-    CPPUNIT_ASSERT(MacAddress((char *)"DD:DD:DD:DD:DD:DD") == eth->getDst());
-    CPPUNIT_ASSERT(MacAddress((char *)"DD:DD:DD:DD:DD:DD") == eth_v->getDst());
+    CPPUNIT_ASSERT(MacAddress("DD:DD:DD:DD:DD:DD") == eth->getDst());
+    CPPUNIT_ASSERT(MacAddress("DD:DD:DD:DD:DD:DD") == eth_v->getDst());
     
     uint8_t tmp_dst2[6] = {0xDD, 0xDD, 0xDD, 0xDD, 0xDD, 0xDD};
     memcpy(tmp_eth, tmp_dst2, 6);
