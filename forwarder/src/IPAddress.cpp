@@ -344,7 +344,7 @@ IPNW IPNetwork::validIPNetwork(const char *nw_str){
         sfwdr::ssize_t nwaddr_end_index;
         if((nwaddr_end_index = comlib::strchr_index(nw_str, '/')) == -1){
             //マスク無しはエラー
-            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+            throw sfwdr::Exception::InvalidIPNetwork("");
         }
         nwaddr_str = new char[nwaddr_end_index + 1]();
         comlib::strncat(nwaddr_str, nw_str, nwaddr_end_index);
@@ -356,14 +356,14 @@ IPNW IPNetwork::validIPNetwork(const char *nw_str){
         int prefix_len_str_len = comlib::strlen(&nw_str[nwaddr_end_index + 1]);
         int plen = comlib::atoi(&nw_str[nwaddr_end_index + 1]);
         if(prefix_len_str_len != comlib::ndigit(plen)){
-            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+            throw sfwdr::Exception::InvalidIPNetwork("");
         }
         
         nw.netmask.setLength(plen);
         
         //ネットワークアドレスとサブネットマスクの論理積が、ネットワークアドレスと同じであれば正当
         if((nw.netaddr.touInt() & nw.netmask.touInt()) != nw.netaddr.touInt()){
-            throw sfwdr::Exception::InvalidIPNetwork((char *)"");
+            throw sfwdr::Exception::InvalidIPNetwork("");
         }
         
         delete[] nwaddr_str;
