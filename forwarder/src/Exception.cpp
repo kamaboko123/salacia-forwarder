@@ -2,17 +2,17 @@
 
 namespace sfwdr{
     namespace Exception{
-        void Exception::_init(char *str){
+        void Exception::_init(const char *str){
             sfwdr::ssize_t len = comlib::strlen(str) + 1;
             this->message = new char[len]();
             comlib::strncpy(this->message, str, len);
         }
         
         Exception::Exception(){
-            _init((char *)"");
+            _init("");
         }
         
-        Exception::Exception(char *str){
+        Exception::Exception(const char *str){
             _init(str);
         }
         
@@ -32,7 +32,7 @@ namespace sfwdr{
             delete[] message;
         }
         
-        void Exception::setMessage(char *str){
+        void Exception::setMessage(const char *str){
             delete[] message;
             
             sfwdr::ssize_t len = comlib::strlen(str) + 1;
@@ -44,7 +44,7 @@ namespace sfwdr{
             return(message);
         }
         
-        InvalidEthType::InvalidEthType(char *str){
+        InvalidEthType::InvalidEthType(const char *str){
             char msg_head[] = "InvalidEthType : ";
             char *tmp = new char[comlib::strlen(str) + comlib::strlen(msg_head) + 1]();
             comlib::strcat(tmp, msg_head);

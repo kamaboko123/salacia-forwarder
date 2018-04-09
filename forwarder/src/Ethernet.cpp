@@ -153,6 +153,6 @@ bool Ethernet::isARP() const{
 }
 
 ARP &Ethernet::arp(){
-    if(!isARP()) throw sfwdr::Exception::InvalidEthType((char *)"ARP");
+    if(!isARP()) throw sfwdr::Exception::InvalidEthType("ARP");
     return(_arp);
 }

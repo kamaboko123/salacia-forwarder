@@ -9,28 +9,28 @@ namespace sfwdr{
         private:
             char *message;
             
-            void _init(char *str);
+            void _init(const char *str);
             
         public:
             Exception();
-            Exception(char *str);
+            Exception(const char *str);
             ~Exception();
             
             Exception(const Exception &except);
             Exception &operator=(const Exception &except);
             
-            void setMessage(char *str);
+            void setMessage(const char *str);
             char *getMessage() const;
         };
         
         class OutOfRange : public Exception{
         public:
-            OutOfRange() : Exception((char *)"out-of-range"){};
+            OutOfRange() : Exception("out-of-range"){};
         };
         
         class InvalidEthType : public Exception{
         public:
-            InvalidEthType(char *str);
+            InvalidEthType(const char *str);
         };
         
         class InvalidIPAddress : public Exception{
