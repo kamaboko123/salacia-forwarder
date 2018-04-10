@@ -25,6 +25,7 @@ public:
 class MacTable{
 private:
     HashMap<MacAddress, MacTableEntry *> *tbl;
+    Array<MacAddress> tbl_keys;
 
 public:
     MacTable(int size = 256);
@@ -33,7 +34,6 @@ public:
     NetIf *get(MacAddress addr);
     void refresh();
     
-    MacAddress *getKeys();
     int getSize();
 };
 

@@ -52,23 +52,17 @@ NetIf *MacTable::get(MacAddress addr){
 
 void MacTable::refresh(){
     uint64_t c_time = time(NULL);
-    int size = tbl->getSize();
-    
-    MacAddress *keys = new MacAddress[size];
-    tbl->getKeys(keys);
-    for(int i = 0; i < size; i++){
-        MacTableEntry *entry = tbl->get(keys[i]);
+    Array<MacAddress> *keys = new Array<MacAddress>;
+    tbl->getKeys(*keys);
+    for(sfwdr::size_t i = 0; i < keys->getSize(); i++){
+        MacTableEntry *entry = tbl->get(keys->get(i));
         if((c_time - entry->getRefTime()) > MAC_TBL_EXPIRE_TIME){
-            tbl->del(keys[i]);
+            tbl->del(keys->get(i));
             delete entry;
         }
     }
     
-    delete[] keys;
-}
-
-MacAddress *MacTable::getKeys(){
-    return(tbl->getKeys());
+    delete keys;
 }
 
 int MacTable::getSize(){
