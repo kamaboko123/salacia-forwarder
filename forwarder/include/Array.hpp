@@ -16,7 +16,7 @@ public:
         next = nullptr;
     }
     
-    T get(){
+    T &get(){
         return(item);
     }
     
@@ -145,7 +145,7 @@ public:
         return(size);
     }
     
-    T get(uint32_t index) const{
+    T &get(uint32_t index) const{
         ArrayItem<T> *ret = getArrayItem(index);
         if(ret == nullptr){
             throw sfwdr::Exception::OutOfRange();
@@ -153,6 +153,10 @@ public:
         }
         
         return(ret->get());
+    }
+    
+    T &operator [](uint32_t index) const{
+        return(get(index));
     }
 };
 

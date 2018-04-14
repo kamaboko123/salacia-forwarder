@@ -103,8 +103,19 @@ void FIXTURE_NAME::test_core(){
     //[test] get and mem access
     CPPUNIT_ASSERT_EQUAL(*ar.get(2), *i3);
     
+    //[test]operator []
+    CPPUNIT_ASSERT(i3 == ar[0]);
+    CPPUNIT_ASSERT(i3 == ar[1]);
+    CPPUNIT_ASSERT(i3 == ar[2]);
+    
+    ar[0] = i4;
+    CPPUNIT_ASSERT(i4 == ar[0]);
+    
+    
     //[test] clear
     ar.clear();
+    
+    CPPUNIT_ASSERT_EQUAL(0, (int)ar.getSize());
     
     delete i0;
     delete i1;
