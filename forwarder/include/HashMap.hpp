@@ -159,6 +159,10 @@ public:
         return(result->get());
     }
     
+    V &operator [](const K &key) const{
+        return(get(key));
+    }
+    
     bool isExist(K key) const{
         if(_getEntry(key) != nullptr) return(true);
         return(false);
