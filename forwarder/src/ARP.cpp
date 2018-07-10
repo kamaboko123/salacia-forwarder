@@ -45,6 +45,7 @@ void ARP::setSrcMac(const MacAddress &src_mac){
 }
 
 void ARP::setSrcMac(const uint64_t &src_mac){
+    _nullexc();
     uint8_t *p = (uint8_t *)&src_mac;
     for(int i = 0; i < MAC_ADDR_SIZE; i++){
         eth_arp->src_mac[MAC_ADDR_SIZE - (i + 1)] = p[i];
@@ -56,6 +57,7 @@ void ARP::setDstMac(const MacAddress &dst_mac){
 }
 
 void ARP::setDstMac(const uint64_t &dst_mac){
+    _nullexc();
     uint8_t *p = (uint8_t *)&dst_mac;
     for(int i = 0; i < MAC_ADDR_SIZE; i++){
         eth_arp->dst_mac[MAC_ADDR_SIZE - (i + 1)] = p[i];
@@ -67,6 +69,7 @@ void ARP::setSrcIP(const IPAddress &src_ip){
 }
 
 void ARP::setSrcIP(const uint32_t &src_ip){
+    _nullexc();
     eth_arp->src_ip = comlib::htonl(src_ip);
 }
 
@@ -75,6 +78,7 @@ void ARP::setDstIP(const IPAddress &dst_ip){
 }
 
 void ARP::setDstIP(const uint32_t &dst_ip){
+    _nullexc();
     eth_arp->dst_ip = comlib::htonl(dst_ip);
 }
 
