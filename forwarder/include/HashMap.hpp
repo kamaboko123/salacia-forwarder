@@ -6,16 +6,16 @@
 #include "comlib.hpp"
 
 template <typename K, typename V>
-class HashMapEntry{
+class HashMapItem{
 private:
     bool empty;
     K key;
     V obj;
-    HashMapEntry<K, V> *next;
-    HashMapEntry<K, V> *prev;
+    HashMapItem<K, V> *next;
+    HashMapItem<K, V> *prev;
     
 public:
-    HashMapEntry<K, V>(){
+    HashMapItem<K, V>(){
         init();
     }
     
@@ -26,7 +26,7 @@ public:
         this->prev = nullptr;
     }
     
-    void set(K k, V v,  HashMapEntry<K, V> *next, HashMapEntry<K, V> *prev){
+    void set(K k, V v,  HashMapItem<K, V> *next, HashMapItem<K, V> *prev){
         this->empty = false;
         this->key = k;
         this->obj = v;
@@ -38,18 +38,18 @@ public:
         this->obj = v;
     }
     
-    void setNext(HashMapEntry<K, V> *next){
+    void setNext(HashMapItem<K, V> *next){
         this->next = next;
     }
     
-    HashMapEntry<K, V> *getNext(){
+    HashMapItem<K, V> *getNext(){
         return(this->next);
     }
     
-    void setPrev(HashMapEntry<K, V> *prev){
+    void setPrev(HashMapItem<K, V> *prev){
         this->prev = prev;
     }
-    HashMapEntry<K, V> *getPrev(){
+    HashMapItem<K, V> *getPrev(){
         return(this->prev);
     }
     
@@ -69,17 +69,17 @@ public:
 template <typename K, typename V>
 class HashMap{
 private:
-    HashMapEntry<K, V> *tbl;
+    HashMapItem<K, V> *tbl;
     V *d_value;
     int size;
     
     void _init(int size){
         this->size = size;
-        this->tbl = new HashMapEntry<K, V>[this->size];
+        this->tbl = new HashMapItem<K, V>[this->size];
         this->d_value = new V();
     }
     
-    HashMapEntry<K, V> *_getEntry(K key) const{
+    HashMapItem<K, V> *_getItem(K key) const{
         int index = hash(key);
         if(tbl[index].isEmpty()) return(nullptr);
         
@@ -87,7 +87,7 @@ private:
             return(&tbl[index]);
         }
         
-        HashMapEntry<K, V> *p = &tbl[index];
+        HashMapItem<K, V> *p = &tbl[index];
         if((p = p->getNext()) == nullptr) return(nullptr);
         do{
             if(p->getKey() == key){
@@ -129,7 +129,7 @@ public:
             return;
         }
         
-        HashMapEntry<K, V> *p;
+        HashMapItem<K, V> *p;
         p = &(tbl[index]);
         while(p->getNext() != nullptr){
             //keyが同じなら中身更新
@@ -148,13 +148,13 @@ public:
         }
         
         //create new node
-        HashMapEntry<K, V> *ne = new HashMapEntry<K, V>();
+        HashMapItem<K, V> *ne = new HashMapItem<K, V>();
         p->setNext(ne);
         ne->set(key, value, nullptr, p);
     }
     
     V get(K key) const{
-        HashMapEntry<K, V> *result = _getEntry(key);
+        HashMapItem<K, V> *result = _getItem(key);
         if(result == nullptr) return(*d_value);
         return(result->get());
     }
@@ -164,14 +164,14 @@ public:
     }
     
     bool isExist(K key) const{
-        if(_getEntry(key) != nullptr) return(true);
+        if(_getItem(key) != nullptr) return(true);
         return(false);
     }
     
     int getSize(){
         int ret = 0;
         for(int i = 0; i < size; i++){
-            HashMapEntry<K, V> *p = &tbl[i];
+            HashMapItem<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             ret++;
             while(p->getNext() != nullptr){
@@ -184,7 +184,7 @@ public:
     
     void _dump(){
         for(int i = 0; i < size; i++){
-            HashMapEntry<K, V> *p = &tbl[i];
+            HashMapItem<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             printf("!");
             while(p->getNext() != nullptr){
@@ -200,7 +200,7 @@ public:
         K *ret = new K[getSize()];
         int j = 0;
         for(int i = 0; i < size; i++){
-            HashMapEntry<K, V> *p = &tbl[i];
+            HashMapItem<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             ret[j] = tbl[i].getKey();
             j++;
@@ -217,7 +217,7 @@ public:
     K *getKeys(K *ret){
         int j = 0;
         for(int i = 0; i < size; i++){
-            HashMapEntry<K, V> *p = &tbl[i];
+            HashMapItem<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             ret[j] = tbl[i].getKey();
             j++;
@@ -233,7 +233,7 @@ public:
     sfwdr::size_t getKeys(Array<K> &ret) const{
         ret.clear();
         for(int i = 0; i < size; i++){
-            HashMapEntry<K, V> *p = &tbl[i];
+            HashMapItem<K, V> *p = &tbl[i];
             if(p->isEmpty()) continue;
             ret.add(tbl[i].getKey());
             while(p->getNext() != nullptr){
@@ -246,7 +246,7 @@ public:
     }
     
     bool del(K key){
-        HashMapEntry<K, V> *target = _getEntry(key);
+        HashMapItem<K, V> *target = _getItem(key);
         if(target == nullptr) return(false);
     
         if(target->getPrev() == nullptr){
@@ -258,7 +258,7 @@ public:
             }
             else{
                 //first node && next node is exist
-                HashMapEntry<K, V> *se = target->getNext();
+                HashMapItem<K, V> *se = target->getNext();
                 target->set(se->getKey(), se->get(), se->getNext(), nullptr);
                 delete se;
                 return(true);
