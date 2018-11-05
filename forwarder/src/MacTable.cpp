@@ -1,24 +1,24 @@
 #include "MacTable.hpp"
 
-MacTableEntry::MacTableEntry(NetIf *interface){
+MacTableItem::MacTableItem(NetIf *interface){
     this->netif = interface;
     updateRefTime();
 }
 
-void MacTableEntry::updateRefTime(){
+void MacTableItem::updateRefTime(){
     last_ref_time = time(NULL);
 }
 
-uint64_t MacTableEntry::getRefTime(){
+uint64_t MacTableItem::getRefTime(){
     return(last_ref_time);
 }
 
-void MacTableEntry::update(NetIf *interface){
+void MacTableItem::update(NetIf *interface){
     this->netif = interface;
     updateRefTime();
 }
 
-NetIf *MacTableEntry::getIf(){
+NetIf *MacTableItem::getIf(){
     updateRefTime();
     return(netif);
 }
@@ -26,7 +26,7 @@ NetIf *MacTableEntry::getIf(){
 
 
 MacTable::MacTable(int size){
-    this->tbl = new HashMap<MacAddress, MacTableEntry *>(size);
+    this->tbl = new HashMap<MacAddress, MacTableItem *>(size);
 }
 
 MacTable::~MacTable(){
@@ -34,9 +34,9 @@ MacTable::~MacTable(){
 }
 
 void MacTable::update(MacAddress addr, NetIf *interface){
-    MacTableEntry *entry = tbl->get(addr);
+    MacTableItem *entry = tbl->get(addr);
     if(entry == nullptr){
-        MacTableEntry *new_entry = new MacTableEntry(interface);
+        MacTableItem *new_entry = new MacTableItem(interface);
         tbl->update(addr, new_entry);
         return;
     }
@@ -45,7 +45,7 @@ void MacTable::update(MacAddress addr, NetIf *interface){
 }
 
 NetIf *MacTable::get(MacAddress addr){
-    MacTableEntry *entry = tbl->get(addr);
+    MacTableItem *entry = tbl->get(addr);
     if(entry == nullptr) return(nullptr);
     return(entry->getIf());
 }
@@ -55,7 +55,7 @@ void MacTable::refresh(){
     Array<MacAddress> *keys = new Array<MacAddress>;
     tbl->getKeys(*keys);
     for(sfwdr::size_t i = 0; i < keys->getSize(); i++){
-        MacTableEntry *entry = tbl->get(keys->get(i));
+        MacTableItem *entry = tbl->get(keys->get(i));
         if((c_time - entry->getRefTime()) > MAC_TBL_EXPIRE_TIME){
             tbl->del(keys->get(i));
             delete entry;
