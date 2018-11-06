@@ -44,12 +44,13 @@ private:
     struct sockaddr myaddr;
     struct sockaddr_ll sll;
     
+    NetIf();
+    
     void initIf();
     //int sendL2a(uint8_t *data, int length);
     int _send(Ethernet &packet, uint16_t vlan = 0);
     
 public:
-    NetIf();
     
     //Layer2
     NetIf(char *ifname, IfType iftype, uint16_t vlan);

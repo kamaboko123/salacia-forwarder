@@ -17,7 +17,7 @@ void _dump(HashMap<MacAddress, int*> *map){
     printf("size:%d\n", map->getSize());
     
     for(int i = 0; i < map->getSize(); i++){
-        cout << keys[i].toInt();
+        cout << keys[i].toLong();
         cout << ":";
         cout << *map->get(keys[i]) << endl;
         
@@ -97,8 +97,11 @@ int main(void){
     delete[] keys;
     printf("!!!!!!!!!\n");
     
+    map_int->del(10);
+    map_int[10] = pi1;
+    
     if(map_int->isExist(10)){
-        printf("key : [%d] is exist!\n", 10);
+        printf("key : [%d] is exist! -> %d\n", 10, map_int[10]);
     }
     else{
         printf("key : [%d] is not exist!\n", 10);
