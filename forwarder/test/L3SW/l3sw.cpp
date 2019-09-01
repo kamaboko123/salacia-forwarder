@@ -8,7 +8,7 @@
 int main(void){
     //struct pollfd *pfds = new struct pollfd[1];
     
-    NetIf netif1((char *)"enp3s0", IPAddress((char *)"172.18.0.15"), IPNetmask((char *)"255.255.255.0"));
+    NetIf netif1((char *)"11h", IPAddress((char *)"172.18.0.15"), IPNetmask((char *)"255.255.255.0"));
     
     //pfds[0].fd = netif1.getFD();
     //pfds[0].events = POLLIN|POLLERR;

@@ -158,8 +158,8 @@ int main(int argc, char **argv){
                         continue;
                     }
                     
-                    vlan->mtbl.update(pbuf.getSrc(), &netif[i]);
-                    outif = vlan->mtbl.get(pbuf.getDst());
+                    vlan->mtbl.update(pbuf.getSrc(), PointerWrapper<NetIf *>(&netif[i]));
+                    outif = vlan->mtbl.get(pbuf.getDst()).unwrap();
                     
                     if((pbuf.getDst().toLong() == 0xFFFFFFFFFFFF) || (outif == nullptr)){
                         for(uint32_t j = 0; j < vlan->ifs.getSize(); j++){

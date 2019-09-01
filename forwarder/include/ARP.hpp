@@ -6,6 +6,7 @@
 #include "IPAddress.hpp"
 #include "Exception.hpp"
 #include "comlib.hpp"
+#include "CacheTable.hpp"
 
 #define PKT_ARP \
 {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x08, 0x06, 0x00, 0x01,\
@@ -67,5 +68,7 @@ public:
     void setDstIP(const uint32_t &dst_ip);
     IPAddress getDstIP() const;
 };
+
+typedef CacheTable<IPAddress, MacAddress> ARPTable;
 
 #endif

@@ -1,5 +1,5 @@
 #ifndef INCLUDED_CACHE_TABLE
-#define INCLUDED CACHE_TABLE
+#define INCLUDED_CACHE_TABLE
 
 #include <ctime>
 #include "HashMap.hpp"
@@ -67,7 +67,8 @@ public:
             return tbl->get(key)->getItem();
         }
         else{
-            tbl->update(key, CacheItem<V>());
+            //return NULL;
+            tbl->update(key, new CacheItem<V>());
             return get(key);
         }
     }
@@ -92,7 +93,28 @@ public:
     uint32_t getSize() const{
         return tbl->getSize();
     }
+    
+    bool isExist(K key) const{
+        return tbl->isExist(key);
+    }
 };
+
+template <typename T>
+class PointerWrapper{
+private:
+    T *p;
+public:
+    PointerWrapper(){
+        p = nullptr;
+    }
+    PointerWrapper(T *p){
+        this->p = p;
+    }
+    T *unwrap() const{
+        return p;
+    }
+};
+
 
 
 #endif

@@ -6,6 +6,25 @@
 #include "HashMap.hpp"
 #include "NetIf.hpp"
 
+template <typename T>
+class PointerWrapper{
+private:
+    T *p;
+public:
+    PointerWrapper(){
+        p = nullptr;
+    }
+    PointerWrapper(T *p){
+        this->p = p;
+    }
+    T unwrap(){
+        return p;
+    }
+};
+
+typedef CacheTable<MacAddress, PointerWrapper<NetIf *>> MacTable;
+
+/*
 #define MAC_TBL_EXPIRE_TIME 5
 
 class MacTableItem{
@@ -36,5 +55,5 @@ public:
     
     int getSize();
 };
-
+*/
 #endif

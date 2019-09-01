@@ -51,3 +51,6 @@ $(TESTOBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
 
 clean:
 	rm -rf $(OBJDIR) $(TARGETDIR) $(TEST_RESULT_DIR)
+
+run:
+	$(TARGET)
