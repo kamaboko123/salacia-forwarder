@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = mac_table_test.cpp ../../src/comlib.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/Ethernet.cpp ../../src/dlib.cpp ../../src/MacTable.cpp ../../src/IPAddress.cpp ../../src/ARP.cpp ../../src/Exception.cpp
+SRC = mac_table_test.cpp ../../src/comlib.cpp ../../src/MacAddress.cpp ../../src/NetIf.cpp ../../src/Ethernet.cpp ../../src/dlib.cpp ../../src/IPAddress.cpp ../../src/ARP.cpp ../../src/Exception.cpp
 C_OPT = -std=c++11 -Wall
 INCLUDE = -I ../../include
 TARGET_DIR = ./bin
