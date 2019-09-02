@@ -157,6 +157,11 @@ uint32_t IPAddress::iptoui(char const *addr_str){
     return(addr);
 }
 
+
+bool IPAddress::operator==(IPAddress v){
+    return(this->touInt() == v.touInt());
+}
+
 IPNetmask::IPNetmask() : IPAddress(){
     length = 0;
 }

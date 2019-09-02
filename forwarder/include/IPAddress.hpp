@@ -40,6 +40,8 @@ public:
     
     static uint32_t iptoui(const char *addr_str);
     static char *uitoip(uint32_t addr, char *retbuf, sfwdr::ssize_t retbuf_len);
+    
+    bool operator==(IPAddress v);
 };
 
 class IPNetmask : public IPAddress{
