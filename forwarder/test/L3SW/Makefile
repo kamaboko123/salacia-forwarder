@@ -1,6 +1,6 @@
 # Makefile
 
-SRC = l3sw.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp ../../src/Exception.cpp ../../src/ARP.cpp ../../src/IPAddress.cpp ../../src/NetIf.cpp
+SRC = l3sw.cpp ../../src/comlib.cpp ../../src/Ethernet.cpp ../../src/MacAddress.cpp ../../src/dlib.cpp ../../src/Exception.cpp ../../src/ARP.cpp ../../src/IPAddress.cpp ../../src/NetIf.cpp ../../src/IPv4.cpp
 C_OPT = -std=c++11 -Wall
 INCLUDE = -I ../../include
 TARGET_DIR = ./bin

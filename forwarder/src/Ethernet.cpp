@@ -28,6 +28,7 @@ void Ethernet::_update(){
             _arp.set(_ul_head);
             break;
         case ETHTYPE_IPV4:
+            _ipv4.set(_ul_head);
             break;
         case ETHTYPE_DOT1Q:
         {
@@ -155,4 +156,13 @@ bool Ethernet::isARP() const{
 ARP &Ethernet::arp(){
     if(!isARP()) throw sfwdr::Exception::InvalidEthType("ARP");
     return(_arp);
+}
+
+bool Ethernet::isIPv4() const{
+    return(getULType() == ETHTYPE_IPV4);
+}
+
+IPv4 &Ethernet::ipv4(){
+    if(!isIPv4()) throw sfwdr::Exception::InvalidEthType("IPv4");
+    return(_ipv4);
 }

@@ -8,6 +8,7 @@
 #include "comlib.hpp"
 #include "dlib.hpp"
 #include "ARP.hpp"
+#include "IPv4.hpp"
 
 #define ETH_BROADCAST 0xFFFFFFFF
 
@@ -47,6 +48,7 @@ private:
     EthType _ul_type;
     
     ARP _arp;
+    IPv4 _ipv4;
     
     //upper layer header
     uint8_t *_ul_head;
@@ -74,6 +76,7 @@ public:
     
     bool hasVlan() const;
     bool isARP() const;
+    bool isIPv4() const;
     
     uint16_t getVlanId() const;
     uint16_t removeVlanTag();
@@ -81,6 +84,7 @@ public:
     uint8_t *RawData();
     
     ARP &arp();
+    IPv4 &ipv4();
 };
 
 #endif

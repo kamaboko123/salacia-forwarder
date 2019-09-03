@@ -172,12 +172,38 @@ int NetIf::sendBroadcast(Ethernet packet, uint16_t valn){
 }
 
 uint16_t NetIf::recv(Ethernet *eth){
+    //Interfaceの設定によるpacket filterも実装されている
+    //自分宛てのアドレスの通信だったり、VLANのフィルタなど
+    //戻り地は受信パケットの長さを示す、0の場合、受信していないかフィルタされたことを示す
+    //0を返した場合でも、渡されたethの中身は破壊される可能性がある
+    
     uint8_t buf[2048];
     uint16_t s = recvRaw(buf, sizeof(buf));
     if(s == 0){
         return(0);
     }
     eth->set(buf, s);
+    
+    switch(this->iftype){
+        case IFTYPE_L2_ACCESS:
+            break;
+        case IFTYPE_L2_TRUNK:
+            //TODO:implement packet filter
+            break;
+        case IFTYPE_L3_V4:
+            if(eth->isARP()){
+            }
+            else if(eth->isIPv4()){
+            }
+            else{
+                return 0;
+            }
+            
+            break;
+        default:
+            break;
+    }
+    
     return(eth->getLength());
 }
 
@@ -282,4 +308,13 @@ uint16_t NetIf::recvRaw(uint8_t *buf, uint16_t buflen){
 
 uint16_t NetIf::getVlanId(){
     return(vlan);
+}
+
+
+IPAddress NetIf::getIP(){
+    return ip_addr;
+}
+
+IPNetmask NetIf::getIPNetmask(){
+    return ip_mask;
 }

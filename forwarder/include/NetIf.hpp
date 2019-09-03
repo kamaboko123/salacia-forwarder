@@ -67,6 +67,9 @@ public:
     char *getIfName();
     uint16_t getVlanId();
     
+    IPAddress getIP();
+    IPNetmask getIPNetmask();
+    
     int send(Ethernet packet, uint16_t vlan = 0);
     //int send(uint8_t *data, int length, uint16_t vlan = 1);
     int sendRaw(uint8_t *data, int length);
