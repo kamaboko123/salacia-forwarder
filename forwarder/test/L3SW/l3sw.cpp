@@ -50,10 +50,12 @@ int main(void){
         }
         
         else if(pkt->isIPv4()){
-            printf("[receive IP Packet]\n");
+            pkt->ipv4();
+            printf("[IP length] %d\n", pkt->ipv4().getLength());
+            printf("[IP] %s -> %s (protocol number:%d)", pkt->ipv4().getSrc().toStr(), pkt->ipv4().getDst().toStr(), pkt->ipv4().getProtocol());
         }
         
-        printf("\n");
+        printf("\n\n");
     }
     
     delete pkt;
