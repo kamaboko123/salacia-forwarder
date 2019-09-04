@@ -106,4 +106,11 @@ void FIXTURE_NAME::test_with_pointer_wrapper(){
     
     CPPUNIT_ASSERT(nullptr == tbl.get(KeyMock(4)).unwrap());
     
+    sleep(11);
+    tbl.refresh();
+    
+    free(i1);
+    free(i2);
+    free(i3);
+    
 }

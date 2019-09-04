@@ -52,5 +52,8 @@ $(TESTOBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
 clean:
 	rm -rf $(OBJDIR) $(TARGETDIR) $(TEST_RESULT_DIR)
 
-run:
+run: $(TARGET)
 	$(TARGET)
+
+run_checkmem: $(TARGET)
+	valgrind --tool=memcheck --leak-check=full --track-origins=yes $(TARGET)
