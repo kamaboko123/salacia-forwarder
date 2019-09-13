@@ -50,6 +50,7 @@ public:
     }
     
     ~CacheTable(){
+        refresh(true);
         delete tbl;
     }
     
@@ -73,7 +74,7 @@ public:
         }
     }
     
-    void refresh(){
+    void refresh(bool delete_all=false){
         uint64_t current = time(NULL);
         
         Array<K> *keys = new Array<K>;
@@ -81,7 +82,7 @@ public:
         
         for(sfwdr::size_t i = 0; i < keys->getSize(); i++){
             CacheItem<V> *item = tbl->get((*keys)[i]);
-            if((current - item->getLastRef()) > age_out){
+            if(delete_all || ((current - item->getLastRef()) > age_out)){
                 tbl->del((*keys)[i]);
                 delete item;
             }
