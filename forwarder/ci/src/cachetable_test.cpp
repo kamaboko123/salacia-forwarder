@@ -53,19 +53,22 @@ void FIXTURE_NAME::test_core(){
     CacheTable<KeyMock, int> tbl;
     CPPUNIT_ASSERT_EQUAL(0, (int)tbl.getSize());
     
+    tbl.update(KeyMock(0), 10, true);
     tbl.update(KeyMock(1), 11);
     tbl.update(KeyMock(2), 12);
     tbl.update(KeyMock(3), 13);
     
+    CPPUNIT_ASSERT_EQUAL(10, (int)tbl.get(KeyMock(0)));
     CPPUNIT_ASSERT_EQUAL(11, (int)tbl.get(KeyMock(1)));
     CPPUNIT_ASSERT_EQUAL(12, (int)tbl.get(KeyMock(2)));
     CPPUNIT_ASSERT_EQUAL(13, (int)tbl.get(KeyMock(3)));
     
-    CPPUNIT_ASSERT_EQUAL(3, (int)tbl.getSize());
+    CPPUNIT_ASSERT_EQUAL(4, (int)tbl.getSize());
     
-    sleep(5);
+    sleep(6);
     tbl.refresh();
     
+    CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(0)));
     CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(1)));
     CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(2)));
     CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(3)));
@@ -76,10 +79,10 @@ void FIXTURE_NAME::test_core(){
     
     tbl.update(KeyMock(4), 14);
     
-    sleep(6);
+    sleep(7);
     tbl.refresh();
     
-    CPPUNIT_ASSERT_EQUAL(1, (int)tbl.getSize());
+    CPPUNIT_ASSERT_EQUAL(2, (int)tbl.getSize());
     
     CPPUNIT_ASSERT(false == tbl.isExist(KeyMock(1)));
     CPPUNIT_ASSERT(false == tbl.isExist(KeyMock(2)));
@@ -87,6 +90,8 @@ void FIXTURE_NAME::test_core(){
     
     CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(4)));
     CPPUNIT_ASSERT_EQUAL(14, (int)tbl.get(KeyMock(4)));
+    CPPUNIT_ASSERT(true == tbl.isExist(KeyMock(0)));
+    CPPUNIT_ASSERT_EQUAL(10, (int)tbl.get(KeyMock(0)));
 }
 
 void FIXTURE_NAME::test_with_pointer_wrapper(){
@@ -105,9 +110,6 @@ void FIXTURE_NAME::test_with_pointer_wrapper(){
     CPPUNIT_ASSERT(i3 == tbl.get(KeyMock(3)).unwrap());
     
     CPPUNIT_ASSERT(nullptr == tbl.get(KeyMock(4)).unwrap());
-    
-    sleep(11);
-    tbl.refresh();
     
     free(i1);
     free(i2);

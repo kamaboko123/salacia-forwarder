@@ -7,20 +7,22 @@
 template <typename V>
 class CacheItem{
 private:
+    bool persistent;
     uint64_t last_ref;
     V item;
     
 public:
-    CacheItem<V>(){
+    CacheItem<V>(bool persistent=false){
         V d_value;
-        update(d_value);
+        update(d_value, persistent);
     }
-    CacheItem<V>(V value){
-        update(value);
+    CacheItem<V>(V value, bool persistent=false){
+        update(value, persistent);
     }
     
-    void update(V value){
+    void update(V value, bool persistent=false){
         item = value;
+        this->persistent = persistent;
         updateRefTime();
     }
     
@@ -34,6 +36,10 @@ public:
     
     void updateRefTime(){
         last_ref = time(NULL);
+    }
+    
+    bool isPersistent(){
+        return persistent;
     }
 };
 
@@ -54,12 +60,12 @@ public:
         delete tbl;
     }
     
-    void update(K key, V value){
+    void update(K key, V value, bool persistent=false){
         if(tbl->isExist(key)){
             tbl->get(key)->update(value);
         }
         else{
-            tbl->update(key, new CacheItem<V>(value));
+            tbl->update(key, new CacheItem<V>(value, persistent));
         }
     }
     
@@ -74,6 +80,7 @@ public:
         }
     }
     
+    //persisitent item will be deleted if delete_all is true
     void refresh(bool delete_all=false){
         uint64_t current = time(NULL);
         
@@ -82,7 +89,11 @@ public:
         
         for(sfwdr::size_t i = 0; i < keys->getSize(); i++){
             CacheItem<V> *item = tbl->get((*keys)[i]);
-            if(delete_all || ((current - item->getLastRef()) > age_out)){
+            if(delete_all){
+                tbl->del((*keys)[i]);
+                delete item;
+            }
+            else if(!item->isPersistent() && ((current - item->getLastRef()) > age_out)){
                 tbl->del((*keys)[i]);
                 delete item;
             }
