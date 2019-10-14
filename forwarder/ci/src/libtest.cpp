@@ -16,7 +16,7 @@ int KeyMock::getKey(){
     return key;
 }
 
-bool KeyMock::operator==(KeyMock v){
+bool KeyMock::operator==(KeyMock &v){
     return(key == v.getKey());
 }
 

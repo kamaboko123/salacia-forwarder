@@ -10,7 +10,7 @@ public:
     KeyMock(int v);
     int getHash();
     int getKey();
-    bool operator==(KeyMock v);
+    bool operator==(KeyMock &v);
 };
 
 #endif
