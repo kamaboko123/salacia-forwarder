@@ -1,33 +1,12 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <unistd.h>
 #include "CacheTable.hpp"
+#include "libtest.hpp"
 
 #ifdef FIXTURE_NAME
 #undef FIXTURE_NAME
 #endif
 #define FIXTURE_NAME CacheTableTest
-
-class KeyMock{
-    int key;
-    
-public:
-    KeyMock(){
-        key = 0;
-    }
-    KeyMock(int v){
-        key = v;
-    }
-    
-    int getHash(){
-        return key;
-    }
-    int getKey(){
-        return key;
-    }
-    bool operator==(KeyMock v){
-        return(key == v.getKey());
-    }
-};
 
 class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(FIXTURE_NAME);

@@ -3,7 +3,7 @@
 #コンパイラ
 CC = g++
 CFLAGS = -std=c++11 -Wall -g -O0
-INCLUDE = -I../include
+INCLUDE = -I./include -I../include
 LIB = -lcppunit
 
 #テストしたいライブラリ
