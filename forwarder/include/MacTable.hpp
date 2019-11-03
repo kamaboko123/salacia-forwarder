@@ -6,7 +6,7 @@
 #include "HashMap.hpp"
 #include "NetIf.hpp"
 
-typedef CacheTable<MacAddress, PointerWrapper<NetIf *>> MacTable;
+typedef CacheTable<MacAddress, PointerWrapper<NetIf>> MacTable;
 
 /*
 #define MAC_TBL_EXPIRE_TIME 5
