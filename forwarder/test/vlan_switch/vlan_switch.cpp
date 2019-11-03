@@ -158,7 +158,7 @@ int main(int argc, char **argv){
                         continue;
                     }
                     
-                    vlan->mtbl.update(pbuf.getSrc(), PointerWrapper<NetIf *>(&netif[i]));
+                    vlan->mtbl.update(pbuf.getSrc(), PointerWrapper<NetIf>(&(netif[i])));
                     outif = vlan->mtbl.get(pbuf.getDst()).unwrap();
                     
                     if((pbuf.getDst().toLong() == 0xFFFFFFFFFFFF) || (outif == nullptr)){
