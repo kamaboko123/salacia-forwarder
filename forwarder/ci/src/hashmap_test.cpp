@@ -59,10 +59,10 @@ void FIXTURE_NAME::test_core(){
         }
     }
     
-    //test get with not exist key(should return default value but not add map item)
+    //test get with not exist key(should throw Exception)
     CPPUNIT_ASSERT_EQUAL(7, (int)map->getSize());
     CPPUNIT_ASSERT(false == map->isExist(KeyMock(10)));
-    CPPUNIT_ASSERT_EQUAL(0, (int)map->get(KeyMock(10)));
+    CPPUNIT_ASSERT_THROW(map->get(KeyMock(10)), sfwdr::Exception::OutOfRange);
     CPPUNIT_ASSERT_EQUAL(7, (int)map->getSize());
     CPPUNIT_ASSERT(false == map->isExist(KeyMock(10)));
     

@@ -88,10 +88,9 @@ void FIXTURE_NAME::test_with_pointer_wrapper(){
     CPPUNIT_ASSERT(i2 == tbl.get(KeyMock(2)).unwrap());
     CPPUNIT_ASSERT(i3 == tbl.get(KeyMock(3)).unwrap());
     
-    CPPUNIT_ASSERT(nullptr == tbl.get(KeyMock(4)).unwrap());
+    CPPUNIT_ASSERT_THROW(tbl.get(KeyMock(4)), sfwdr::Exception::OutOfRange);
     
     free(i1);
     free(i2);
     free(i3);
-    
 }

@@ -155,7 +155,9 @@ public:
     
     V get(K key) const{
         HashMapItem<K, V> *result = _getItem(key);
-        if(result == nullptr) return(*d_value);
+        if(result == nullptr){
+            throw sfwdr::Exception::OutOfRange();
+        }
         return(result->get());
     }
     

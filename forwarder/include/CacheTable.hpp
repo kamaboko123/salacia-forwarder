@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include "HashMap.hpp"
+#include "Exception.hpp"
 
 template <typename V>
 class CacheItem{
@@ -74,9 +75,7 @@ public:
             return tbl->get(key)->getItem();
         }
         else{
-            //return NULL;
-            tbl->update(key, new CacheItem<V>());
-            return get(key);
+            throw sfwdr::Exception::OutOfRange();
         }
     }
     

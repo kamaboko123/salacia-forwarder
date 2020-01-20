@@ -62,7 +62,10 @@ void Route::_copy_from(const Route &route){
 }
 
 void Route::addNexthop(RouteType type, const IPAddress nexthop){
-    Array<IPAddress> *nhs = nexthops.get(type);
+    Array<IPAddress> *nhs = nullptr;
+    if(nexthops.isExist(type)){
+        nhs = nexthops.get(type);
+    }
     if(nhs == nullptr){
         nhs = new Array<IPAddress>();
         nexthops.update(type, nhs);
@@ -71,7 +74,10 @@ void Route::addNexthop(RouteType type, const IPAddress nexthop){
 }
 
 Array<IPAddress> Route::getNexthops(RouteType type) const{
-    Array<IPAddress> *ret = nexthops.get(type);
+    Array<IPAddress> *ret = nullptr;
+    if(nexthops.isExist(type)){
+        ret = nexthops.get(type);
+    }
     if(ret != nullptr) return(*ret);
     return(Array<IPAddress>());
 }
