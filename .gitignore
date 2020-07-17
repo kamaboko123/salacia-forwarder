@@ -3,3 +3,4 @@ a.out
 *.swp
 bin/
 test_result.xml
+.vscode/

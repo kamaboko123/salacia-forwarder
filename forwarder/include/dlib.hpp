@@ -3,13 +3,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <cstdint>
+
 #include <cctype>
+#include <cstdint>
 
-//debug functions
+#include "RouteTable.hpp"
 
-namespace dlib{
+// debug functions
+
+namespace dlib {
     void hexdump(uint8_t *p, int count);
-}
-
+    void dump_route_table(RouteTable &rtb);
+}  // namespace dlib
 #endif
