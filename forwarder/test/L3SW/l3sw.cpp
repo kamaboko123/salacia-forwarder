@@ -40,7 +40,7 @@ void request_arp(NetIf &netif, Ethernet &pkt) {
     arp_request.setDst(MacAddress(0xFFFFFFFFFFFF));
     arp_request.setSrc(netif.getMac());
 
-    printf("[Send ARP Request] interface: %s\n", netif.getIfName());
+    printf("[Send ARP Request] interface: %s\n\n", netif.getIfName());
     printf("Who has %s ?\n", pkt.ipv4().getDst().toStr());
     netif.send(arp_request);
 }
@@ -49,13 +49,13 @@ void dump_netif_info(NetIf &netif) {
     printf("Interface Name: %s\n", netif.getIfName());
     printf("Interface IPAddr: %s\n", netif.getIP().toStr());
     printf("Interface IPNetmask(length): %s(%d)\n", netif.getIPNetmask().toStr(), netif.getIPNetmask().getLength());
-    printf("Interface MacAddr: %x\n", netif.getMac().toLong());
+    printf("Interface MacAddr: %lx\n", netif.getMac().toLong());
     printf("\n");
 }
 
 int main(void) {
-    CacheTable<IPAddress, MacAddress> arp_tbl;
-    CacheTable<MacAddress, NetIf *> mac_tbl;
+    CacheTable<IPAddress, MacAddress> arp_tbl(256, 300);
+    CacheTable<MacAddress, NetIf *> mac_tbl(256, 300);
     struct pollfd *pfds = new struct pollfd[2];
     RouteTable rtb;
 
@@ -129,6 +129,7 @@ int main(void) {
                             if (mac_tbl.isExist(_mac)) {
                                 NetIf *outif = mac_tbl.get(_mac);
                                 pkt->setDst(_mac);
+                                pkt->setSrc(outif->getMac());
                                 printf("Send interface: %s\n", outif->getIfName());
                                 outif->send(*pkt);
                             }
