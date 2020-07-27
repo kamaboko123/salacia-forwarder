@@ -85,8 +85,8 @@ void NetIf::initIf() {
     }
 
     //ノンブロッキングモードに
-    //fcntl(this->pd, F_SETFL, O_NONBLOCK);
-    ioctl(this->pd, FIONBIO, &on);
+    fcntl(this->pd, F_SETFL, O_NONBLOCK);
+    //ioctl(this->pd, FIONBIO, &on);
 
     //取ってきたMacAddressを扱いやすいようにする
     uint64_t mac_int = 0;
@@ -192,8 +192,7 @@ uint16_t NetIf::recv(Ethernet *eth) {
             //TODO:implement packet filter
             break;
         case IFTYPE_L3_V4:
-            if (eth->isARP()) {
-            } else if (eth->isIPv4()) {
+            if (eth->isARP() || eth->isIPv4()) {
             } else {
                 return 0;
             }
